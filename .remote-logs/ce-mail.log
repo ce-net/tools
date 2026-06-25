@@ -1,0 +1,223 @@
+=== Wed Jun 24 16:34:32 UTC 2026 remote test ce-mail ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+    Updating crates.io index
+     Locking 11 packages to latest Rust 1.96.0 compatible versions
+      Adding aho-corasick v1.1.4
+      Adding lazy_static v1.5.0
+      Adding matchers v0.2.0
+      Adding nu-ansi-term v0.50.3
+      Adding regex-automata v0.4.14
+      Adding sharded-slab v0.1.7
+      Adding thread_local v1.1.9
+      Adding tracing-attributes v0.1.31
+      Adding tracing-log v0.2.0
+      Adding tracing-subscriber v0.3.23
+      Adding valuable v0.1.1
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.65s
+     Running unittests src/lib.rs (/opt/build/target-ce-mail/debug/deps/ce_mail-899e0cf11cdbb264)
+
+running 139 tests
+test attachment::tests::decode_rejects_garbage ... ok
+test attachment::tests::encode_decode_roundtrip ... ok
+test attachment::tests::from_file_guesses_type ... ok
+test attachment::tests::len_and_is_empty ... ok
+test client::tests::attachments_round_trip_e2e ... ok
+test client::tests::attachment_plaintext_never_in_stored_blob ... ok
+test client::tests::dropped_peer_send_errors_gracefully ... ok
+test client::tests::bodiless_ping_stores_no_blob ... ok
+test client::tests::duplicate_receipt_deposit_reports_duplicate ... ok
+test client::tests::missing_blob_on_drain_yields_empty_body_not_panic ... ok
+test client::tests::oversized_body_send_is_rejected ... ok
+test client::tests::offline_store_and_forward_replay ... ok
+test client::tests::read_receipt_round_trip ... ok
+test client::tests::screen_inbox_separates_contact_from_stranger ... ok
+test client::tests::paginated_drain_covers_all_messages ... ok
+test client::tests::send_to_unauthorized_mailbox_is_rejected ... ok
+test client::tests::sealed_subject_is_confidential_and_recovered ... ok
+test client::tests::unsealed_subject_is_plain_and_default_path_unchanged ... ok
+test crypto::tests::decode_sealed_rejects_garbage ... ok
+test crypto::tests::derived_x25519_public_matches_montgomery_of_ed25519 ... ok
+test crypto::tests::encode_decode_sealed_roundtrip ... ok
+test crypto::tests::invalid_node_id_pubkey_errors ... ok
+test crypto::tests::malformed_epk_is_rejected_gracefully ... ok
+test crypto::tests::malformed_nonce_len_is_rejected_gracefully ... ok
+test crypto::tests::seal_open_empty_body ... ok
+test crypto::tests::seal_open_roundtrip ... ok
+test crypto::tests::tampered_ciphertext_fails ... ok
+test crypto::tests::tampered_nonce_fails ... ok
+test crypto::tests::two_seals_use_distinct_ephemeral_keys ... ok
+test crypto::tests::wrong_recipient_cannot_open ... ok
+test envelope::tests::decode_rejects_garbage ... ok
+test envelope::tests::distinct_content_yields_distinct_ids ... ok
+test envelope::tests::encode_decode_roundtrip ... ok
+test client::tests::threaded_drain_groups_conversation ... ok
+test envelope::tests::message_id_is_stable_and_hex ... ok
+test envelope::tests::parse_node_id_validates_length ... ok
+test envelope::tests::forged_from_fails_verification ... ok
+test envelope::tests::seal_sets_from_and_verifies ... ok
+test envelope::tests::verify_rejects_bad_from_hex ... ok
+test limits::tests::clamp_page_bounds_both_ends ... ok
+test limits::tests::default_envelope_passes ... ok
+test limits::tests::oversized_cid_rejected ... ok
+test limits::tests::oversized_postage_rejected ... ok
+test envelope::tests::tampered_subject_fails_verification ... ok
+test limits::tests::oversized_subject_rejected ... ok
+test mailbox::tests::accept_and_read_roundtrip ... ok
+test limits::tests::too_many_attachments_rejected ... ok
+test mailbox::tests::ack_out_of_range_is_clamped ... ok
+test mailbox::tests::ack_removes_delivered ... ok
+test mailbox::tests::delivered_and_read_receipts_coexist ... ok
+test mailbox::tests::duplicate_delivery_is_idempotent ... ok
+test mailbox::tests::capacity_evicts_oldest ... ok
+test mailbox::tests::from_bytes_rejects_garbage ... ok
+test mailbox::tests::duplicate_receipt_is_idempotent ... ok
+test mailbox::tests::gate_rejects_grant_for_different_recipient ... ok
+test mailbox::tests::gate_rejects_grant_to_other_mailbox ... ok
+test mailbox::tests::gate_rejects_missing_grant ... ok
+test mailbox::tests::gate_respects_revocation ... ok
+test mailbox::tests::legacy_v1_store_loads_with_empty_receipts ... ok
+test mailbox::tests::persistence_roundtrip_rebuilds_dedup ... ok
+test mailbox::tests::put_and_collect_receipt_roundtrip ... ok
+test mailbox::tests::full_pagination_covers_all_without_overlap ... ok
+test mailbox::tests::put_receipt_rejects_empty_target ... ok
+test mailbox::tests::put_receipt_rejects_forged ... ok
+test mailbox::tests::read_from_cursor_returns_only_new ... ok
+test mailbox::tests::read_page_bounds_and_signals_more ... ok
+test mailbox::tests::read_page_limit_zero_treated_as_one ... ok
+test mailbox::tests::read_page_unknown_recipient_is_empty ... ok
+test mailbox::tests::read_page_past_end_is_empty ... ok
+test mailbox::tests::receipts_survive_persistence_roundtrip ... ok
+test mailbox::tests::receipt_capacity_evicts_oldest_and_forgets_dedup ... ok
+test mailbox::tests::refuses_forged_envelope ... ok
+test mailbox::tests::seen_stays_bounded_under_sustained_overflow ... ok
+test mailbox::tests::shared_mailbox_concurrent_deliver_no_lost_updates ... ok
+test mailbox::tests::valid_accept_grant_passes_gate ... ok
+test persist::tests::atomic_write_creates_and_reads_back ... ok
+test persist::tests::atomic_write_creates_missing_parent_dir ... ok
+test persist::tests::atomic_write_is_durable_across_many_writes ... ok
+test persist::tests::atomic_write_overwrites_without_leaving_temp ... ok
+test proto::tests::ack_request_roundtrip ... ok
+test proto::tests::collect_receipts_request_roundtrip ... ok
+test proto::tests::decode_rejects_garbage ... ok
+test proto::tests::deliver_request_roundtrip ... ok
+test proto::tests::drain_page_request_roundtrip ... ok
+test proto::tests::drain_request_roundtrip ... ok
+test proto::tests::put_receipt_request_roundtrip ... ok
+test proto::tests::reply_variants_roundtrip ... ok
+test receipt::tests::decode_rejects_garbage ... ok
+test receipt::tests::dedup_key_is_stable_and_distinguishes_kind ... ok
+test receipt::tests::encode_decode_roundtrip ... ok
+test receipt::tests::forged_by_fails_verification ... ok
+test receipt::tests::issue_sets_by_and_verifies ... ok
+test receipt::tests::read_receipt_verifies ... ok
+test receipt::tests::tampered_kind_fails_verification ... ok
+test receipt::tests::tampered_message_id_fails_verification ... ok
+test receipt::tests::verify_rejects_bad_by_hex ... ok
+test screening::tests::blocked_sender_always_rejected_even_with_postage ... ok
+test screening::tests::contact_is_always_inbox_without_postage ... ok
+test screening::tests::established_sender_is_waived_by_default ... ok
+test screening::tests::established_sender_not_waived_when_disabled ... ok
+test screening::tests::message_addressed_elsewhere_is_rejected ... ok
+test screening::tests::self_mail_is_inbox ... ok
+test screening::tests::stranger_with_sufficient_postage_reaches_inbox_held ... ok
+test screening::tests::stranger_with_underpaid_postage_is_denied ... ok
+test screening::tests::stranger_without_postage_is_rejected_when_strict ... ok
+test screening::tests::stranger_without_postage_is_spam_when_lenient ... ok
+test screening::tests::zero_min_postage_accepts_any_nonempty_receipt ... ok
+test service::tests::ack_frees_storage_for_recipient ... ok
+test service::tests::bad_recipient_hex_yields_error_not_panic ... ok
+test service::tests::deliver_with_valid_grant_stores ... ok
+test service::tests::deliver_without_grant_is_refused ... ok
+test mailbox::tests::shared_mailbox_interleaved_deliver_and_ack_is_consistent ... ok
+test service::tests::drain_page_limit_is_clamped_to_server_ceiling ... ok
+test service::tests::drain_page_stranger_rejected ... ok
+test service::tests::drain_page_returns_bounded_page ... ok
+test service::tests::put_and_collect_receipt_via_service ... ok
+test service::tests::put_receipt_without_grant_refused ... ok
+test service::tests::recipient_drains_own_inbox ... ok
+test service::tests::stranger_cannot_collect_receipts ... ok
+test service::tests::stranger_cannot_drain_inbox ... ok
+test service::tests::tighter_limits_reject_a_subject_default_would_allow ... ok
+test thread::tests::conversation_orders_messages_chronologically ... ok
+test thread::tests::cyclic_chain_does_not_loop ... ok
+test thread::tests::deep_chain_resolves_to_original_root ... ok
+test thread::tests::empty_input_yields_no_conversations ... ok
+test thread::tests::group_threads_is_idempotent_under_duplicates ... ok
+test thread::tests::group_threads_partitions_by_root ... ok
+test thread::tests::normalize_collapses_whitespace_and_lowercases ... ok
+test thread::tests::normalize_does_not_strip_words_that_merely_start_with_re ... ok
+test thread::tests::normalize_empty_subject ... ok
+test thread::tests::normalize_leaves_plain_subject ... ok
+test thread::tests::normalize_rejects_malformed_bracket ... ok
+test thread::tests::normalize_strips_bracketed_count ... ok
+test thread::tests::normalize_strips_single_reply_prefix ... ok
+test thread::tests::normalize_strips_stacked_prefixes ... ok
+test thread::tests::reply_resolves_to_parent_root ... ok
+test thread::tests::reply_to_unknown_parent_uses_declared_parent_as_root ... ok
+test thread::tests::single_message_is_its_own_root ... ok
+test service::tests::oversized_subject_is_rejected_before_storage ... ok
+
+test result: ok. 139 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.63s
+
+     Running unittests src/main.rs (/opt/build/target-ce-mail/debug/deps/ce_mail-238ed0bcf0de4ce8)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/integration.rs (/opt/build/target-ce-mail/debug/deps/integration-4ffb72ab037afcca)
+
+running 17 tests
+test capability_gate_blocks_unauthorized_delivery ... ok
+test delivery_and_ack_via_mailbox ... ok
+test dropped_peer_is_handled_gracefully ... ok
+test attachments_end_to_end_via_mailbox ... ok
+test e2e_body_encryption_only_recipient_can_read ... ok
+test envelope_encode_decode_roundtrip_e2e ... ok
+test duplicate_delivery_is_idempotent_end_to_end ... ok
+test offline_replay_is_idempotent_across_redelivery ... ok
+test mailbox_store_survives_atomic_persist_and_reload ... ok
+test offline_store_replay_preserves_order_and_content ... ok
+test postage_lets_a_stranger_reach_the_inbox ... ok
+test paginated_inbox_drain_e2e ... ok
+test read_receipt_round_trip_e2e ... ok
+test revocation_taking_effect_after_start_blocks_delivery ... ok
+test screening_quarantines_stranger_without_postage ... ok
+test threaded_view_groups_replies_e2e ... ok
+test threading_via_in_reply_to ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.62s
+
+     Running tests/properties.rs (/opt/build/target-ce-mail/debug/deps/properties-0ddb2a7e1fb34287)
+
+running 16 tests
+test clamp_page_is_always_bounded ... ok
+test decode_attachment_never_panics ... ok
+test decode_envelope_never_panics ... ok
+test decode_proto_never_panics ... ok
+test decode_receipt_never_panics ... ok
+test decode_sealed_never_panics ... ok
+test attachment_roundtrip_through_seal ... ok
+test limits_reject_oversized_subject ... ok
+test limits_reject_too_many_attachments ... ok
+test message_id_is_deterministic ... ok
+test normalize_subject_is_idempotent ... ok
+test envelope_roundtrip_verifies ... ok
+test reply_prefixes_collapse_to_same_normalized_subject ... ok
+test seal_open_recovers_plaintext ... ok
+test tampering_ciphertext_fails ... ok
+test receipt_roundtrip_verifies ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.46s
+
+   Doc-tests ce_mail
+
+running 4 tests
+test src/lib.rs - (line 39) - compile ... ok
+test src/screening.rs - screening::ScreeningPolicy (line 65) ... ok
+test src/attachment.rs - attachment::Attachment (line 18) ... ok
+test src/thread.rs - thread::normalize_subject (line 31) ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 1.57s; merged doctests compilation took 1.56s

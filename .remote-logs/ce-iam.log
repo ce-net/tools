@@ -1,0 +1,201 @@
+=== Wed Jun 24 16:28:18 UTC 2026 remote test ce-iam ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.59s
+     Running unittests src/lib.rs (/opt/build/target-ce-iam/debug/deps/ce_iam-8d67cfa95c3e99f9)
+
+running 100 tests
+test catalog::tests::attach_unknown_role_errors ... ok
+test catalog::tests::attach_detach_and_roles_for ... ok
+test catalog::tests::audit_records_each_change ... ok
+test catalog::tests::audit_since_filters_by_version ... ok
+test catalog::tests::effective_grants_empty_for_unknown_principal ... ok
+test catalog::tests::effective_grants_errors_on_empty_action_statement ... ok
+test catalog::tests::effective_grants_skips_deny_statements ... ok
+test catalog::tests::effective_grants_split_by_distinct_scope ... ok
+test catalog::tests::effective_grants_union_abilities_same_scope ... ok
+test catalog::tests::catalog_json_round_trips ... ok
+test catalog::tests::op_log_replay_converges_to_writer ... ok
+test catalog::tests::partial_replay_is_a_prefix_of_full ... ok
+test catalog::tests::policy_crud_round_trip ... ok
+test catalog::tests::put_role_rejects_empty_name ... ok
+test catalog::tests::put_policy_rejects_empty_name ... ok
+test catalog::tests::put_role_then_overwrite_updates ... ok
+test catalog::tests::remove_is_idempotent ... ok
+test catalog::tests::removing_a_role_detaches_it_everywhere ... ok
+test catalog::tests::role_crud_round_trip ... ok
+test catalog::tests::replay_order_independence_for_independent_keys ... ok
+test grant::tests::attenuate_rejects_amplification_before_signing ... ok
+test grant::tests::attenuate_rejects_escaping_path_prefix ... ok
+test grant::tests::attenuate_rejects_expiry_extension ... ok
+test grant::tests::attenuate_rejects_non_holder ... ok
+test grant::tests::attenuate_rejects_raising_max_cpu ... ok
+test grant::tests::attenuate_rejects_resource_broadening ... ok
+test grant::tests::attenuate_rejects_widening_allowed_ports ... ok
+test grant::tests::compile_rejects_deny ... ok
+test grant::tests::decode_and_inspect_honor_bounds ... ok
+test grant::tests::expand_empty_action_errors ... ok
+test grant::tests::expand_literal_action_passes_through ... ok
+test grant::tests::expand_prefix_wildcard ... ok
+test grant::tests::expand_star_is_whole_universe ... ok
+test grant::tests::expand_star_with_empty_universe_errors ... ok
+test grant::tests::expand_unmatched_wildcard_errors ... ok
+test grant::tests::inspect_malformed_is_err ... ok
+test grant::tests::inspect_reports_scope ... ok
+test grant::tests::literal_action_outside_universe_is_allowed ... ok
+test grant::tests::mint_and_verify_root_grant ... ok
+test grant::tests::mint_expands_wildcard_into_abilities ... ok
+test grant::tests::mint_policy_rejects_deny ... ok
+test grant::tests::attenuate_narrows_and_verifies ... ok
+test grant::tests::mint_policy_unions_same_scope_into_one ... ok
+test grant::tests::reissue_migrates_root_grant_under_new_key ... ok
+test grant::tests::reissue_rejects_non_root_grant ... ok
+test grant::tests::render_resource_round_trips_via_parse ... ok
+test grant::tests::mint_policy_splits_distinct_scopes ... ok
+test grant::tests::verify_honors_expiry ... ok
+test grant::tests::verify_honors_configured_accepted_root ... ok
+test grant::tests::verify_honors_not_before ... ok
+test grant::tests::verify_malformed_token_is_err_not_panic ... ok
+test grant::tests::verify_honors_revocation ... ok
+test grant::tests::verify_rejects_oversize_token ... ok
+test grant::tests::verify_rejects_unaccepted_root_on_other_node ... ok
+test grant::tests::verify_rejects_wrong_audience ... ok
+test policy::tests::conditions_compile_to_caveats ... ok
+test policy::tests::empty_conditions_are_default_caveats ... ok
+test policy::tests::policy_json_round_trips ... ok
+test policy::tests::policy_parses_aws_style_deny_but_marks_it ... ok
+test policy::tests::policy_rejects_bad_version_and_empty ... ok
+test policy::tests::resource_compile_rejects_bad_node_and_empty_tags ... ok
+test policy::tests::resource_compiles_to_cap_resource ... ok
+test policy::tests::resource_parse_forms ... ok
+test policy::tests::resource_parse_rejects_garbage ... ok
+test policy::tests::role_rejects_empty_name ... ok
+test policy::tests::role_round_trips ... ok
+test principal::tests::display_is_hex ... ok
+test principal::tests::hex_round_trips ... ok
+test principal::tests::json_is_a_hex_string ... ok
+test principal::tests::parse_rejects_non_hex ... ok
+test principal::tests::parse_rejects_wrong_length ... ok
+test principal::tests::parse_tolerates_whitespace_and_case ... ok
+test revocation::tests::cached_freshness_semantics ... ok
+test revocation::tests::cached_load_missing_is_default ... ok
+test revocation::tests::cached_set_materializes_pairs ... ok
+test revocation::tests::empty_revokes_nothing ... ok
+test revocation::tests::from_hex_pairs_decodes ... ok
+test revocation::tests::from_hex_pairs_skips_malformed_rows_without_failing ... ok
+test revocation::tests::from_pairs_and_lookup ... ok
+test revocation::tests::predicate_matches_set ... ok
+test roots::tests::add_and_accept_within_window ... ok
+test roots::tests::no_window_means_always ... ok
+test grant::tests::verify_rejects_too_deep_chain ... ok
+test roots::tests::rejects_empty_window ... ok
+test roots::tests::retire_sets_not_after ... ok
+test roots::tests::rotation_overlap_window ... ok
+test roots::tests::persists_and_reloads ... ok
+test store::tests::atomic_write_then_load_round_trips ... ok
+test store::tests::catalog_store_rejects_invalid_op_before_disk ... ok
+test store::tests::catalog_store_persists_and_reloads ... ok
+test store::tests::load_missing_file_is_default ... ok
+test store::tests::load_oversize_file_errors ... ok
+test store::tests::no_temp_files_left_after_write ... ok
+test tests::cloud_universe_is_nonempty_and_sorted_after_install ... ok
+test store::tests::compact_preserves_state_and_shrinks_log ... ok
+test wallet::tests::add_duplicate_label_errors ... ok
+test wallet::tests::add_get_list_remove ... ok
+test wallet::tests::add_rejects_bad_inputs ... ok
+test wallet::tests::persists_and_reloads ... ok
+test tests::end_to_end_three_level_delegation ... ok
+
+test result: ok. 100 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s
+
+     Running unittests src/main.rs (/opt/build/target-ce-iam/debug/deps/ce_iam-9852d5239251ab13)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/catalog.rs (/opt/build/target-ce-iam/debug/deps/catalog-00b8b5f4bc509142)
+
+running 10 tests
+test catalog_crud_converges_over_coord_log ... ok
+test deleting_a_role_does_not_revoke_an_issued_token ... ok
+test issued_token_scope_is_byte_stable_across_catalog_edits ... ok
+test mint_role_uses_catalog_role ... ok
+test effective_grants_match_minted_capability ... ok
+test prop_effective_grants_are_well_formed ... ok
+test prop_op_log_replay_converges ... ok
+test two_independent_replicas_of_same_log_are_identical ... ok
+test widening_a_role_does_not_broaden_an_issued_token ... ok
+test prop_catalog_edits_never_broaden_issued_token ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 14.33s
+
+     Running tests/cli.rs (/opt/build/target-ce-iam/debug/deps/cli-ff47c0cc4e208713)
+
+running 10 tests
+test grant_from_role_then_verify ... ok
+test policy_validate_from_stdin_and_file ... ok
+test grant_then_verify_allow_and_deny ... ok
+test root_add_list_retire ... ok
+test role_catalog_flow_persists ... ok
+test verify_json_shape ... ok
+test root_reissue_then_verify_under_new_root ... ok
+test verify_malformed_token_exits_nonzero_no_panic ... ok
+test whoami_prints_node_id ... ok
+test wallet_add_list_show_rm ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s
+
+     Running tests/integration.rs (/opt/build/target-ce-iam/debug/deps/integration-bd0e4281f057cf27)
+
+running 8 tests
+test empty_revocation_set_is_safe_offline_default ... ok
+test deny_statement_is_rejected_at_mint ... ok
+test revocation_fetch_against_dead_node_is_graceful_err ... ok
+test resource_scoping_by_tag_is_enforced ... ok
+test role_to_grant_to_verify_flow ... ok
+test submit_revoke_against_dead_node_is_graceful_err ... ok
+test revocation_set_from_node_wire_form_works ... ok
+test wildcard_policy_grants_whole_prefix ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests/prop_attenuation.rs (/opt/build/target-ce-iam/debug/deps/prop_attenuation-468b385a2232c116)
+
+running 11 tests
+test deep_chain_never_amplifies ... ok
+test depth_limit_rejects_long_chains ... ok
+test expiry_is_honored ... ok
+test malformed_tokens_never_panic ... ok
+test oversize_token_rejected ... ok
+test principal_round_trips ... ok
+test attenuation_never_amplifies ... ok
+test token_round_trips ... ok
+test wrong_audience_is_rejected ... ok
+test wrong_issuer_is_rejected ... ok
+test revocation_denies_chain ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.88s
+
+     Running tests/store.rs (/opt/build/target-ce-iam/debug/deps/store-bfefcacade0d59f8)
+
+running 6 tests
+test catalog_store_reload_reproduces_state ... ok
+test catalog_store_mint_role_after_reload ... ok
+test compaction_survives_reload ... ok
+test roots_persist_and_filter_by_time ... ok
+test wallet_persists_across_open ... ok
+test many_sequential_writers_keep_store_consistent ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.87s
+
+   Doc-tests ce_iam
+
+running 4 tests
+test src/lib.rs - (line 42) - compile ... ok
+test src/roots.rs - roots::Roots (line 59) ... ok
+test src/grant.rs - grant::Iam::mint_policy (line 386) ... ok
+test src/wallet.rs - wallet::WalletStore (line 52) ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 1.80s; merged doctests compilation took 1.78s

@@ -1,0 +1,163 @@
+=== Thu Jun 25 13:13:40 UTC 2026 remote test game-coop ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+    Updating crates.io index
+    Updating git repository `https://github.com/ce-net/ce-rs`
+     Locking 222 packages to latest Rust 1.96.0 compatible versions
+      Adding generic-array v0.14.7 (available: v0.14.9)
+    Checking tokio v1.52.3
+    Checking bitflags v2.13.0
+    Checking regex-syntax v0.8.11
+    Checking getrandom v0.3.4
+    Checking rand_core v0.9.5
+    Checking regex-automata v0.4.14
+    Checking linux-raw-sys v0.12.1
+    Checking rustix v1.1.4
+    Checking hyper v1.10.1
+    Checking hyper-util v0.1.20
+    Checking tower v0.5.3
+    Checking tokio-rustls v0.26.4
+    Checking tower-http v0.6.11
+    Checking hyper-rustls v0.27.9
+    Checking tokio-util v0.7.18
+    Checking matchers v0.2.0
+    Checking getrandom v0.4.3
+    Checking zerocopy v0.8.52
+    Checking reqwest v0.12.28
+    Checking ce-rs v0.1.0 (/opt/build/ce-rs)
+    Checking fastrand v2.4.1
+    Checking tempfile v3.27.0
+    Checking tracing-subscriber v0.3.23
+    Checking ce-coord v0.1.0 (/opt/build/ce-coord)
+    Checking ppv-lite86 v0.2.21
+    Checking wait-timeout v0.2.1
+    Checking fnv v1.0.7
+    Checking bit-vec v0.8.0
+    Checking quick-error v1.2.3
+    Checking rusty-fork v0.3.1
+    Checking bit-set v0.8.0
+    Checking rand_chacha v0.9.0
+    Checking num-traits v0.2.19
+    Checking rand v0.9.4
+    Checking rand_xorshift v0.4.0
+    Checking unarray v0.1.4
+    Checking game-coop v0.1.0 (/opt/build/game-coop)
+    Checking proptest v1.11.0
+warning: manual implementation of `.is_multiple_of()`
+   --> src/room.rs:266:16
+    |
+266 |             && tick % cfg.mission_every == 0
+    |                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `tick.is_multiple_of(cfg.mission_every)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.96.0/index.html#manual_is_multiple_of
+    = note: `#[warn(clippy::manual_is_multiple_of)]` on by default
+
+warning: manual implementation of `.is_multiple_of()`
+   --> src/room.rs:300:50
+    |
+300 |         if cfg.snapshot_every > 0 && tick > 0 && tick % cfg.snapshot_every == 0 {
+    |                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `tick.is_multiple_of(cfg.snapshot_every)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.96.0/index.html#manual_is_multiple_of
+
+warning: manual implementation of `.is_multiple_of()`
+   --> src/room.rs:302:37
+    |
+302 |             if !placement_loaded || tick % (cfg.snapshot_every * 5) == 0 {
+    |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `tick.is_multiple_of(cfg.snapshot_every * 5)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.96.0/index.html#manual_is_multiple_of
+
+warning: `game-coop` (lib) generated 3 warnings (run `cargo clippy --fix --lib -p game-coop -- ` to apply 3 suggestions)
+warning: this call to `clone` can be replaced with `std::slice::from_ref`
+   --> src/mission.rs:167:53
+    |
+167 |         let host_a = Mission::open(&coord_a, &id_a, &[id_b.clone()]).await.unwrap();
+    |                                                     ^^^^^^^^^^^^^^^ help: try: `std::slice::from_ref(&id_b)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.96.0/index.html#cloned_ref_to_slice_refs
+    = note: `#[warn(clippy::cloned_ref_to_slice_refs)]` on by default
+
+warning: this call to `clone` can be replaced with `std::slice::from_ref`
+   --> src/mission.rs:168:53
+    |
+168 |         let host_b = Mission::open(&coord_b, &id_b, &[id_a.clone()]).await.unwrap();
+    |                                                     ^^^^^^^^^^^^^^^ help: try: `std::slice::from_ref(&id_a)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.96.0/index.html#cloned_ref_to_slice_refs
+
+warning: `game-coop` (lib test) generated 5 warnings (3 duplicates)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 10.06s
+   Compiling game-coop v0.1.0 (/opt/build/game-coop)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.27s
+     Running unittests src/lib.rs (/opt/build/target-game-coop/debug/deps/game_coop-1042ab4831ca72be)
+
+running 54 tests
+test objective::tests::additive_contributions_sum ... ok
+test objective::tests::clock_observe_prevents_key_reuse_after_restart ... ok
+test objective::tests::clock_produces_strictly_increasing_unique_keys ... ok
+test objective::tests::fold_is_order_independent_and_idempotent ... ok
+test objective::tests::keyed_objective_roundtrips_through_json ... ok
+test objective::tests::presence_is_last_writer_wins_by_time ... ok
+test mission::tests::two_hosts_converge_on_the_shared_mission ... ok
+test placement::tests::best_host_filters_by_capability_tag ... ok
+test placement::tests::best_host_prefers_lowest_latency ... ok
+test placement::tests::empty_membership_has_no_owner ... ok
+test placement::tests::headroom_breaks_latency_ties ... ok
+test placement::tests::my_rooms_partitions_ownership ... ok
+test placement::tests::no_capable_host_returns_none ... ok
+test placement::tests::removing_a_node_rehomes_minimally ... ok
+test placement::tests::rendezvous_is_deterministic_and_room_specific ... ok
+test placement::tests::shard_host_agrees_across_observers_and_picks_max_weight ... ok
+test placement::tests::sharding_spreads_rooms_roughly_evenly ... ok
+test placement::tests::unmeasured_hosts_sort_after_measured_ones ... ok
+test replication::tests::redundancy_set_clamps_to_available_peers ... ok
+test replication::tests::redundancy_set_picks_nearest_peers_excluding_self ... ok
+test replication::tests::redundancy_set_respects_capability_filter ... ok
+test replication::tests::snapshot_encode_decode_restore_is_faithful ... ok
+test replication::tests::snapshot_ref_orders_by_tick_and_roundtrips ... ok
+test room::tests::bye_removes_the_player ... ok
+test room::tests::latest_input_wins_and_stale_seq_is_dropped ... ok
+test room::tests::room_seed_is_deterministic_and_room_specific ... ok
+test room::tests::seq_zero_always_applies ... ok
+test room::tests::stale_inputs_are_pruned_by_ttl ... ok
+test room::tests::table_drives_world_to_spawn_a_ship ... ok
+test run::tests::host_rooms_rejects_empty_room_list ... ok
+test run::tests::shard_and_host_rejects_empty_room_list ... ok
+test sim::tests::a_kill_awards_a_point_and_kills_the_victim ... ok
+test objective::tests::prop_multiwriter_objective_converges ... ok
+test sim::tests::dead_ship_respawns_after_timeout ... ok
+test sim::tests::destroying_all_drones_clears_a_wave_and_banks_shards ... ok
+test sim::tests::deterministic_for_same_seed_and_inputs ... ok
+test sim::tests::drones_and_objective_counters_ride_the_view_roundtrip ... ok
+test sim::tests::firing_respects_cooldown ... ok
+test sim::tests::first_input_spawns_a_ship_inside_the_arena ... ok
+test sim::tests::first_tick_spawns_a_rift_wave ... ok
+test sim::tests::from_view_preserves_tick_and_ships ... ok
+test sim::tests::silent_client_is_culled ... ok
+test sim::tests::speed_is_capped ... ok
+test sim::tests::thrust_moves_the_ship ... ok
+test sim::tests::view_roundtrips_through_json ... ok
+test sim::tests::wave_report_is_empty_when_nothing_happens ... ok
+test sim::tests::waves_are_deterministic_for_same_seed ... ok
+test wire::tests::bye_parses ... ok
+test wire::tests::client_input_roundtrips_through_json ... ok
+test wire::tests::client_input_tolerates_missing_fields ... ok
+test wire::tests::state_tag_serializes_as_st ... ok
+test wire::tests::topics_are_room_keyed_and_distinct ... ok
+test wire::tests::unknown_message_tag_is_an_error_not_a_panic ... ok
+test sim::tests::bullets_are_capped ... ok
+
+test result: ok. 54 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running unittests src/main.rs (/opt/build/target-game-coop/debug/deps/game_coop-63a17f0a1e681b0f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests game_coop
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

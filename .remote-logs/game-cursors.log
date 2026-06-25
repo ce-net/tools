@@ -1,0 +1,200 @@
+=== Thu Jun 25 13:15:54 UTC 2026 remote test game-cursors ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+    Updating crates.io index
+     Locking 204 packages to latest Rust 1.96.0 compatible versions
+      Adding generic-array v0.14.7 (available: v0.14.9)
+    Checking libc v0.2.186
+    Checking zerofrom v0.1.8
+    Checking stable_deref_trait v1.2.1
+    Checking yoke v0.8.3
+    Checking pin-project-lite v0.2.17
+    Checking zerovec v0.11.6
+    Checking bytes v1.12.0
+    Checking futures-core v0.3.32
+    Checking errno v0.3.14
+    Checking itoa v1.0.18
+    Checking cfg-if v1.0.4
+    Checking smallvec v1.15.2
+    Checking signal-hook-registry v1.4.8
+    Checking socket2 v0.6.4
+    Checking mio v1.2.1
+    Checking tinystr v0.8.3
+    Checking once_cell v1.21.4
+    Checking litemap v0.8.2
+    Checking writeable v0.6.3
+    Checking tokio v1.52.3
+    Checking icu_locale_core v2.2.0
+    Checking zerotrie v0.2.4
+    Checking potential_utf v0.1.5
+    Checking utf8_iter v1.0.4
+    Checking icu_collections v2.2.0
+    Checking icu_provider v2.2.0
+    Checking http v1.4.2
+    Checking zeroize v1.9.0
+    Checking percent-encoding v2.3.2
+    Checking rustls-pki-types v1.14.1
+    Checking http-body v1.0.1
+    Checking icu_normalizer_data v2.2.0
+    Checking icu_properties_data v2.2.0
+    Checking tracing-core v0.1.36
+    Checking getrandom v0.2.17
+    Checking slab v0.4.12
+    Checking untrusted v0.9.0
+    Checking futures-task v0.3.32
+    Checking futures-util v0.3.32
+    Checking ring v0.17.14
+    Checking icu_properties v2.2.0
+    Checking icu_normalizer v2.2.0
+    Checking typenum v1.20.1
+    Checking tower-service v0.3.3
+    Checking try-lock v0.2.5
+    Checking want v0.3.1
+    Checking idna_adapter v1.2.2
+    Checking tracing v0.1.44
+    Checking generic-array v0.14.7
+    Checking httparse v1.10.1
+    Checking serde_core v1.0.228
+    Checking rustls-webpki v0.103.13
+    Checking form_urlencoded v1.2.2
+    Checking futures-channel v0.3.32
+    Checking subtle v2.6.1
+    Checking atomic-waker v1.1.2
+    Checking hyper v1.10.1
+    Checking rustls v0.23.41
+    Checking idna v1.1.0
+    Checking sync_wrapper v1.0.2
+    Checking ipnet v2.12.0
+    Checking utf8parse v0.2.2
+    Checking log v0.4.33
+    Checking tower-layer v0.3.3
+    Checking base64 v0.22.1
+    Checking hyper-util v0.1.20
+    Checking tower v0.5.3
+    Checking tokio-rustls v0.26.4
+    Checking anstyle-parse v1.0.0
+    Checking serde v1.0.228
+    Checking url v2.5.8
+    Checking zmij v1.0.21
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking webpki-roots v1.0.8
+    Checking futures-sink v0.3.32
+    Checking option-ext v0.2.0
+    Checking anstyle-query v1.1.5
+    Checking is_terminal_polyfill v1.70.2
+    Checking anstyle v1.0.14
+    Checking regex-syntax v0.8.11
+    Checking ryu v1.0.23
+    Checking bitflags v2.13.0
+    Checking memchr v2.8.2
+    Checking colorchoice v1.0.5
+    Checking anstream v1.0.0
+    Checking regex-automata v0.4.14
+    Checking serde_json v1.0.150
+    Checking tower-http v0.6.11
+    Checking serde_urlencoded v0.7.1
+    Checking dirs-sys v0.4.1
+    Checking tokio-util v0.7.18
+    Checking hyper-rustls v0.27.9
+    Checking digest v0.10.7
+    Checking http-body-util v0.1.3
+    Checking strsim v0.11.1
+    Checking lazy_static v1.5.0
+    Checking clap_lex v1.1.0
+    Checking cpufeatures v0.2.17
+    Checking sha2 v0.10.9
+    Checking clap_builder v4.6.0
+    Checking sharded-slab v0.1.7
+    Checking reqwest v0.12.28
+    Checking matchers v0.2.0
+    Checking directories v5.0.1
+    Checking anyhow v1.0.102
+    Checking tracing-log v0.2.0
+    Checking thread_local v1.1.9
+    Checking hex v0.4.3
+    Checking nu-ansi-term v0.50.3
+    Checking ce-rs v0.1.0 (/opt/build/ce-rs)
+    Checking tracing-subscriber v0.3.23
+    Checking clap v4.6.1
+    Checking game-cursors v0.1.0 (/opt/build/game-cursors)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 14.18s
+   Compiling game-cursors v0.1.0 (/opt/build/game-cursors)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 3.88s
+     Running unittests src/lib.rs (/opt/build/target-game-cursors/debug/deps/game_cursors-29c6ca0bbc0b2ab4)
+
+running 60 tests
+test placement::tests::best_host_none_when_nothing_placeable ... ok
+test placement::tests::best_host_picks_the_strongest_capable_node ... ok
+test placement::tests::capability_tag_gives_a_bonus ... ok
+test placement::tests::fabric_rtt_hint_is_the_median ... ok
+test placement::tests::lower_rtt_scores_higher_all_else_equal ... ok
+test placement::tests::more_free_capacity_scores_higher ... ok
+test placement::tests::rank_prefers_self_for_local_hosting ... ok
+test placement::tests::ranking_is_deterministic_on_score_ties ... ok
+test placement::tests::stale_or_zero_capacity_hosts_score_zero ... ok
+test presence::tests::evict_sector_older_than_drops_only_stale_entries_of_that_sector ... ok
+test presence::tests::merge_concurrent_partials_in_any_order_converges ... ok
+test presence::tests::from_cursors_then_merge_builds_a_global_view ... ok
+test presence::tests::merge_is_associative ... ok
+test presence::tests::merge_is_commutative ... ok
+test presence::tests::merge_is_idempotent ... ok
+test presence::tests::ts_tie_is_broken_deterministically_by_sector ... ok
+test presence::tests::snapshot_roundtrips_through_json ... ok
+test presence::tests::upsert_is_last_writer_wins_by_timestamp ... ok
+test replication::tests::restore_reconstructs_the_presence_map ... ok
+test replication::tests::snapshot_is_deterministic_for_dedup ... ok
+test replication::tests::snapshot_bytes_roundtrip ... ok
+test replication::tests::unknown_version_is_rejected ... ok
+test room::tests::click_is_edge_latched ... ok
+test room::tests::bye_removes_the_player ... ok
+test room::tests::latest_input_wins_and_stale_seq_is_dropped ... ok
+test room::tests::stale_inputs_are_pruned_by_ttl ... ok
+test room::tests::seq_zero_always_applies ... ok
+test room::tests::table_drives_space_to_spawn_a_cursor ... ok
+test run::tests::host_one_sector_rejects_out_of_range ... ok
+test run::tests::host_rooms_rejects_empty_room_list ... ok
+test shard::tests::empty_ring_has_no_owner ... ok
+test shard::tests::adding_a_node_reassigns_only_a_minority_of_sectors ... ok
+test shard::tests::from_atlas_filters_stale_and_zero_capacity_but_keeps_self ... ok
+test shard::tests::interest_is_the_clamped_neighbourhood ... ok
+test shard::tests::owner_is_deterministic_and_coordinator_free ... ok
+test shard::tests::position_is_clamped_not_out_of_range ... ok
+test shard::tests::position_maps_into_the_lattice ... ok
+test shard::tests::sectors_spread_across_candidates ... ok
+test shard::tests::single_node_owns_everything ... ok
+test sim::tests::click_emits_one_authoritative_ripple_at_cursor ... ok
+test shard::tests::ownership_partitions_the_world_with_no_gaps_or_overlap ... ok
+test sim::tests::click_is_debounced ... ok
+test sim::tests::deterministic_for_same_inputs_and_clock ... ok
+test sim::tests::explicit_remove_drops_cursor ... ok
+test sim::tests::first_input_spawns_a_normalized_cursor ... ok
+test sim::tests::from_view_preserves_tick_and_cursors ... ok
+test sim::tests::one_client_cannot_forge_a_ripple_for_another ... ok
+test sim::tests::position_is_clamped_into_unit_square ... ok
+test sim::tests::ripples_age_out ... ok
+test sim::tests::seen_and_last_click_are_not_serialized ... ok
+test sim::tests::silent_client_is_culled ... ok
+test sim::tests::cursor_cap_is_enforced_for_new_players ... ok
+test sim::tests::zero_viewport_does_not_divide_by_zero ... ok
+test sim::tests::view_roundtrips_through_json ... ok
+test wire::tests::bye_parses ... ok
+test wire::tests::client_input_roundtrips_through_json ... ok
+test wire::tests::client_input_tolerates_missing_fields ... ok
+test wire::tests::state_tag_serializes_as_st ... ok
+test wire::tests::topics_are_room_keyed_and_distinct ... ok
+test wire::tests::unknown_message_tag_is_an_error_not_a_panic ... ok
+
+test result: ok. 60 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/main.rs (/opt/build/target-game-cursors/debug/deps/game_cursors-1582aabe1ee9c37b)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests game_cursors
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

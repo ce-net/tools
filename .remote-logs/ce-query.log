@@ -1,0 +1,193 @@
+=== Wed Jun 24 16:31:24 UTC 2026 remote test ce-query ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+    Updating crates.io index
+     Locking 2 packages to latest Rust 1.96.0 compatible versions
+      Adding futures v0.3.32
+      Adding futures-executor v0.3.32
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.95s
+     Running unittests src/lib.rs (/opt/build/target-ce-query/debug/deps/ce_query-de986592899baec1)
+
+running 155 tests
+test caps::tests::inspect_rejects_garbage ... ok
+test caps::tests::inspect_reports_ability_and_scope ... ok
+test caps::tests::mint_and_verify ... ok
+test caps::tests::scope_allows_logic ... ok
+test caps::tests::scope_caveat_roundtrip ... ok
+test caps::tests::scope_exact_match_does_not_widen_to_siblings ... ok
+test caps::tests::all_scope_covers_every_dataset ... ok
+test caps::tests::verify_rejects_other_dataset ... ok
+test caps::tests::verify_rejects_expired ... ok
+test catalog::tests::corrupt_catalog_is_error_not_empty ... ok
+test catalog::tests::load_missing_is_empty ... ok
+test caps::tests::verify_rejects_sibling_prefix_dataset ... ok
+test catalog::tests::lock_blocks_a_second_holder_until_released ... ok
+test catalog::tests::newer_schema_version_is_rejected ... ok
+test catalog::tests::pre_versioned_file_migrates_forward ... ok
+test catalog::tests::mutate_is_atomic_load_modify_save ... ok
+test catalog::tests::put_returns_previous ... ok
+test catalog::tests::put_get_remove_roundtrip_on_disk ... ok
+test catalog::tests::require_errors_clearly ... ok
+test catalog::tests::save_stamps_schema_version ... ok
+test combine::tests::empty_is_identity ... ok
+test combine::tests::float_sum_merge_associative ... ok
+test combine::tests::int_sum_overflow_promotes_to_float_without_panic ... ok
+test combine::tests::kahan_sum_is_precise_and_reorder_stable ... ok
+test combine::tests::merge_associative ... ok
+test combine::tests::empty_shards_harmless ... ok
+test combine::tests::merge_matches_single_shard ... ok
+test combine::tests::min_max_empty_finalize_null ... ok
+test combine::tests::merge_commutative ... ok
+test combine::tests::partial_json_roundtrip_with_grouped_keys ... ok
+test combine::tests::shard_count_invariant ... ok
+test combine::tests::variant_mismatch_is_noop_not_panic ... ok
+test dataset::tests::add_shard_with_stats_roundtrips ... ok
+test dataset::tests::compute_stats_disqualifies_mixed_type_column ... ok
+test dataset::tests::compute_stats_records_numeric_min_max ... ok
+test dataset::tests::dataset_name_validation ... ok
+test dataset::tests::dataset_totals ... ok
+test dataset::tests::decode_rejects_malformed_json ... ok
+test dataset::tests::decode_rejects_non_object_line ... ok
+test dataset::tests::decode_rejects_non_utf8 ... ok
+test dataset::tests::decode_skips_blank_lines_and_trailing_newline ... ok
+test dataset::tests::empty_shard_roundtrips_to_empty ... ok
+test dataset::tests::shard_roundtrip ... ok
+test dataset::tests::shard_rows_more_shards_than_rows_yields_empties ... ok
+test dataset::tests::shard_rows_round_robin_balances ... ok
+test dataset::tests::shard_rows_zero_count_errors ... ok
+test engine::tests::attempt_cap_is_respected ... ok
+test engine::tests::bounded_in_flight_limits_outstanding_calls ... ok
+test combine::tests::partial_json_roundtrip_prop ... ok
+test engine::tests::cost_limit_rejects_too_many_result_groups ... ok
+test engine::tests::cost_limit_rejects_too_many_rows ... ok
+test engine::tests::cost_limit_rejects_too_many_shards ... ok
+test engine::tests::concurrent_fanout_is_correct_and_faster_than_serial ... ok
+test engine::tests::dropped_host_redistributes_and_still_correct ... ok
+test engine::tests::empty_dataset_yields_empty_result ... ok
+test engine::tests::happy_path_matches_local ... ok
+test engine::tests::invalid_query_rejected_before_dispatch ... ok
+test engine::tests::missing_blob_on_all_hosts_is_hard_error ... ok
+test engine::tests::no_hosts_errors ... ok
+test engine::tests::order_by_and_limit_applied_to_run_report ... ok
+test engine::tests::projection_limit_truncates_and_flags ... ok
+test engine::tests::projection_order_by_then_limit ... ok
+test engine::tests::projection_returns_filtered_rows ... ok
+test engine::tests::pruning_all_shards_yields_empty_result ... ok
+test engine::tests::pruning_skips_non_matching_shards ... ok
+test engine::tests::quorum_majority_tolerates_one_liar ... ok
+test engine::tests::redundancy_agrees_when_all_honest ... ok
+test engine::tests::redundancy_best_effort_with_small_pool ... ok
+test engine::tests::redundancy_detects_a_lying_host ... ok
+test engine::tests::transient_failure_retries_then_succeeds ... ok
+test join::tests::column_clash_is_prefixed_not_lost ... ok
+test engine::tests::deadline_is_enforced ... ok
+test join::tests::distributed_join_equals_hash_join_single_partition ... ok
+test join::tests::inner_join_basic ... ok
+test join::tests::join_cardinality ... ok
+test join::tests::join_feeds_aggregate_engine ... ok
+test join::tests::join_on_different_column_names ... ok
+test join::tests::many_to_many_cartesian_within_key ... ok
+test join::tests::null_and_missing_key_never_matches ... ok
+test join::tests::partition_drops_null_keys ... ok
+test join::tests::partition_is_co_located ... ok
+test join::tests::string_keys_join ... ok
+test mesh::tests::error_classification ... ok
+test mesh::tests::map_reply_rows_roundtrip ... ok
+test mesh::tests::map_request_reply_roundtrip ... ok
+test mesh::tests::serve_map_rejects_invalid_query ... ok
+test mesh::tests::serve_map_rejects_unauthorized ... ok
+test mesh::tests::shard_cid_matches_sdk_cid ... ok
+test order::tests::cell_cmp_is_total_across_types ... ok
+test order::tests::empty_order_by_is_stable_noop ... ok
+test join::tests::distributed_equals_hashjoin ... ok
+test order::tests::limit_none_and_zero ... ok
+test order::tests::limit_truncates_after_order ... ok
+test order::tests::multi_key_tiebreak ... ok
+test order::tests::order_by_aggregate_asc ... ok
+test order::tests::order_by_aggregate_desc ... ok
+test order::tests::order_by_group_key_column ... ok
+test order::tests::order_is_sorted_permutation ... ok
+test order::tests::query_shape_identity_without_clauses ... ok
+test order::tests::query_shape_orders_and_limits ... ok
+test order::tests::unknown_column_is_noop_not_panic ... ok
+test order::tests::limit_is_prefix_of_full_order ... ok
+test plan::tests::fallback_host_matches_ranking ... ok
+test plan::tests::next_walks_the_fallback_chain_then_exhausts ... ok
+test plan::tests::no_hosts_means_exhausted_tasks ... ok
+test plan::tests::plan_assigns_every_shard_a_primary ... ok
+test plan::tests::pruning_and_or_compose ... ok
+test plan::tests::pruning_is_conservative_without_stats_or_on_unknown_column ... ok
+test plan::tests::pruning_never_drops_a_matching_shard ... ok
+test plan::tests::pruning_skips_provably_non_matching_shard ... ok
+test plan::tests::ranking_is_deterministic ... ok
+test plan::tests::removing_a_host_only_rehomes_its_shards ... ok
+test query::tests::agg_output_names ... ok
+test query::tests::as_number_classifies_int_vs_float ... ok
+test query::tests::avg_and_minmax ... ok
+test query::tests::builder_order_and_limit ... ok
+test query::tests::cmp_cross_type_is_unordered ... ok
+test query::tests::cmp_ops_numeric ... ok
+test query::tests::integer_sum_is_exact ... ok
+test query::tests::map_shard_global_count_sum ... ok
+test query::tests::map_shard_group_by ... ok
+test query::tests::non_numeric_values_skipped ... ok
+test query::tests::predicate_and_or_not ... ok
+test query::tests::predicate_missing_field_filters_out ... ok
+test query::tests::projection_and_aggregate_are_mutually_exclusive ... ok
+test query::tests::projection_query_validates_and_maps ... ok
+test query::tests::projection_star_keeps_all_columns_and_applies_where ... ok
+test query::tests::query_serde_roundtrip_with_order_limit ... ok
+test query::tests::shape_orders_then_limits ... ok
+test query::tests::sum_stays_integer_lane_then_promotes_on_fraction ... ok
+test query::tests::validate_requires_aggregate ... ok
+test sql::tests::aggregate_still_parses_alongside_projection_support ... ok
+test sql::tests::case_insensitive_keywords ... ok
+test sql::tests::double_quoted_string_literal ... ok
+test sql::tests::errors_are_graceful_not_panics ... ok
+test sql::tests::full_query_with_all_clauses ... ok
+test sql::tests::group_by_multiple_columns ... ok
+test sql::tests::numeric_and_bool_and_null_literals ... ok
+test sql::tests::operators_all_parse ... ok
+test sql::tests::order_by_and_limit_errors_are_graceful ... ok
+test sql::tests::parse_and_or_not ... ok
+test sql::tests::parse_limit_without_order ... ok
+test sql::tests::parse_limit_zero_is_valid ... ok
+test sql::tests::parse_order_by_default_asc ... ok
+test sql::tests::parse_order_by_desc_and_limit ... ok
+test sql::tests::parse_order_by_multiple_keys ... ok
+test sql::tests::parse_projection_columns ... ok
+test sql::tests::parse_projection_with_order_by ... ok
+test sql::tests::parse_select_star ... ok
+test sql::tests::parse_simple_count ... ok
+test sql::tests::parse_sum_with_where_and_group ... ok
+test sql::tests::projection_with_group_by_is_rejected ... ok
+test tests::builder_equals_sql ... ok
+test tests::dataset_sharding_is_consistent ... ok
+test plan::tests::balanced_assignment ... ok
+
+test result: ok. 155 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.59s
+
+     Running unittests src/main.rs (/opt/build/target-ce-query/debug/deps/ce_query-4b9f8e716d4ecf49)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/end_to_end.rs (/opt/build/target-ce-query/debug/deps/end_to_end-953a81b107a43072)
+
+running 4 tests
+test encode_decode_shard_is_the_wire_contract ... ok
+test sharding_count_does_not_change_the_answer ... ok
+test sql_aggregate_group_by_end_to_end ... ok
+test sql_projection_with_where_and_limit_end_to_end ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+   Doc-tests ce_query
+
+running 2 tests
+test src/combine.rs - combine::KahanSum (line 44) ... ok
+test src/lib.rs - (line 38) - compile ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 1.65s; merged doctests compilation took 1.63s

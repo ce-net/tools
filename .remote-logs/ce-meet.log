@@ -1,0 +1,204 @@
+=== Wed Jun 24 16:37:41 UTC 2026 remote test ce-meet ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+    Updating crates.io index
+     Locking 2 packages to latest Rust 1.96.0 compatible versions
+      Adding hmac v0.12.1 (available: v0.13.0)
+      Adding signal-hook-registry v1.4.8
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.68s
+     Running unittests src/lib.rs (/opt/build/target-ce-meet/debug/deps/ce_meet-f05034cf4d2b4051)
+
+running 125 tests
+test admit::tests::ct_eq_basic ... ok
+test admit::tests::expired_resume_token_falls_through_to_handshake ... ok
+test admit::tests::force_mute_chain_authorizes_via_moderate_ability ... ok
+test admit::tests::open_room_admits_and_issues_resume ... ok
+test admit::tests::rate_limiter_allows_up_to_capacity_then_blocks ... ok
+test admit::tests::rate_limiter_bounds_tracked_senders ... ok
+test admit::tests::rate_limiter_clamps_degenerate_params ... ok
+test admit::tests::rate_limiter_rolls_window ... ok
+test admit::tests::resume_carries_seq_floor_for_monotonic_reconnect ... ok
+test admit::tests::resume_mac_is_hmac_not_plain_sha256 ... ok
+test admit::tests::resume_token_from_a_different_host_secret_is_rejected ... ok
+test admit::tests::resume_token_rejected_for_different_identity ... ok
+test admit::tests::gated_room_admits_valid_chain_denies_empty ... ok
+test admit::tests::tampered_resume_mac_is_rejected ... ok
+test admit::tests::resume_token_round_trip_admits_same_identity ... ok
+test admit::tests::wrong_room_request_is_denied ... ok
+test caps::tests::gated_room_accepts_org_root ... ok
+test caps::tests::gated_room_denies_chain_from_stranger_root ... ok
+test caps::tests::gated_room_denies_empty_chain ... ok
+test caps::tests::gated_room_denies_malformed_caps_hex ... ok
+test caps::tests::gated_room_admits_valid_self_issued_chain ... ok
+test caps::tests::gated_room_denies_wrong_ability ... ok
+test caps::tests::open_room_admits_without_caps ... ok
+test caps::tests::gated_room_denies_revoked_chain ... ok
+test caps::tests::parse_node_id_rejects_bad_input ... ok
+test caps::tests::resolve_explicit_takes_precedence ... ok
+test caps::tests::resolve_empty_falls_through_to_none ... ok
+test client::tests::adopt_resume_advances_outbound_floor ... ok
+test client::tests::apply_message_directed_surfaces_envelope ... ok
+test client::tests::apply_message_ignores_other_room ... ok
+test client::tests::apply_message_rejects_garbage_without_panic ... ok
+test client::tests::apply_message_surfaces_media_and_chat ... ok
+test client::tests::apply_message_updates_roster ... ok
+test client::tests::end_room_effect_is_observed ... ok
+test client::tests::freshness_disabled_delivers_old_signal ... ok
+test client::tests::freshness_drops_stale_directed_signal ... ok
+test client::tests::ingest_ordered_delivers_directed_signals_in_seq_order ... ok
+test client::tests::ingest_ordered_ignores_malformed_and_broadcast ... ok
+test client::tests::ingest_ordered_ignores_signals_for_other_peers ... ok
+test client::tests::restore_rebuilds_roster_and_outbound_seq ... ok
+test client::tests::room_id_is_deterministic_and_short ... ok
+test client::tests::room_id_varies_with_inputs ... ok
+test order::tests::duplicates_are_dropped ... ok
+test order::tests::first_message_above_zero_anchors_in_order ... ok
+test order::tests::in_order_delivers_immediately ... ok
+test order::tests::offer_with_window_zero_never_buffers ... ok
+test order::tests::reorders_a_gap_then_releases_the_run ... ok
+test order::tests::router_drops_unauthenticated_sender ... ok
+test order::tests::router_keeps_peers_independent ... ok
+test order::tests::router_skip_peer_to_unknown_peer_is_empty ... ok
+test order::tests::skip_to_drops_lower_and_releases_higher ... ok
+test order::tests::skip_to_in_the_past_is_a_noop ... ok
+test order::tests::window_force_advances_past_a_lost_message ... ok
+test proto::tests::admit_req_round_trips_with_and_without_resume ... ok
+test proto::tests::admit_resp_default_is_denied_with_no_resume ... ok
+test proto::tests::admit_resp_round_trips_with_resume_and_ice ... ok
+test proto::tests::directed_moderation_signals_are_not_broadcast ... ok
+test proto::tests::envelope_broadcast_has_no_recipient ... ok
+test proto::tests::envelope_bytes_roundtrip ... ok
+test proto::tests::envelope_directed_addresses_only_target ... ok
+test proto::tests::freshness_rejects_stale_and_future ... ok
+test proto::tests::freshness_window_disabled_is_always_fresh ... ok
+test proto::tests::from_bytes_rejects_garbage ... ok
+test proto::tests::from_bytes_rejects_oversized_frame_cheaply ... ok
+test proto::tests::from_bytes_rejects_oversized_sdp_payload ... ok
+test proto::tests::media_control_signals_classify_as_broadcast ... ok
+test proto::tests::moderation_classification ... ok
+test proto::tests::new_signal_tags_are_stable ... ok
+test proto::tests::new_signals_json_round_trip ... ok
+test proto::tests::room_topic_roundtrips ... ok
+test proto::tests::sdp_offer_answer_roundtrip ... ok
+test proto::tests::signal_classification ... ok
+test proto::tests::validate_accepts_in_bounds_signals ... ok
+test proto::tests::validate_rejects_oversized_candidate_and_name_and_chat ... ok
+test proto::tests::validate_rejects_oversized_sdp ... ok
+test proto::tests::with_sender_stamps_from ... ok
+test room::tests::digest_is_order_independent ... ok
+test room::tests::directed_moderation_surfaces_as_directed ... ok
+test room::tests::directed_signal_does_not_touch_roster ... ok
+test room::tests::duplicate_join_is_idempotent ... ok
+test room::tests::end_room_sets_ended_and_surfaces ... ok
+test room::tests::join_then_leave_converges ... ok
+test room::tests::keepalive_refreshes_present_member ... ok
+test room::tests::leave_first_seen_records_absent_without_left_event ... ok
+test room::tests::media_signal_respects_member_cap ... ok
+test room::tests::media_before_join_creates_absent_placeholder_then_join_converges ... ok
+test room::tests::media_signal_updates_member_state ... ok
+test room::tests::media_state_excluded_from_digest ... ok
+test room::tests::media_state_is_lww_ordered_and_ignores_stale ... ok
+test room::tests::member_cap_rejects_new_members_beyond_limit ... ok
+test room::tests::member_cap_still_allows_updates_to_known_members ... ok
+test room::tests::member_cap_zero_is_clamped_to_one ... ok
+test room::tests::merge_snapshot_converges_two_replicas ... ok
+test room::tests::merge_snapshot_ignores_other_room ... ok
+test room::tests::merge_snapshot_older_seq_does_not_override ... ok
+test room::tests::out_of_order_leave_before_join_does_not_resurrect ... ok
+test room::tests::outbound_seq_is_monotonic ... ok
+test room::tests::prune_removes_stale_members ... ok
+test room::tests::reaction_and_chat_surface_without_roster_change ... ok
+test room::tests::recording_consent_surfaces ... ok
+test room::tests::rejoin_with_higher_seq_works ... ok
+test room::tests::restored_room_converges_with_later_events ... ok
+test room::tests::resume_outbound_never_goes_backwards ... ok
+test room::tests::resume_prevents_seq_reuse_so_peer_accepts_post_reconnect_messages ... ok
+test room::tests::screen_share_and_raise_hand_track ... ok
+test room::tests::snapshot_bytes_round_trip ... ok
+test room::tests::snapshot_from_bytes_rejects_garbage ... ok
+test room::tests::snapshot_restore_round_trip_preserves_state ... ok
+test room::tests::unauthenticated_sender_is_ignored ... ok
+test room::tests::wrong_room_is_ignored ... ok
+test turn::tests::credential_derive_then_verify ... ok
+test turn::tests::credential_tamper_is_rejected ... ok
+test turn::tests::credential_to_ice_server ... ok
+test turn::tests::credential_username_tamper_is_rejected ... ok
+test turn::tests::ct_eq_basic ... ok
+test turn::tests::default_stun_is_stun_only ... ok
+test turn::tests::password_is_hmac_not_plain_sha256 ... ok
+test turn::tests::select_relay_empty_is_empty ... ok
+test turn::tests::select_relay_is_deterministic_for_identical_scores ... ok
+test turn::tests::select_relay_ranks_by_latency_then_reputation ... ok
+test turn::tests::select_relay_reputation_breaks_latency_tie ... ok
+test turn::tests::stun_has_no_credentials ... ok
+test turn::tests::stun_serializes_without_credential_keys ... ok
+test turn::tests::turn_carries_credentials ... ok
+test room::tests::save_atomic_then_load_round_trips ... ok
+
+test result: ok. 125 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running unittests src/main.rs (/opt/build/target-ce-meet/debug/deps/ce_meet-8b26dddfb6f9f6ab)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/integration.rs (/opt/build/target-ce-meet/debug/deps/integration-f9741d02d271e972)
+
+running 23 tests
+test admit_flood_is_rate_limited_before_verification ... ok
+test capability_gate_rejects_forged_and_malformed ... ok
+test dropped_peer_is_pruned_by_liveness ... ok
+test duplicate_and_reordered_delivery_is_safe ... ok
+test end_room_marks_room_ended_for_all ... ok
+test ice_flow_delivered_in_order_through_reorder_buffer ... ok
+test kick_is_directed_and_does_not_touch_roster ... ok
+test media_state_converges_across_replicas_under_reorder ... ok
+test capability_gate_admits_then_revokes ... ok
+test open_room_admits_anyone ... ok
+test ordering_is_observable_via_seq ... ok
+test oversized_sdp_is_rejected_at_parse_and_never_reaches_roster ... ok
+test persisted_host_converges_with_live_host_across_concurrent_updates ... ok
+test moderate_ability_gates_kick_authorization ... ok
+test private_room_admitter_denies_without_cap_allows_with ... ok
+test reconnection_with_stolen_token_is_denied ... ok
+test relay_selection_prefers_nearest_then_most_reputable ... ok
+test reconnection_resume_admits_by_identity_and_preserves_seq ... ok
+test router_orders_each_peer_independently ... ok
+test sdp_offer_answer_ice_round_trip ... ok
+test two_persisted_replicas_reconcile_via_merge ... ok
+test two_replicas_converge_on_membership ... ok
+test roster_member_cap_resists_a_flood_of_distinct_senders ... ok
+
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.08s
+
+     Running tests/properties.rs (/opt/build/target-ce-meet/debug/deps/properties-ed7ab9a21b7816e5)
+
+running 15 tests
+test directed_signals_never_change_roster ... ok
+test highest_seq_action_wins ... ok
+test media_state_converges_under_permutation ... ok
+test envelope_json_round_trips ... ok
+test merge_snapshots_converge ... ok
+test member_cap_is_never_exceeded ... ok
+test ordered_inbox_delivers_in_order_under_any_permutation ... ok
+test ordered_inbox_handles_high_seqs ... ok
+test ordered_inbox_output_is_monotonic ... ok
+test roster_converges_regardless_of_order ... ok
+test select_relay_is_a_stable_permutation ... ok
+test parser_never_panics_on_arbitrary_bytes ... ok
+test snapshot_restore_preserves_convergence ... ok
+test validate_is_exact_at_the_sdp_boundary ... ok
+test turn_credential_soundness ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s
+
+   Doc-tests ce_meet
+
+running 3 tests
+test src/lib.rs - (line 57) - compile ... ok
+test src/room.rs - room::Room (line 147) ... ok
+test src/turn.rs - turn::select_relay (line 214) ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 1.66s; merged doctests compilation took 1.64s

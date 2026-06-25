@@ -1,0 +1,360 @@
+=== Wed Jun 24 16:29:07 UTC 2026 remote test ce-storage ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling unicode-ident v1.0.24
+   Compiling libc v0.2.186
+   Compiling syn v2.0.118
+   Compiling cfg-if v1.0.4
+   Compiling stable_deref_trait v1.2.1
+   Compiling pin-project-lite v0.2.17
+   Compiling getrandom v0.2.17
+   Compiling bytes v1.12.0
+   Compiling once_cell v1.21.4
+   Compiling zeroize v1.9.0
+   Compiling futures-core v0.3.32
+   Compiling version_check v0.9.5
+   Compiling generic-array v0.14.7
+   Compiling find-msvc-tools v0.1.9
+   Compiling smallvec v1.15.2
+   Compiling shlex v2.0.1
+   Compiling itoa v1.0.18
+   Compiling cc v1.2.65
+   Compiling synstructure v0.13.2
+   Compiling mio v1.2.1
+   Compiling zerofrom-derive v0.1.7
+   Compiling yoke-derive v0.8.2
+   Compiling zerofrom v0.1.8
+   Compiling zerovec-derive v0.11.3
+   Compiling yoke v0.8.3
+   Compiling displaydoc v0.2.6
+   Compiling tokio-macros v2.7.0
+   Compiling zerovec v0.11.6
+   Compiling socket2 v0.6.4
+   Compiling tinystr v0.8.3
+   Compiling writeable v0.6.3
+   Compiling litemap v0.8.2
+   Compiling serde_core v1.0.228
+   Compiling typenum v1.20.1
+   Compiling icu_locale_core v2.2.0
+   Compiling tokio v1.52.3
+   Compiling potential_utf v0.1.5
+   Compiling zerotrie v0.2.4
+   Compiling ring v0.17.14
+   Compiling utf8_iter v1.0.4
+   Compiling subtle v2.6.1
+   Compiling zerocopy v0.8.52
+   Compiling icu_normalizer_data v2.2.0
+   Compiling icu_properties_data v2.2.0
+   Compiling icu_collections v2.2.0
+   Compiling icu_provider v2.2.0
+   Compiling http v1.4.2
+   Compiling serde v1.0.228
+   Compiling percent-encoding v2.3.2
+   Compiling http-body v1.0.1
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling futures-macro v0.3.32
+   Compiling serde_derive v1.0.228
+   Compiling rustls-pki-types v1.14.1
+   Compiling tracing-core v0.1.36
+   Compiling slab v0.4.12
+   Compiling futures-task v0.3.32
+   Compiling bitflags v2.13.0
+   Compiling untrusted v0.9.0
+   Compiling httparse v1.10.1
+   Compiling getrandom v0.3.4
+   Compiling semver v1.0.28
+   Compiling rustc_version v0.4.1
+   Compiling futures-util v0.3.32
+   Compiling ppv-lite86 v0.2.21
+   Compiling digest v0.10.7
+   Compiling icu_properties v2.2.0
+   Compiling icu_normalizer v2.2.0
+   Compiling tracing-attributes v0.1.31
+   Compiling cpufeatures v0.2.17
+   Compiling try-lock v0.2.5
+   Compiling tower-service v0.3.3
+   Compiling rustls v0.23.40
+   Compiling want v0.3.1
+   Compiling idna_adapter v1.2.2
+   Compiling rustls-webpki v0.103.13
+   Compiling tracing v0.1.44
+   Compiling curve25519-dalek v4.1.3
+   Compiling form_urlencoded v1.2.2
+   Compiling futures-channel v0.3.32
+   Compiling rand_core v0.6.4
+   Compiling atomic-waker v1.1.2
+   Compiling zmij v1.0.21
+   Compiling anyhow v1.0.102
+   Compiling hyper v1.10.1
+   Compiling idna v1.1.0
+   Compiling sha2 v0.10.9
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling sync_wrapper v1.0.2
+   Compiling ipnet v2.12.0
+   Compiling signature v2.2.0
+   Compiling utf8parse v0.2.2
+   Compiling log v0.4.33
+   Compiling tower-layer v0.3.3
+   Compiling serde_json v1.0.150
+   Compiling regex-syntax v0.8.11
+   Compiling base64 v0.22.1
+   Compiling hyper-util v0.1.20
+   Compiling tower v0.5.3
+   Compiling anstyle-parse v1.0.0
+   Compiling ed25519 v2.2.3
+   Compiling tokio-rustls v0.26.4
+   Compiling url v2.5.8
+   Compiling rand_chacha v0.3.1
+   Compiling webpki-roots v1.0.8
+   Compiling option-ext v0.2.0
+   Compiling futures-sink v0.3.32
+   Compiling hex v0.4.3
+   Compiling colorchoice v1.0.5
+   Compiling rustix v1.1.4
+   Compiling anstyle v1.0.14
+   Compiling ryu v1.0.23
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling anstyle-query v1.1.5
+   Compiling memchr v2.8.2
+   Compiling anstream v1.0.0
+   Compiling serde_urlencoded v0.7.1
+   Compiling tokio-util v0.7.18
+   Compiling dirs-sys v0.4.1
+   Compiling rand v0.8.6
+   Compiling hyper-rustls v0.27.9
+   Compiling ed25519-dalek v2.2.0
+   Compiling tower-http v0.6.11
+   Compiling regex-automata v0.4.14
+   Compiling rand_core v0.9.5
+   Compiling http-body-util v0.1.3
+   Compiling strsim v0.11.1
+   Compiling lazy_static v1.5.0
+   Compiling autocfg v1.5.1
+   Compiling heck v0.5.0
+   Compiling linux-raw-sys v0.12.1
+   Compiling clap_lex v1.1.0
+   Compiling clap_builder v4.6.0
+   Compiling matchers v0.2.0
+   Compiling clap_derive v4.6.1
+   Compiling num-traits v0.2.19
+   Compiling sharded-slab v0.1.7
+   Compiling reqwest v0.12.28
+   Compiling ce-identity v0.1.0 (/opt/build/ce/crates/ce-identity)
+   Compiling directories v5.0.1
+   Compiling tracing-log v0.2.0
+   Compiling bincode v1.3.3
+   Compiling thread_local v1.1.9
+   Compiling nu-ansi-term v0.50.3
+   Compiling fastrand v2.4.1
+   Compiling tempfile v3.27.0
+   Compiling tracing-subscriber v0.3.23
+   Compiling ce-rs v0.1.0 (/opt/build/ce-rs)
+   Compiling ce-cap v0.1.0 (/opt/build/ce/crates/ce-cap)
+   Compiling clap v4.6.1
+   Compiling wait-timeout v0.2.1
+   Compiling bit-vec v0.8.0
+   Compiling fnv v1.0.7
+   Compiling quick-error v1.2.3
+   Compiling bit-set v0.8.0
+   Compiling rusty-fork v0.3.1
+   Compiling rand_xorshift v0.4.0
+   Compiling rand v0.9.4
+   Compiling rand_chacha v0.9.0
+   Compiling unarray v0.1.4
+   Compiling ce-storage v0.1.0 (/opt/build/ce-storage)
+   Compiling proptest v1.11.0
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 21s
+     Running unittests src/lib.rs (/opt/build/target-ce-storage/debug/deps/ce_storage-55557596bf65d80d)
+
+running 69 tests
+test caps::tests::inspect_reports_scope ... ok
+test caps::tests::link_rejects_expired ... ok
+test caps::tests::link_rejects_out_of_scope_key ... ok
+test caps::tests::link_rejects_wrong_ability ... ok
+test caps::tests::mint_and_verify_read_link ... ok
+test caps::tests::parse_node_id_roundtrips_and_rejects_bad ... ok
+test caps::tests::scope_enforces_path_boundary ... ok
+test caps::tests::scope_roundtrip_and_allows ... ok
+test index::tests::bucket_name_rules ... ok
+test index::tests::copy_shares_cid ... ok
+test index::tests::delete_version_removes_key_when_last ... ok
+test index::tests::expired_keys_empty_without_rules ... ok
+test index::tests::expired_keys_first_matching_rule_wins ... ok
+test index::tests::expired_keys_skips_delete_markers ... ok
+test index::tests::future_schema_is_rejected ... ok
+test index::tests::lifecycle_rule_expiry_math ... ok
+test index::tests::lifecycle_validation_bounds ... ok
+test index::tests::list_delimiter_rolls_up_prefixes ... ok
+test index::tests::list_hides_delete_markers ... ok
+test index::tests::list_prefix_and_pagination ... ok
+test index::tests::list_seek_continuation_does_not_revisit ... ok
+test index::tests::make_and_list_buckets ... ok
+test index::tests::put_head_delete ... ok
+test index::tests::put_rejects_oversized_metadata ... ok
+test index::tests::remove_bucket_requires_empty_or_force ... ok
+test index::tests::lifecycle_survives_save_load ... ok
+test index::tests::unversioned_put_overwrites_in_place ... ok
+test index::tests::user_metadata_bounds_enforced ... ok
+test index::tests::versioned_put_keeps_history_and_delete_marker ... ok
+test index::tests::roundtrip_save_load ... ok
+test lock::tests::acquire_and_release ... ok
+test lock::tests::stale_lock_is_reclaimed ... ok
+test multipart::tests::assemble_allows_short_final_part ... ok
+test multipart::tests::assemble_concatenates_chunks_in_order ... ok
+test multipart::tests::assemble_rejects_etag_mismatch_and_missing_and_unordered ... ok
+test multipart::tests::assemble_rejects_non_multiple_nonfinal_part ... ok
+test multipart::tests::assembled_size_sums_parts ... ok
+test multipart::tests::create_enforces_inflight_cap ... ok
+test multipart::tests::create_put_list_abort_roundtrip ... ok
+test multipart::tests::load_future_schema_rejected ... ok
+test multipart::tests::put_part_rejects_bad_number_and_empty ... ok
+test multipart::tests::put_part_replaces_same_number ... ok
+test multipart::tests::state_save_load_roundtrip ... ok
+test range::tests::covering_single_chunk ... ok
+test range::tests::covering_spans_chunks ... ok
+test range::tests::out_of_bounds_covering_errors ... ok
+test range::tests::parse_basic_ranges ... ok
+test range::tests::parse_rejects_bad ... ok
+test range::tests::slice_extracts_window ... ok
+test seal::tests::bad_version_rejected ... ok
+test seal::tests::ciphertext_hides_plaintext ... ok
+test seal::tests::ct_eq_is_correct ... ok
+test seal::tests::distinct_salts_give_distinct_ciphertext ... ok
+test seal::tests::hmac_matches_known_rfc4231_vector ... ok
+test seal::tests::roundtrip_various_sizes ... ok
+test seal::tests::tampered_ciphertext_rejected ... ok
+test seal::tests::truncated_record_rejected ... ok
+test seal::tests::wrong_key_is_rejected ... ok
+test store::tests::bucket_lifecycle ... ok
+test store::tests::delete_objects_bulk_reports_per_key ... ok
+test store::tests::head_copy_delete_via_seeded_index ... ok
+test store::tests::lifecycle_get_set_roundtrip ... ok
+test store::tests::oversize_put_rejected_before_node ... ok
+test store::tests::precondition_read_not_modified_and_failed ... ok
+test store::tests::precondition_write_once_and_if_match ... ok
+test store::tests::put_into_missing_bucket_errors_fast ... ok
+test store::tests::sweep_all_reports_per_bucket ... ok
+test lock::tests::second_acquire_blocks_until_release ... ok
+test store::tests::sweep_expired_deletes_only_aged_objects ... ok
+
+test result: ok. 69 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s
+
+     Running unittests src/main.rs (/opt/build/target-ce-storage/debug/deps/ce_storage-eb0e87fff29a6671)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/concurrency.rs (/opt/build/target-ce-storage/debug/deps/concurrency-3db7b4cea4c7cf3e)
+
+running 2 tests
+test concurrent_make_bucket_no_lost_update ... ok
+test concurrent_deletes_all_land ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.57s
+
+     Running tests/edge_cases.rs (/opt/build/target-ce-storage/debug/deps/edge_cases-313190c489d1f298)
+
+running 25 tests
+test bucket_name_length_boundaries ... ok
+test bucket_name_rejects_uppercase_and_underscore ... ok
+test copy_from_missing_source_errors ... ok
+test inspect_garbage_token_errors_not_panics ... ok
+test key_validation_boundaries ... ok
+test head_missing_key_errors ... ok
+test legacy_v1_index_without_new_fields_loads ... ok
+test list_delimiter_counts_prefixes_toward_max_keys ... ok
+test list_empty_bucket_is_empty_page ... ok
+test list_max_keys_zero_treated_as_one ... ok
+test list_missing_bucket_errors ... ok
+test load_corrupt_file_errors_not_panics ... ok
+test list_mixed_keys_and_folders_under_prefix ... ok
+test load_missing_file_yields_empty_index ... ok
+test range_rejects_garbage_and_negatives ... ok
+test put_into_missing_bucket_errors ... ok
+test range_start_past_end_unsatisfiable ... ok
+test range_suffix_larger_than_object_clamps_to_whole ... ok
+test range_whitespace_tolerated ... ok
+test range_zero_suffix_unsatisfiable ... ok
+test range_start_at_last_byte_is_satisfiable ... ok
+test save_is_atomic_no_leftover_temp ... ok
+test scope_from_caveat_without_slash_is_whole_bucket ... ok
+test versioning_history_and_markers ... ok
+test save_load_preserves_large_sizes ... ok
+
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/gateway_features.rs (/opt/build/target-ce-storage/debug/deps/gateway_features-72d8a77be84b6604)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/gateway_live.rs (/opt/build/target-ce-storage/debug/deps/gateway_live-73abb1b3c5fef60f)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/integration.rs (/opt/build/target-ce-storage/debug/deps/integration-e6ec15841c8d1732)
+
+running 1 test
+test full_object_roundtrip_against_node ... ignored, requires a running CE node on :8844
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/live.rs (/opt/build/target-ce-storage/debug/deps/live-8c60986100049b56)
+
+running 6 tests
+test live_capability_bucket_scope ... ok
+test live_cid_integrity_and_dedup ... ok
+test live_full_object_lifecycle_multichunk ... ok
+test live_missing_objects_error_gracefully ... ok
+test live_versioning_metadata_and_conditionals ... ok
+test live_lifecycle_sweep_expires_objects ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/live_multipart_seal.rs (/opt/build/target-ce-storage/debug/deps/live_multipart_seal-b53a4ab6e1db1e8f)
+
+running 4 tests
+test live_multipart_abort_and_validation ... ok
+test live_multipart_upload_roundtrip ... ok
+test live_sealed_object_roundtrip ... ok
+test live_sealed_object_versioned ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/prop_storage.rs (/opt/build/target-ce-storage/debug/deps/prop_storage-9de73cf6d5b69100)
+
+running 14 tests
+test index_roundtrips_with_large_sizes ... ok
+test lifecycle_expiry_is_monotone_and_prefix_scoped ... ok
+test covering_slice_equals_window ... ok
+test list_prefix_only_matches_prefix ... ok
+test list_pagination_covers_every_key_once ... ok
+test object_meta_roundtrips ... ok
+test parse_range_is_total_and_sound ... ok
+test parse_range_wellformed_windows ... ok
+test scope_boundary_denies_sibling_segments ... ok
+test object_meta_with_metadata_roundtrips ... ok
+test valid_bucket_name_never_panics ... ok
+test scope_roundtrips_and_allows_is_exact ... ok
+test versioning_current_is_newest ... ok
+test valid_key_never_panics ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.94s
+
+   Doc-tests ce_storage
+
+running 4 tests
+test src/lib.rs - (line 56) - compile ... ok
+test src/range.rs - range::parse_range (line 33) ... ok
+test src/caps.rs - caps::scope_allows (line 82) ... ok
+test src/seal.rs - seal::seal (line 157) ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+all doctests ran in 0.67s; merged doctests compilation took 0.65s

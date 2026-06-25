@@ -1,0 +1,198 @@
+=== Wed Jun 24 16:37:30 UTC 2026 remote test ce-gke ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+     Locking 1 package to latest Rust 1.96.0 compatible version
+      Adding signal-hook-registry v1.4.8
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.60s
+     Running unittests src/lib.rs (/opt/build/target-ce-gke/debug/deps/ce_gke-4d0725a0f7df74e5)
+
+running 136 tests
+test auth::tests::malformed_token_does_not_panic ... ok
+test auth::tests::preflight_rejects_expired ... ok
+test auth::tests::host_grant_authorizes_deploy_and_kill ... ok
+test auth::tests::preflight_rejects_resource_mismatch ... ok
+test auth::tests::preflight_rejects_revoked ... ok
+test auth::tests::preflight_rejects_unrelated_action ... ok
+test auth::tests::preflight_rejects_wrong_requester ... ok
+test controller::tests::converges_then_idle ... ok
+test controller::tests::failed_replica_is_rescheduled ... ok
+test controller::tests::host_rejecting_deploy_falls_back_to_another ... ok
+test controller::tests::kill_failure_is_retried_next_tick ... ok
+test controller::tests::liveness_probe_failure_reschedules_running_replica ... ok
+test controller::tests::no_candidates_reports_failure_not_panic ... ok
+test controller::tests::no_service_means_no_advertise ... ok
+test controller::tests::rolling_update_to_new_image_converges ... ok
+test controller::tests::scale_down_removes_excess ... ok
+test controller::tests::service_is_advertised_when_ready ... ok
+test controller::tests::tick_scales_up_to_desired ... ok
+test controller::tests::tick_spreads_across_hosts ... ok
+test controller::tests::tick_to_zero_kills_all ... ok
+test controller::tests::transient_refresh_error_does_not_immediately_fail ... ok
+test auth::tests::token_roundtrips ... ok
+test daemon::tests::pass_heals_a_failed_replica ... ok
+test daemon::tests::pass_reconciles_all_namespaces ... ok
+test daemon::tests::pass_respects_namespace_filter ... ok
+test driver::tests::fake_atlas_reflects_load ... ok
+test driver::tests::fake_deploy_and_kill_roundtrip ... ok
+test driver::tests::fake_deploy_rejection_is_error ... ok
+test driver::tests::fake_kill_failure_is_error_and_keeps_job ... ok
+test driver::tests::fake_set_phase_models_health_change ... ok
+test driver::tests::fake_transient_deploy_failure_clears ... ok
+test driver::tests::fmt_credits_works ... ok
+test placement::tests::free_capacity_charges_running_jobs ... ok
+test placement::tests::free_capacity_saturates_at_zero ... ok
+test placement::tests::host_can_fit_requires_tags_and_headroom ... ok
+test placement::tests::rank_drops_stale_hosts ... ok
+test placement::tests::rank_empty_atlas_is_empty ... ok
+test placement::tests::rank_excludes_non_matching_and_full_hosts ... ok
+test placement::tests::rank_orders_emptiest_first ... ok
+test placement::tests::rank_tie_break_is_deterministic ... ok
+test placement::tests::score_is_monotonic_in_free_capacity ... ok
+test placement::tests::score_penalizes_load ... ok
+test placement::tests::tag_matching ... ok
+test protocol::tests::effective_phase_failed_probe_overrides_running ... ok
+test protocol::tests::failed_reply_helper ... ok
+test protocol::tests::malformed_decode_does_not_panic ... ok
+test protocol::tests::oversized_decode_rejected ... ok
+test protocol::tests::reply_roundtrip ... ok
+test protocol::tests::request_roundtrip ... ok
+test reconcile::tests::phase_from_job_status ... ok
+test reconcile::tests::phase_predicates ... ok
+test reconcile::tests::plan_actions_places_then_kills ... ok
+test reconcile::tests::reconcile_is_deterministic ... ok
+test reconcile::tests::reconcile_noop_when_at_desired ... ok
+test reconcile::tests::reconcile_reaps_all_terminal_and_refills ... ok
+test reconcile::tests::reconcile_replaces_failed_replica ... ok
+test reconcile::tests::reconcile_scale_down_kills_pending_first ... ok
+test reconcile::tests::reconcile_scales_down_excess ... ok
+test reconcile::tests::reconcile_scales_up_from_zero ... ok
+test reconcile::tests::reconcile_scales_up_partial ... ok
+test reconcile::tests::reconcile_to_zero_kills_everything ... ok
+test reconcile::tests::tally_phases_counts ... ok
+test rollout::tests::census_classifies_replicas ... ok
+test rollout::tests::recreate_done_when_new_ready ... ok
+test rollout::tests::recreate_drains_all_then_fills ... ok
+test rollout::tests::rolling_done_when_all_on_target_and_ready ... ok
+test rollout::tests::rolling_fresh_deploy_limited_by_surge_when_smaller ... ok
+test rollout::tests::rolling_fresh_deploy_surges_up_to_ceiling ... ok
+test rollout::tests::rolling_kills_non_ready_old_freely ... ok
+test rollout::tests::rolling_never_breaches_availability_floor_during_roll ... ok
+test rollout::tests::rolling_not_done_while_new_pending ... ok
+test rollout::tests::rolling_reaps_terminal_replicas ... ok
+test rollout::tests::rolling_retires_old_once_new_is_ready ... ok
+test rollout::tests::rolling_surges_new_before_killing_old ... ok
+test rollout::tests::rolling_to_zero_kills_all_then_done ... ok
+test rollout::tests::rolling_update_converges_to_target ... ok
+test rollout::tests::rolling_with_unavailable_budget_kills_old_immediately ... ok
+test rollout::tests::scale_down_on_target_trims_excess ... ok
+test rollout::tests::step_is_idle_helper ... ok
+test secrets::tests::load_corrupt_is_error ... ok
+test secrets::tests::load_missing_is_empty ... ok
+test secrets::tests::save_load_roundtrip ... ok
+test secrets::tests::set_get_remove ... ok
+test serve::tests::authorized_probe_reports_phase ... ok
+test serve::tests::empty_job_id_rejected ... ok
+test daemon::tests::daemon_stops_on_shutdown_signal ... ok
+test serve::tests::malformed_grant_rejected ... ok
+test serve::tests::missing_grant_allowed_when_open ... ok
+test serve::tests::missing_grant_rejected_when_required ... ok
+test serve::tests::handle_bytes_roundtrips_and_bounds ... ok
+test serve::tests::revoked_grant_rejected ... ok
+test serve::tests::unknown_job_is_failed ... ok
+test spec::tests::default_namespace_applied ... ok
+test spec::tests::deployment_json_roundtrip ... ok
+test spec::tests::effective_command_env_without_command_errors ... ok
+test spec::tests::effective_command_injects_env ... ok
+test spec::tests::effective_command_missing_secret_errors ... ok
+test spec::tests::effective_command_no_env_is_passthrough ... ok
+test spec::tests::env_changes_revision ... ok
+test spec::tests::env_validation ... ok
+test spec::tests::malformed_manifest_does_not_panic ... ok
+test spec::tests::manifest_with_bad_spec_is_rejected ... ok
+test spec::tests::name_validation_rules ... ok
+test spec::tests::parses_json_manifest ... ok
+test spec::tests::parses_yaml_manifest ... ok
+test spec::tests::probe_check_commands ... ok
+test spec::tests::probe_manifest_parses ... ok
+test spec::tests::probe_validation ... ok
+test spec::tests::required_tags_always_include_docker ... ok
+test spec::tests::revision_changes_with_command_and_resources ... ok
+test spec::tests::revision_changes_with_image ... ok
+test spec::tests::revision_is_short_hex ... ok
+test spec::tests::revision_is_stable_for_same_template ... ok
+test spec::tests::service_name_is_namespaced ... ok
+test spec::tests::validate_accepts_good_spec ... ok
+test spec::tests::validate_allows_zero_replicas ... ok
+test spec::tests::validate_image_accepts_registry_refs ... ok
+test spec::tests::validate_rejects_empty_image ... ok
+test spec::tests::validate_rejects_multibyte_image ... ok
+test spec::tests::validate_rejects_negative_bid ... ok
+test spec::tests::validate_rejects_oversized_image ... ok
+test spec::tests::validate_rejects_stuck_rolling_update ... ok
+test spec::tests::validate_rejects_too_many_replicas ... ok
+test spec::tests::validate_rejects_zero_resources ... ok
+test state::tests::load_corrupt_is_error ... ok
+test state::tests::load_missing_is_empty ... ok
+test state::tests::migrates_v0_unnamespaced_file ... ok
+test state::tests::names_are_sorted ... ok
+test state::tests::namespaces_do_not_collide ... ok
+test state::tests::remove_returns_managed ... ok
+test state::tests::save_load_roundtrip ... ok
+test serve::tests::wrong_requester_rejected ... ok
+test state::tests::upsert_and_get ... ok
+test state::tests::upsert_preserves_replicas_and_grant ... ok
+test state::tests::upsert_records_history_on_revision_change ... ok
+test state::tests::state_lock_excludes_concurrent_holder ... ok
+
+test result: ok. 136 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+
+     Running unittests src/main.rs (/opt/build/target-ce-gke/debug/deps/ce_gke-aedaca0f0b14a63d)
+
+running 8 tests
+test tests::parse_node_id_validates ... ok
+test tests::read_manifest_from_file ... ok
+test tests::fail_note_formats ... ok
+test tests::short_truncates ... ok
+test tests::read_manifest_missing_file_errors ... ok
+test tests::strip_ns_works ... ok
+test tests::truncate_adds_ellipsis ... ok
+test tests::truncate_multibyte_does_not_panic ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cli_flow.rs (/opt/build/target-ce-gke/debug/deps/cli_flow-babc0a20087730a3)
+
+running 4 tests
+test daemon_pass_heals_across_namespaces ... ok
+test apply_scale_delete_lifecycle ... ok
+test rolling_update_then_undo ... ok
+test state_persists_across_simulated_invocations ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/properties.rs (/opt/build/target-ce-gke/debug/deps/properties-ab43da3789ca73a5)
+
+running 12 tests
+test fresh_deploy_converges ... ok
+test deployment_json_roundtrip ... ok
+test manifest_parse_never_panics ... ok
+test probe_decode_never_panics ... ok
+test rank_is_sorted_and_fitting ... ok
+test rank_never_overcommits ... ok
+test reconcile_drives_to_desired_count ... ok
+test reconcile_no_simultaneous_scale_both_ways ... ok
+test revision_ignores_replicas_and_placement ... ok
+test probe_request_roundtrip ... ok
+test score_monotonic ... ok
+test rolling_update_always_converges ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.21s
+
+   Doc-tests ce_gke
+
+running 2 tests
+test src/lib.rs - (line 46) - compile ... ok
+test src/spec.rs - spec::Deployment (line 264) ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 1.79s; merged doctests compilation took 1.77s

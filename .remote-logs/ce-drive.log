@@ -1,0 +1,347 @@
+=== Wed Jun 24 16:37:51 UTC 2026 remote test ce-drive ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running unittests src/main.rs (/opt/build/target-ce-drive/debug/deps/ce_drive-4369bcb2b16c4c55)
+
+running 4 tests
+test tests::encode_decode_roundtrips ... ok
+test tests::decode_rejects_garbage_and_bad_magic ... ok
+test tests::split_path_rejects_root ... ok
+test tests::write_atomic_replaces_existing_file ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/cli_offline.rs (/opt/build/target-ce-drive/debug/deps/cli_offline-ee466c9f6569fd05)
+
+running 4 tests
+test compact_on_empty_drive_is_a_noop_that_persists ... ok
+test empty_drive_reports_empty_surfaces ... ok
+test missing_drive_errors_clearly ... ok
+test init_creates_compact_state_and_commands_load_it ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s
+
+     Running unittests src/lib.rs (/opt/build/target-ce-drive/debug/deps/ce_drive_core-64dfc4afbc1c39b0)
+
+running 81 tests
+test audit::tests::expiry_status_is_computed_from_now ... ok
+test audit::tests::empty_json_is_empty_journal ... ok
+test audit::tests::from_grant_carries_fields ... ok
+test audit::tests::journal_roundtrips_json ... ok
+test changes::tests::cursor_paginates_and_is_resumable ... ok
+test changes::tests::feed_orders_creates_then_edits_then_trash ... ok
+test changes::tests::head_skips_history ... ok
+test content::tests::concurrent_same_mtime_edit_is_flagged_conflict ... ok
+test content::tests::map_apply_is_order_independent_for_distinct_keys ... ok
+test changes::tests::move_is_classified_as_moved_not_created ... ok
+test content::tests::map_apply_set_and_all_cids ... ok
+test content::tests::record_advances_and_keeps_history ... ok
+test content::tests::record_identical_cid_is_noop ... ok
+test content::tests::record_lww_older_edit_loses_but_is_retained ... ok
+test content::tests::restore_points_back_at_old_cid ... ok
+test content::tests::winning_tiebreak_flags_displaced_as_conflict ... ok
+test content::tests::version_cap_prunes_oldest ... ok
+test drive::tests::changes_since_reports_deltas ... ok
+test drive::tests::concurrent_content_edit_surfaces_conflict ... ok
+test drive::tests::dir_move_is_single_op ... ok
+test drive::tests::compact_preserves_live_state_and_shrinks_log ... ok
+test drive::tests::edit_is_new_version_same_id ... ok
+test drive::tests::empty_trash_hard_deletes_and_unpins ... ok
+test drive::tests::from_state_replays_identically ... ok
+test drive::tests::gc_trash_honors_retention ... ok
+test drive::tests::incremental_refold_matches_full_fold ... ok
+test drive::tests::init_mkdir_add_ls ... ok
+test drive::tests::name_validation_rejects_bad_names ... ok
+test drive::tests::rename_keeps_content_identity ... ok
+test drive::tests::restore_rejects_collision_and_non_trashed ... ok
+test drive::tests::restore_version_points_back ... ok
+test drive::tests::rm_moves_to_trash_and_hides ... ok
+test drive::tests::sequential_edits_are_not_conflicts ... ok
+test drive::tests::two_replicas_converge_on_content_ops_in_different_orders ... ok
+test drive::tests::trash_restore_roundtrip ... ok
+test durability::tests::default_policy_is_sane ... ok
+test durability::tests::local_policy_has_no_extra_replicas ... ok
+test drive::tests::two_writers_converge_on_concurrent_moves ... ok
+test durability::tests::pin_status_satisfaction_threshold ... ok
+test durability::tests::policy_roundtrips_json ... ok
+test names::tests::check_name_wraps_in_anyhow ... ok
+test names::tests::rejects_control_chars ... ok
+test names::tests::rejects_dot_components ... ok
+test names::tests::accepts_ordinary_names ... ok
+test names::tests::rejects_empty_and_whitespace ... ok
+test names::tests::rejects_overlong ... ok
+test names::tests::rejects_separators ... ok
+test search::tests::empty_query_returns_nothing ... ok
+test search::tests::add_text_enables_content_match ... ok
+test search::tests::finds_by_substring ... ok
+test search::tests::finds_by_whole_token ... ok
+test search::tests::finds_folder_by_name ... ok
+test search::tests::ranking_prefers_name_over_path_match ... ok
+test search::tests::scoped_search_limits_to_subtree ... ok
+test share::tests::backslash_and_control_chars_are_rejected ... ok
+test share::tests::expired_grant_is_denied ... ok
+test share::tests::dotdot_traversal_is_rejected ... ok
+test share::tests::read_grant_denied_for_write_action ... ok
+test share::tests::revoked_grant_is_denied ... ok
+test share::tests::self_issued_write_grant_authorizes_in_scope ... ok
+test share::tests::share_link_forces_read_only ... ok
+test share::tests::sibling_prefix_does_not_bypass_scope ... ok
+test share::tests::transitive_read_only_reshare_cannot_widen_to_write ... ok
+test share::tests::write_grant_denied_outside_scope ... ok
+test store::tests::content_id_matches_engine ... ok
+test store::tests::fill_chunk_handles_short_reads ... ok
+test share::tests::valid_transitive_read_only_subfolder_reshare_works ... ok
+test store::tests::identical_bytes_dedupe_to_zero_uploads ... ok
+test store::tests::streaming_chunker_matches_in_memory_manifest ... ok
+test sync::tests::content_merge_converges_lww_regardless_of_order ... ok
+test sync::tests::tree_merge_converges_regardless_of_order ... ok
+test tree::tests::concurrent_swap_resolves_acyclically_later_wins ... ok
+test tree::tests::conflict_rename_is_replica_order_independent ... ok
+test tree::tests::create_and_path_derivation ... ok
+test tree::tests::cycle_skip_keeps_tree_acyclic ... ok
+test tree::tests::delete_moves_to_trash_and_hides_from_readdir ... ok
+test tree::tests::dir_move_is_one_op_and_descendants_follow ... ok
+test tree::tests::duplicate_op_is_idempotent ... ok
+test tree::tests::name_collision_renders_deterministic_conflict ... ok
+test tree::tests::random_op_orders_converge_identically ... ok
+test store::tests::one_byte_edit_yields_one_missing_chunk ... ok
+
+test result: ok. 81 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.90s
+
+     Running tests/content_proptest.rs (/opt/build/target-ce-drive/debug/deps/content_proptest-e10214826b003fa3)
+
+running 8 tests
+test equal_mtime_breaks_by_cid_deterministically ... ok
+test large_u64_roundtrips_exactly ... ok
+test lww_converges_regardless_of_order ... ok
+test remove_then_set_is_fresh ... ok
+test restore_semantics ... ok
+test setdoc_attaches_only_to_existing ... ok
+test version_history_bounded_and_current_retained ... ok
+test filecontent_roundtrips ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s
+
+     Running tests/drive_errors.rs (/opt/build/target-ce-drive/debug/deps/drive_errors-9b9e963092260c79)
+
+running 11 tests
+test apply_remote_move_advances_lamport_past_seen ... ok
+test add_file_over_existing_dir_errors ... ok
+test ls_on_file_errors ... ok
+test mkdir_duplicate_errors ... ok
+test mkdir_under_a_file_errors ... ok
+test mkdir_under_missing_parent_errors ... ok
+test mv_missing_source_errors ... ok
+test restore_version_without_history_errors ... ok
+test mv_and_rm_root_error ... ok
+test rm_missing_errors ... ok
+test set_content_by_id_does_not_emit_moveop ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/durability_audit.rs (/opt/build/target-ce-drive/debug/deps/durability_audit-efcd11e1d24b89ae)
+
+running 9 tests
+test announce_all_is_noop_when_announce_disabled ... ok
+test audit_journal_json_roundtrip_and_empty ... ok
+test audit_render_falls_back_when_node_unreachable ... ok
+test announce_all_dedups_and_tolerates_failures ... ok
+test pin_status_satisfaction_threshold_math ... ok
+test revoked_record_grant_record_serde ... ok
+test revoked_set_errors_on_dead_node ... ok
+test status_against_dead_node_is_unsatisfied_not_panic ... ok
+test status_all_handles_empty_and_dead ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/live_store.rs (/opt/build/target-ce-drive/debug/deps/live_store-c4137e7429368117)
+
+running 1 test
+test store_roundtrip_and_dedup_against_live_node ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.65s
+
+     Running tests/serialization_proptest.rs (/opt/build/target-ce-drive/debug/deps/serialization_proptest-08fd681facac9e04)
+
+running 5 tests
+test drivestate_persist_replay_is_identical ... ok
+test pin_policy_roundtrips ... ok
+test stamped_content_op_roundtrips ... ok
+test moveop_json_and_bincode_roundtrip ... ok
+test timestamp_ordering_is_total_and_stable ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.19s
+
+     Running tests/share_proptest.rs (/opt/build/target-ce-drive/debug/deps/share_proptest-44c1f4b69f3c3416)
+
+running 8 tests
+test expiry_boundary ... ok
+test grant_token_roundtrips ... ok
+test malformed_inputs_error_not_panic ... ok
+test path_scope_is_exact ... ok
+test revocation_anywhere_in_chain_denies ... ok
+test scope_normalization_is_canonical ... ok
+test three_level_narrowing_chain ... ok
+test delegation_cannot_exceed_parent ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.98s
+
+     Running tests/store_delta_proptest.rs (/opt/build/target-ce-drive/debug/deps/store_delta_proptest-8431d0cd3e4ebac6)
+
+running 5 tests
+test content_id_is_deterministic ... ok
+test empty_bytes_is_a_valid_object ... ok
+test append_reuses_prefix_chunks ... ok
+test identical_bytes_have_zero_missing ... ok
+test single_byte_edit_moves_one_chunk ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.39s
+
+     Running tests/sync_merge_proptest.rs (/opt/build/target-ce-drive/debug/deps/sync_merge_proptest-4c92da793f376f3b)
+
+running 3 tests
+test content_merge_order_independent ... ok
+test snapshot_bootstrap_equals_full_replay ... ok
+test tree_merge_order_independent ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s
+
+     Running tests/tree_api_edge.rs (/opt/build/target-ce-drive/debug/deps/tree_api_edge-de9c4278112838fb)
+
+running 8 tests
+test empty_name_resolves_and_is_addressable ... ok
+test deeply_nested_path_derivation ... ok
+test is_live_and_live_count ... ok
+test move_into_self_is_skipped ... ok
+test path_of_missing_trashed_and_root ... ok
+test raw_children_vs_readdir_on_collision ... ok
+test resolve_edge_cases ... ok
+test log_max_ts_tracks_frontier ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/tree_proptest.rs (/opt/build/target-ce-drive/debug/deps/tree_proptest-f94d8339ed42c1ea)
+
+running 5 tests
+test deep_concurrent_swap_converges ... ok
+test duplicate_delivery_is_idempotent ... ok
+test conflict_render_is_order_independent_and_unique ... ok
+test tree_is_always_acyclic ... ok
+test random_op_orders_converge_identically ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.65s
+
+     Running tests/two_node_sync.rs (/opt/build/target-ce-drive/debug/deps/two_node_sync-fb80a973a746b446)
+
+running 1 test
+test two_writers_converge_on_concurrent_mutations ... ignored, boots two real ce nodes; run with --ignored
+
+test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/wire_golden.rs (/opt/build/target-ce-drive/debug/deps/wire_golden-bf1966030a937b1b)
+
+running 2 tests
+test content_op_matches_golden ... ok
+test move_op_matches_golden ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src/lib.rs (/opt/build/target-ce-drive/debug/deps/ce_drive_mount-350acbed3f3c7ea2)
+
+running 16 tests
+test materialize::tests::materialize_writes_the_tree ... ok
+test materialize::tests::push_skips_unchanged_files ... ok
+test projfs_logic::tests::basic_info_marks_dirs_and_files ... ok
+test projfs_logic::tests::filetime_saturates_on_overflow ... ok
+test projfs_logic::tests::win_path_maps_to_engine_path ... ok
+test vfs::tests::create_write_read_roundtrip ... ok
+test vfs::tests::getattr_and_lookup_are_manifest_only ... ok
+test materialize::tests::materialize_edit_push_roundtrip ... ok
+test vfs::tests::hydrate_on_open_pulls_only_touched_file ... ok
+test vfs::tests::inodes_are_stable_across_lookups_and_revalidate ... ok
+test vfs::tests::mkdir_unlink_reflected_in_listing ... ok
+test vfs::tests::range_read_returns_slice ... ok
+test vfs::tests::rename_is_atomic_and_preserves_inode ... ok
+test vfs::tests::write_back_batches_until_flush ... ok
+test winnames::tests::macos_rejects_only_structural ... ok
+test winnames::tests::windows_rejects_reserved_and_illegal ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/adapter_logic.rs (/opt/build/target-ce-drive/debug/deps/adapter_logic-f18deae2b3a4a30a)
+
+running 4 tests
+test basic_info_fields_for_dir_and_file ... ok
+test filetime_conversion_is_saturating_and_correct ... ok
+test win_path_mapping_edge_cases ... ok
+test watch_stops_on_predicate ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/adapter_smoke.rs (/opt/build/target-ce-drive/debug/deps/adapter_smoke-644d9016e22f25c8)
+
+running 4 tests
+test projfs_contract_against_real_drive ... ok
+test rename_preserves_inode_across_revalidate ... ok
+test read_path_call_sequence_is_lazy ... ok
+test write_path_call_sequence_writes_back ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s
+
+     Running tests/perf_smoke.rs (/opt/build/target-ce-drive/debug/deps/perf_smoke-b440c78c589247f7)
+
+running 2 tests
+test perf_smoke_lazy_hydration_pulls_only_touched_file ... ok
+test perf_smoke_materialize_then_git_status_and_io ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.38s
+
+     Running tests/vfs_failure.rs (/opt/build/target-ce-drive/debug/deps/vfs_failure-a18fe7aff8275db3)
+
+running 8 tests
+test concurrent_handles_last_flush_wins_no_deadlock ... ok
+test bad_handle_and_unknown_inode_error ... ok
+test flush_write_failure_leaves_handle_dirty ... ok
+test create_empty_file_hydrates_to_empty_not_error ... ok
+test injected_read_failure_is_graceful ... ok
+test materialize_missing_blob_errors ... ok
+test read_of_missing_blob_errors_not_panics ... ok
+test truncate_extend_and_sparse_write_boundaries ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/lib.rs (/opt/build/target-ce-drive/debug/deps/ce_drive_wasm-7a925e63343284aa)
+
+running 9 tests
+test crdt::tests::content_lww ... ok
+test crdt::tests::conflict_surfacing ... ok
+test crdt::tests::pure_tree_converges_like_core ... ok
+test crdt::tests::wasm_moveop_wire_stable ... ok
+test crdt::tests::wasm_tree_idempotent_and_acyclic ... ok
+test tests::moveop_wire_roundtrips ... ok
+test tests::stamped_content_wire_roundtrips ... ok
+test tests::wasm_wire_golden_matches_core ... ok
+test crdt::tests::wasm_tree_converges_regardless_of_order ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.58s
+
+   Doc-tests ce_drive_core
+
+running 1 test
+test crates/ce-drive-core/src/names.rs - names::validate_name (line 62) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 1.92s; merged doctests compilation took 1.90s
+   Doc-tests ce_drive_mount
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ce_drive_wasm
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

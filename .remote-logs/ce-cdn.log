@@ -1,0 +1,201 @@
+=== Wed Jun 24 16:35:51 UTC 2026 remote test ce-cdn ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.58s
+     Running unittests src/lib.rs (/opt/build/target-ce-cdn/debug/deps/ce_cdn-8cefbdf1a6ce24ad)
+
+running 147 tests
+test cache::tests::age_and_ttl_remaining ... ok
+test cache::tests::byte_len_reports_real_stored_size_side_effect_free ... ok
+test cache::tests::contains_fresh_does_not_touch_counters ... ok
+test cache::tests::empty_stats_hit_ratio_is_zero ... ok
+test cache::tests::hit_ratio_accounting ... ok
+test cache::tests::inserting_clears_negative_tombstone ... ok
+test cache::tests::miss_then_insert_then_hit ... ok
+test cache::tests::lru_eviction_when_over_budget ... ok
+test cache::tests::negative_cache_remembers_absent_then_expires ... ok
+test cache::tests::negative_ttl_zero_disables_negative_cache ... ok
+test cache::tests::object_larger_than_budget_is_rejected ... ok
+test cache::tests::per_object_stats_track_hits_and_misses ... ok
+test cache::tests::purge_removes_regardless_of_freshness ... ok
+test cache::tests::reinsert_replaces_and_frees_old_bytes ... ok
+test cache::tests::sweep_drops_only_stale_entries ... ok
+test cache::tests::ttl_expiry_is_a_miss_and_drops_entry ... ok
+test cache::tests::zero_ttl_never_expires ... ok
+test caps::tests::empty_explicit_falls_through_to_none_when_unset ... ok
+test caps::tests::env_var_is_used_when_no_explicit ... ok
+test caps::tests::explicit_takes_precedence ... ok
+test catalog::tests::access_serializes_lowercase ... ok
+test catalog::tests::cids_with_tag_groups_content ... ok
+test catalog::tests::healthy_edges_and_ids ... ok
+test catalog::tests::loads_legacy_catalog_without_version_or_tags ... ok
+test catalog::tests::missing_file_is_empty_catalog ... ok
+test catalog::tests::roundtrips_through_disk ... ok
+test catalog::tests::save_is_atomic_and_leaves_no_temp ... ok
+test catalog::tests::stale_lock_is_reclaimed ... ok
+test catalog::tests::update_locks_and_persists ... ok
+test catalog::tests::upsert_replaces_and_remove_works ... ok
+test cache::tests::negative_cache_is_bounded ... ok
+test cidrange::tests::content_range_header_formats ... ok
+test cidrange::tests::empty_object_cannot_satisfy_a_range ... ok
+test cidrange::tests::end_past_eof_is_clamped ... ok
+test cidrange::tests::explicit_span ... ok
+test cidrange::tests::malformed_headers_fall_back_to_full ... ok
+test cidrange::tests::no_header_is_full ... ok
+test cidrange::tests::open_ended_to_eof ... ok
+test cidrange::tests::partial_range_is_always_in_bounds ... ok
+test cidrange::tests::range_spanning_chunk_boundary ... ok
+test cidrange::tests::single_chunk_range ... ok
+test cidrange::tests::slice_extracts_exact_bytes ... ok
+test cidrange::tests::slice_rejects_truncated_input ... ok
+test cidrange::tests::start_after_end_is_unsatisfiable ... ok
+test cidrange::tests::start_at_or_past_eof_is_unsatisfiable ... ok
+test cidrange::tests::suffix_larger_than_object_clamps_to_whole ... ok
+test cidrange::tests::suffix_range ... ok
+test cidrange::tests::whitespace_is_tolerated ... ok
+test cidrange::tests::zero_chunk_size_is_none ... ok
+test cidrange::tests::zero_suffix_is_unsatisfiable ... ok
+test client::tests::put_result_shape ... ok
+test client::tests::url_for_is_cid_path ... ok
+test edge::tests::age_header_reflects_insertion_time ... ok
+test edge::tests::authorized_private_serves_like_public ... ok
+test edge::tests::denied_access_yields_403 ... ok
+test edge::tests::full_hit_has_cache_headers ... ok
+test edge::tests::if_none_match_matches_strong_weak_and_wildcard ... ok
+test edge::tests::malformed_range_degrades_to_full_200 ... ok
+test edge::tests::miss_marks_x_cache_miss ... ok
+test edge::tests::never_expiring_entry_reports_long_max_age ... ok
+test edge::tests::not_found_is_404 ... ok
+test edge::tests::not_modified_has_validators_and_no_body ... ok
+test edge::tests::range_request_yields_206_with_content_range ... ok
+test edge::tests::unsatisfiable_range_yields_416 ... ok
+test host::tests::ability_for_maps_topics ... ok
+test host::tests::cache_and_purge_always_need_capability_even_for_public_cid ... ok
+test host::tests::caps_and_cid_extracts_head_fields ... ok
+test host::tests::cid_validation_gates_requests ... ok
+test host::tests::now_secs_is_nonzero ... ok
+test host::tests::private_read_requires_capability ... ok
+test host::tests::public_read_is_allowed_without_capability ... ok
+test host::tests::public_set_allow_and_revoke ... ok
+test host::tests::seen_tokens_dedups_like_a_hashset ... ok
+test host::tests::seen_tokens_stays_bounded_under_many_requests ... ok
+test host::tests::seen_tokens_zero_capacity_is_clamped_to_one ... ok
+test limits::tests::acceptable_charset_filters_bad_paths ... ok
+test limits::tests::invalid_cid_rejected ... ok
+test limits::tests::limits_are_coherent ... ok
+test limits::tests::valid_cid_is_64_lowercase_hex ... ok
+test maintain::tests::plan_all_dead_recruits_full_target ... ok
+test maintain::tests::plan_at_target_recruits_nothing ... ok
+test maintain::tests::plan_keeps_healthy_and_recruits_for_unhealthy ... ok
+test maintain::tests::plan_no_recorded_edges_recruits_full_target ... ok
+test maintain::tests::plan_over_target_never_negative ... ok
+test cidrange::tests::chunk_span_covers_and_slices_back_to_range ... ok
+test pop::tests::expired_proof_is_rejected ... ok
+test pop::tests::far_future_proof_is_rejected ... ok
+test pop::tests::gen_nonce_is_distinct ... ok
+test pop::tests::malformed_proof_is_rejected ... ok
+test pop::tests::missing_proof_is_rejected ... ok
+test pop::tests::proof_for_wrong_ability_is_rejected ... ok
+test pop::tests::clock_skew_boundaries_are_inclusive ... ok
+test pop::tests::proof_signed_by_other_key_is_rejected ... ok
+test pop::tests::proof_for_wrong_cid_is_rejected ... ok
+test pop::tests::replay_guard_does_not_record_invalid_proofs ... ok
+test pop::tests::replay_guard_stays_bounded ... ok
+test pop::tests::replay_guard_rejects_reused_proof_but_accepts_fresh ... ok
+test presign::tests::expired_and_far_future_are_rejected ... ok
+test presign::tests::missing_or_malformed_query_is_rejected ... ok
+test presign::tests::presign_for_wrong_cid_is_rejected ... ok
+test pop::tests::valid_proof_verifies ... ok
+test presign::tests::presign_signed_by_untrusted_key_is_rejected ... ok
+test presign::tests::presign_url_is_well_formed_and_verifies ... ok
+test proto::tests::cache_req_roundtrips_json ... ok
+test proto::tests::denied_formats_uniformly ... ok
+test proto::tests::purge_and_status_roundtrip ... ok
+test proto::tests::read_req_defaults_caps_and_range ... ok
+test proto::tests::read_resp_defaults_when_minimal ... ok
+test proto::tests::service_strings_are_cid_namespaced ... ok
+test replication::tests::mem_breaks_ties_after_work_and_liveness ... ok
+test replication::tests::node_id_is_final_tiebreak ... ok
+test replication::tests::ranks_proven_edges_first ... ok
+test replication::tests::replicas_needed_and_rereplication ... ok
+test replication::tests::select_excludes_and_caps ... ok
+test replication::tests::select_handles_fewer_candidates_than_requested ... ok
+test replication::tests::select_on_empty_is_empty ... ok
+test presign::tests::valid_presign_verifies ... ok
+test server::tests::http_full_get_has_cache_headers_and_body ... ok
+test server::tests::http_head_keeps_headers_drops_body ... ok
+test server::tests::http_health_ok_and_unknown_path_404_and_post_405 ... ok
+test server::tests::http_if_none_match_yields_304_no_body ... ok
+test server::tests::http_invalid_cid_charset_is_404 ... ok
+test server::tests::http_malformed_range_degrades_to_full_200 ... ok
+test server::tests::http_metrics_endpoint_is_prometheus ... ok
+test server::tests::http_missing_cid_is_404 ... ok
+test server::tests::http_negative_cache_serves_404_without_rehitting_origin ... ok
+test server::tests::http_origin_fetched_once_then_served_from_cache ... ok
+test server::tests::http_oversize_object_is_413 ... ok
+test server::tests::http_pop_proof_is_single_use_replay_rejected ... ok
+test server::tests::http_concurrent_cold_misses_hit_origin_once_single_flight ... ok
+test server::tests::http_presigned_link_grants_access_without_client_key ... ok
+test server::tests::http_private_content_without_capability_is_403_and_origin_untouched ... ok
+test server::tests::http_private_valid_cap_but_no_proof_is_rejected ... ok
+test server::tests::http_range_yields_206_with_content_range ... ok
+test server::tests::http_private_content_with_valid_capability_is_served ... ok
+test server::tests::http_unsatisfiable_range_yields_416 ... ok
+test server::tests::http_status_reports_real_per_cid_sizes ... ok
+test server::tests::parse_reply_extracts_status_headers_body ... ok
+test server::tests::parse_reply_rejects_malformed ... ok
+test server::tests::resolve_access_private_with_garbage_caps_is_denied ... ok
+test server::tests::resolve_access_private_without_caps_is_denied ... ok
+test server::tests::resolve_access_public_is_open ... ok
+test server::tests::resolve_grant_prefers_public_then_presign ... ok
+test server::tests::status_json_includes_per_cid_sizes ... ok
+test tests::load_roots_missing_file_is_empty ... ok
+test tests::load_roots_parses_hex_lines_and_skips_comments ... ok
+test server::tests::prop_http_range_returns_exact_slice ... ok
+
+test result: ok. 147 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.58s
+
+     Running unittests src/main.rs (/opt/build/target-ce-cdn/debug/deps/ce_cdn-300c02acd318e7b5)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/integration.rs (/opt/build/target-ce-cdn/debug/deps/integration-7db951bc461ee7f8)
+
+running 25 tests
+test cache_ttl_expiry_then_purge ... ok
+test cache_hit_accounting_and_eviction_end_to_end ... ok
+test catalog_update_is_atomic_and_lock_guarded ... ok
+test edge_denies_private_and_404s_missing ... ok
+test edge_serves_full_then_range_with_headers ... ok
+test http_conditional_request_returns_304 ... ok
+test capability_for_wrong_ability_is_denied ... ok
+test http_front_end_full_range_416_and_404 ... ok
+test http_metrics_exposes_prometheus_counters ... ok
+test http_presigned_link_is_honored_end_to_end ... ok
+test limits_reject_bad_cids_and_oversize_inputs ... ok
+test maintenance_plan_recruits_to_restore_target ... ok
+test malformed_protocol_payloads_are_errors_not_panics ... ok
+test malformed_range_degrades_to_full ... ok
+test http_front_end_private_gate_and_status_sizes ... ok
+test private_content_denied_without_capability ... ok
+test private_content_requires_valid_read_capability ... ok
+test public_cid_does_not_authorize_cache_or_purge_without_capability ... ok
+test public_content_served_without_any_capability ... ok
+test range_fetch_slices_exact_bytes_across_chunk_boundary ... ok
+test replication_selects_n_best_edges_and_triggers_rereplication ... ok
+test slice_span_rejects_truncated_chunk_bytes ... ok
+test tampered_chunk_is_rejected_by_cid_verification ... ok
+test unsatisfiable_range_is_graceful_not_a_panic ... ok
+test object_cid_round_trips_and_dedups ... ok
+
+test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s
+
+   Doc-tests ce_cdn
+
+running 1 test
+test src/limits.rs - limits::is_valid_cid (line 39) ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 1.69s; merged doctests compilation took 1.68s

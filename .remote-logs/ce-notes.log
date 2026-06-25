@@ -1,0 +1,105 @@
+=== Wed Jun 24 16:33:37 UTC 2026 remote test ce-notes ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.60s
+     Running unittests src/lib.rs (/opt/build/target-ce-notes/debug/deps/ce_notes-a6b59181efdc248e)
+
+running 42 tests
+test core::crypto::tests::ed25519_secret_derivation_is_deterministic ... ok
+test core::crypto::tests::open_fails_with_wrong_epoch ... ok
+test core::crypto::tests::open_fails_on_tamper ... ok
+test core::crypto::tests::open_fails_with_wrong_key ... ok
+test core::crypto::tests::seal_open_roundtrip ... ok
+test core::crypto::tests::wrap_to_one_device_cannot_be_unwrapped_by_another ... ok
+test core::crypto::tests::wrap_to_node_id_unwraps_with_device_secret ... ok
+test core::crypto::tests::x25519_public_from_node_id_matches_derived_secret ... ok
+test core::crypto::tests::wrap_unwrap_roundtrip ... ok
+test core::mergelog::tests::clamp_mark_never_exceeds_len ... ok
+test core::mergelog::tests::mergelog_accumulates_in_order ... ok
+test core::mergelog::tests::ops_from_past_end_is_empty ... ok
+test core::model::tests::active_members_exclude_revoked ... ok
+test core::model::tests::checklist_item_merge_is_lww ... ok
+test core::model::tests::color_parse_roundtrip ... ok
+test core::model::tests::note_doc_id_format ... ok
+test core::model::tests::invite_decode_rejects_oversize ... ok
+test core::model::tests::note_header_new_defaults ... ok
+test core::model::tests::role_abilities_attenuate ... ok
+test core::model::tests::note_header_merge_is_lww_and_deterministic ... ok
+test core::notedoc::tests::apply_update_is_idempotent ... ok
+test core::notedoc::tests::incremental_edits_preserve_concurrent_changes ... ok
+test core::notedoc::tests::insert_emoji_into_middle_is_exact ... ok
+test core::notedoc::tests::new_doc_is_empty ... ok
+test core::notedoc::tests::set_text_then_read ... ok
+test core::notedoc::tests::non_bmp_edit_roundtrips_and_converges ... ok
+test core::notedoc::tests::snapshot_roundtrip ... ok
+test core::notedoc::tests::updates_are_commutative ... ok
+test core::notes::tests::guess_mime_known_and_unknown ... ok
+test core::notes::tests::derive_title_prefers_heading ... ok
+test core::notes::tests::parse_node_id_validates_length ... ok
+test core::notes::tests::merge_folder_tombstone_wins_and_is_order_independent ... ok
+test core::notes::tests::reduce_checklist_is_lww_per_item_and_sorted ... ok
+test core::notes::tests::reduce_index_is_lww_and_order_independent ... ok
+test core::notes::tests::reduce_index_skips_garbage_and_oversize_lines ... ok
+test core::notes::tests::reduce_checklist_skips_garbage_and_oversize_lines ... ok
+test core::notes::tests::sort_notes_pins_first_then_recency ... ok
+test core::store::tests::applied_marks_roundtrip ... ok
+test core::store::tests::at_rest_file_is_not_plaintext ... ok
+test core::store::tests::doc_snapshot_roundtrips ... ok
+test core::store::tests::list_space_ids_finds_saved_spaces ... ok
+test core::store::tests::meta_roundtrips_through_at_rest_seal ... ok
+
+test result: ok. 42 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/bin/ce-notes.rs (/opt/build/target-ce-notes/debug/deps/ce_notes-1fb85b1adca9dc0e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/live_node.rs (/opt/build/target-ce-notes/debug/deps/live_node-cc261a6c96c09511)
+
+running 1 test
+test notes_full_lifecycle_over_live_node ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/properties.rs (/opt/build/target-ce-notes/debug/deps/properties-5c870904e4d0bc7b)
+
+running 26 tests
+test apply_update_is_idempotent ... ok
+test at_rest_seals_doc_snapshot ... ok
+test atomic_write_leaves_no_temp_files_and_roundtrips ... ok
+test checklist_item_merge_is_commutative ... ok
+test color_parse_is_total_over_palette ... ok
+test at_rest_seals_space_name ... ok
+test invalid_node_id_x25519_derivation_errors ... ok
+test invite_encode_decode_roundtrips ... ok
+test non_bmp_replicas_converge ... ok
+test note_header_merge_is_associative ... ok
+test note_header_merge_is_commutative_and_idempotent ... ok
+test crdt_converges_under_random_op_order ... ok
+test open_rejects_ciphertext_tamper ... ok
+test reader_role_abilities_never_include_write ... ok
+test open_rejects_wrong_epoch ... ok
+test repeated_overwrites_never_corrupt ... ok
+test set_text_roundtrips_arbitrary_unicode ... ok
+test shorter_than_nonce_blob_fails_cleanly ... ok
+test snapshot_roundtrips ... ok
+test tampered_invite_wrapped_key_is_rejected ... ok
+test seal_open_roundtrips ... ok
+test truncated_sealed_blob_fails_to_open ... ok
+test wrap_unwrap_roundtrips ... ok
+test wrong_at_rest_key_cannot_open_anothers_disk ... ok
+test x25519_from_node_id_matches_device_derivation ... ok
+test wrap_to_a_cannot_unwrap_with_b ... ok
+
+test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.43s
+
+   Doc-tests ce_notes
+
+running 2 tests
+test src/lib.rs - (line 16) - compile ... ok
+test src/core/model.rs - core::model::Color (line 25) ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 1.77s; merged doctests compilation took 1.75s

@@ -1,0 +1,109 @@
+=== Thu Jun 25 13:26:27 UTC 2026 remote test game-draw ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+    Updating crates.io index
+    Updating git repository `https://github.com/ce-net/ce-rs`
+     Locking 222 packages to latest Rust 1.96.0 compatible versions
+      Adding generic-array v0.14.7 (available: v0.14.9)
+    Checking game-draw v0.1.0 (/opt/build/game-draw)
+warning: manual implementation of `.is_multiple_of()`
+   --> src/room_tile.rs:219:21
+    |
+219 |         if dirty && seq % SNAPSHOT_EVERY_TICKS == 0 {
+    |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `seq.is_multiple_of(SNAPSHOT_EVERY_TICKS)`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.96.0/index.html#manual_is_multiple_of
+    = note: `#[warn(clippy::manual_is_multiple_of)]` on by default
+
+warning: `game-draw` (lib) generated 1 warning (run `cargo clippy --fix --lib -p game-draw -- ` to apply 1 suggestion)
+warning: `game-draw` (lib test) generated 1 warning (1 duplicate)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.95s
+   Compiling game-draw v0.1.0 (/opt/build/game-draw)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.92s
+     Running unittests src/lib.rs (/opt/build/target-game-draw/debug/deps/game_draw-b3abd2a4776abfee)
+
+running 70 tests
+test crdt::tests::clock_observe_prevents_reuse_after_restart ... ok
+test crdt::tests::clear_hides_prior_strokes_but_keeps_later_ones ... ok
+test crdt::tests::clock_produces_strictly_increasing_unique_ids ... ok
+test crdt::tests::commits_from_two_writers_both_survive ... ok
+test crdt::tests::fold_is_order_independent_and_idempotent ... ok
+test crdt::tests::higher_clear_epoch_wins_lww ... ok
+test crdt::tests::last_visible_of_finds_writers_newest_stroke ... ok
+test crdt::tests::log_serializes_for_content_addressed_snapshots ... ok
+test crdt::tests::undo_before_commit_still_tombstones ... ok
+test crdt::tests::undo_is_author_scoped ... ok
+test placement::tests::best_host_picks_the_strongest_capable_node ... ok
+test placement::tests::fabric_rtt_hint_is_the_median ... ok
+test placement::tests::lower_rtt_scores_higher_all_else_equal ... ok
+test placement::tests::more_free_capacity_scores_higher ... ok
+test placement::tests::rank_prefers_self_for_local_hosting ... ok
+test placement::tests::ranking_is_deterministic_on_score_ties ... ok
+test placement::tests::redundancy_set_is_nearest_peers_excluding_self ... ok
+test placement::tests::stale_or_zero_capacity_hosts_score_zero ... ok
+test replication::tests::snapshot_bytes_roundtrip_preserves_the_board ... ok
+test replication::tests::snapshot_is_deterministic_for_dedup ... ok
+test replication::tests::snapshot_ref_orders_by_tick_per_tile ... ok
+test replication::tests::snapshot_ref_roundtrips ... ok
+test replication::tests::unknown_version_is_rejected ... ok
+test room::tests::build_state_delta_carries_only_new_strokes ... ok
+test room::tests::build_state_full_carries_whole_board ... ok
+test room::tests::hello_request_is_one_shot ... ok
+test room::tests::player_table_tracks_liveness_and_culls ... ok
+test room::tests::snapshot_encode_decode_roundtrips ... ok
+test room::tests::tick_effects_fold_undo_and_clear ... ok
+test room_tile::tests::board_from_log_reflects_clear ... ok
+test room_tile::tests::board_from_log_renders_converged_strokes_in_id_order ... ok
+test room_tile::tests::tile_config_defaults ... ok
+test run::tests::host_rooms_rejects_empty_room_list ... ok
+test run::tests::seed_tiles_is_the_square_block_around_home ... ok
+test run::tests::seed_tiles_partition_cleanly_across_a_ring ... ok
+test sim::tests::apply_dispatches_each_message_kind ... ok
+test sim::tests::changes_since_returns_only_newer_strokes ... ok
+test sim::tests::clear_wipes_board_and_bumps_epoch ... ok
+test sim::tests::color_is_length_bounded ... ok
+test sim::tests::commit_assigns_monotonic_seqs_and_author ... ok
+test sim::tests::commit_clamps_points_into_board ... ok
+test sim::tests::commit_clamps_width ... ok
+test sim::tests::deterministic_for_same_ordered_inputs ... ok
+test sim::tests::empty_stroke_is_rejected ... ok
+test sim::tests::from_parts_restores_seq_and_epoch ... ok
+test sim::tests::one_client_cannot_undo_anothers_stroke ... ok
+test sim::tests::over_long_stroke_is_truncated ... ok
+test sim::tests::rolling_cap_drops_oldest_strokes ... ok
+test sim::tests::seg_buffer_clamps_and_caps ... ok
+test sim::tests::undo_is_author_scoped ... ok
+test tile::tests::empty_ring_owns_nothing ... ok
+test tile::tests::from_atlas_excludes_stale_and_zero_capacity ... ok
+test tile::tests::live_tiles_partition_with_no_gaps_or_overlap ... ok
+test tile::tests::local_coords_are_always_in_tile_bounds ... ok
+test tile::tests::owner_is_deterministic_and_coordinator_free ... ok
+test tile::tests::point_maps_into_the_right_tile_including_negatives ... ok
+test crdt::tests::prop_multiwriter_canvas_converges ... ok
+test tile::tests::single_node_owns_every_live_tile ... ok
+test tile::tests::tile_key_is_topic_safe_and_unique ... ok
+test tile::tests::viewport_interest_is_bounded_for_a_huge_span ... ok
+test tile::tests::viewport_interest_is_the_overlapped_tiles_plus_margin ... ok
+test wire::tests::client_payload_never_carries_author_id ... ok
+test wire::tests::point_serializes_as_pair ... ok
+test wire::tests::seg_and_control_messages_decode ... ok
+test wire::tests::state_msg_roundtrips_through_json ... ok
+test wire::tests::stroke_commit_roundtrips_and_is_tagged ... ok
+test wire::tests::tile_topics_are_tile_keyed_and_distinct ... ok
+test wire::tests::topics_are_room_keyed_and_distinct ... ok
+test wire::tests::unknown_tag_is_error_not_panic ... ok
+test tile::tests::prop_adding_a_node_moves_few_tiles ... ok
+
+test result: ok. 70 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s
+
+     Running unittests src/main.rs (/opt/build/target-game-draw/debug/deps/game_draw-900cc88f58b155c7)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests game_draw
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

@@ -1,0 +1,299 @@
+=== Wed Jun 24 16:36:01 UTC 2026 remote test ce-pin ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+   Compiling proc-macro2 v1.0.106
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.45
+   Compiling libc v0.2.186
+   Compiling syn v2.0.118
+   Compiling cfg-if v1.0.4
+   Compiling stable_deref_trait v1.2.1
+   Compiling pin-project-lite v0.2.17
+   Compiling getrandom v0.2.17
+   Compiling bytes v1.12.0
+   Compiling once_cell v1.21.4
+   Compiling futures-core v0.3.32
+   Compiling version_check v0.9.5
+   Compiling zeroize v1.9.0
+   Compiling generic-array v0.14.7
+   Compiling errno v0.3.14
+   Compiling find-msvc-tools v0.1.9
+   Compiling itoa v1.0.18
+   Compiling smallvec v1.15.2
+   Compiling shlex v2.0.1
+   Compiling cc v1.2.65
+   Compiling synstructure v0.13.2
+   Compiling signal-hook-registry v1.4.8
+   Compiling mio v1.2.1
+   Compiling zerofrom-derive v0.1.7
+   Compiling yoke-derive v0.8.2
+   Compiling zerovec-derive v0.11.3
+   Compiling zerofrom v0.1.8
+   Compiling yoke v0.8.3
+   Compiling displaydoc v0.2.6
+   Compiling tokio-macros v2.7.0
+   Compiling zerovec v0.11.6
+   Compiling socket2 v0.6.4
+   Compiling tinystr v0.8.3
+   Compiling serde_core v1.0.228
+   Compiling typenum v1.20.1
+   Compiling writeable v0.6.3
+   Compiling litemap v0.8.2
+   Compiling icu_locale_core v2.2.0
+   Compiling tokio v1.52.3
+   Compiling potential_utf v0.1.5
+   Compiling zerotrie v0.2.4
+   Compiling ring v0.17.14
+   Compiling zerocopy v0.8.52
+   Compiling icu_properties_data v2.2.0
+   Compiling utf8_iter v1.0.4
+   Compiling subtle v2.6.1
+   Compiling icu_normalizer_data v2.2.0
+   Compiling icu_collections v2.2.0
+   Compiling icu_provider v2.2.0
+   Compiling http v1.4.2
+   Compiling percent-encoding v2.3.2
+   Compiling serde v1.0.228
+   Compiling http-body v1.0.1
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling serde_derive v1.0.228
+   Compiling futures-macro v0.3.32
+   Compiling rustls-pki-types v1.14.1
+   Compiling tracing-core v0.1.36
+   Compiling bitflags v2.13.0
+   Compiling slab v0.4.12
+   Compiling untrusted v0.9.0
+   Compiling httparse v1.10.1
+   Compiling getrandom v0.3.4
+   Compiling semver v1.0.28
+   Compiling futures-task v0.3.32
+   Compiling futures-util v0.3.32
+   Compiling rustc_version v0.4.1
+   Compiling ppv-lite86 v0.2.21
+   Compiling digest v0.10.7
+   Compiling icu_normalizer v2.2.0
+   Compiling icu_properties v2.2.0
+   Compiling tracing-attributes v0.1.31
+   Compiling rustls v0.23.40
+   Compiling cpufeatures v0.2.17
+   Compiling try-lock v0.2.5
+   Compiling tower-service v0.3.3
+   Compiling want v0.3.1
+   Compiling idna_adapter v1.2.2
+   Compiling tracing v0.1.44
+   Compiling rustls-webpki v0.103.13
+   Compiling curve25519-dalek v4.1.3
+   Compiling form_urlencoded v1.2.2
+   Compiling futures-channel v0.3.32
+   Compiling rand_core v0.6.4
+   Compiling zmij v1.0.21
+   Compiling atomic-waker v1.1.2
+   Compiling anyhow v1.0.102
+   Compiling hyper v1.10.1
+   Compiling idna v1.1.0
+   Compiling sha2 v0.10.9
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling sync_wrapper v1.0.2
+   Compiling ipnet v2.12.0
+   Compiling log v0.4.32
+   Compiling tower-layer v0.3.3
+   Compiling serde_json v1.0.150
+   Compiling utf8parse v0.2.2
+   Compiling regex-syntax v0.8.11
+   Compiling base64 v0.22.1
+   Compiling signature v2.2.0
+   Compiling hyper-util v0.1.20
+   Compiling ed25519 v2.2.3
+   Compiling anstyle-parse v1.0.0
+   Compiling tower v0.5.3
+   Compiling tokio-rustls v0.26.4
+   Compiling url v2.5.8
+   Compiling rand_chacha v0.3.1
+   Compiling webpki-roots v1.0.8
+   Compiling futures-sink v0.3.32
+   Compiling rustix v1.1.4
+   Compiling option-ext v0.2.0
+   Compiling memchr v2.8.2
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling hex v0.4.3
+   Compiling colorchoice v1.0.5
+   Compiling anstyle-query v1.1.5
+   Compiling anstyle v1.0.14
+   Compiling ryu v1.0.23
+   Compiling serde_urlencoded v0.7.1
+   Compiling anstream v1.0.0
+   Compiling dirs-sys v0.4.1
+   Compiling rand v0.8.6
+   Compiling tokio-util v0.7.18
+   Compiling hyper-rustls v0.27.9
+   Compiling ed25519-dalek v2.2.0
+   Compiling tower-http v0.6.11
+   Compiling regex-automata v0.4.14
+   Compiling rand_core v0.9.5
+   Compiling http-body-util v0.1.3
+   Compiling lazy_static v1.5.0
+   Compiling clap_lex v1.1.0
+   Compiling autocfg v1.5.1
+   Compiling strsim v0.11.1
+   Compiling heck v0.5.0
+   Compiling linux-raw-sys v0.12.1
+   Compiling matchers v0.2.0
+   Compiling clap_derive v4.6.1
+   Compiling clap_builder v4.6.0
+   Compiling num-traits v0.2.19
+   Compiling sharded-slab v0.1.7
+   Compiling reqwest v0.12.28
+   Compiling ce-identity v0.1.0 (/opt/build/ce/crates/ce-identity)
+   Compiling directories v5.0.1
+   Compiling tracing-log v0.2.0
+   Compiling bincode v1.3.3
+   Compiling thread_local v1.1.9
+   Compiling nu-ansi-term v0.50.3
+   Compiling fastrand v2.4.1
+   Compiling tracing-subscriber v0.3.23
+   Compiling tempfile v3.27.0
+   Compiling ce-cap v0.1.0 (/opt/build/ce/crates/ce-cap)
+   Compiling ce-rs v0.1.0 (/opt/build/ce-rs)
+   Compiling clap v4.6.1
+   Compiling wait-timeout v0.2.1
+   Compiling quick-error v1.2.3
+   Compiling bit-vec v0.8.0
+   Compiling fnv v1.0.7
+   Compiling rusty-fork v0.3.1
+   Compiling bit-set v0.8.0
+   Compiling rand v0.9.4
+   Compiling rand_chacha v0.9.0
+   Compiling rand_xorshift v0.4.0
+   Compiling unarray v0.1.4
+   Compiling proptest v1.11.0
+   Compiling ce-pin v0.1.0 (/opt/build/ce-pin)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 22s
+     Running unittests src/lib.rs (/opt/build/target-ce-pin/debug/deps/ce_pin-2a1b0526b6c06c94)
+
+running 51 tests
+test audit::tests::empty_object_index_is_zero ... ok
+test audit::tests::index_changes_with_beacon ... ok
+test audit::tests::index_is_in_range_and_deterministic ... ok
+test audit::tests::nonce_is_hex_and_stable_for_seed ... ok
+test audit::tests::proof_rejects_replayed_nonce ... ok
+test audit::tests::proof_rejects_wrong_bytes ... ok
+test audit::tests::proof_roundtrips ... ok
+test caps::tests::explicit_takes_precedence ... ok
+test client::tests::channel_capacity_has_a_floor ... ok
+test client::tests::channel_capacity_scales_with_rent_and_lease ... ok
+test client::tests::rent_owed_handles_sub_gb_objects ... ok
+test caps::tests::empty_explicit_falls_through_to_none_when_unset ... ok
+test client::tests::rent_owed_is_integer_and_scales ... ok
+test config::tests::default_admits_a_normal_object ... ok
+test config::tests::from_env_clamps_zero_concurrency ... ok
+test config::tests::malformed_rent_is_treated_as_zero ... ok
+test config::tests::rejects_object_over_max_size ... ok
+test config::tests::rejects_offer_over_capacity_budget ... ok
+test config::tests::rejects_rent_below_minimum ... ok
+test held::tests::corrupt_file_is_preserved_not_dropped ... ok
+test held::tests::evict_noop_when_under_target ... ok
+test held::tests::evict_prefers_expired_then_low_rent_then_lru ... ok
+test held::tests::expired_lists_only_past_lease ... ok
+test held::tests::legacy_v0_file_migrates_forward ... ok
+test held::tests::total_bytes_sums_entries ... ok
+test held::tests::touch_updates_recency ... ok
+test host::tests::audit_denied_after_release ... ok
+test held::tests::atomic_save_load_roundtrip ... ok
+test host::tests::audit_denied_for_cid_not_held_locally ... ok
+test host::tests::empty_host_answers_no_audit ... ok
+test host::tests::seen_window_dedups_and_is_bounded ... ok
+test pinset::tests::healthy_replicas_counts_only_verified ... ok
+test metrics::tests::counters_increment_and_snapshot ... ok
+test pinset::tests::missing_file_is_empty_set ... ok
+test pinset::tests::upsert_replaces_and_remove_works ... ok
+test placement::tests::fault_domain_extracted_from_tags ... ok
+test placement::tests::mem_breaks_ties_after_work_and_liveness ... ok
+test placement::tests::ranks_proven_hosts_first ... ok
+test placement::tests::select_excludes_and_caps ... ok
+test placement::tests::select_handles_fewer_candidates_than_requested ... ok
+test placement::tests::select_spreads_across_fault_domains ... ok
+test placement::tests::select_tops_up_when_fewer_domains_than_n ... ok
+test placement::tests::unknown_domains_are_distinct_buckets ... ok
+test proto::tests::offer_roundtrips_json ... ok
+test proto::tests::resp_defaults_when_fields_absent ... ok
+test proto::tests::service_strings_are_cid_namespaced ... ok
+test repair::tests::never_over_places_when_more_healthy_than_desired ... ok
+test repair::tests::no_placement_when_fully_healthy ... ok
+test repair::tests::places_full_factor_when_all_dead ... ok
+test repair::tests::places_the_shortfall ... ok
+test pinset::tests::roundtrips_through_disk ... ok
+
+test result: ok. 51 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/main.rs (/opt/build/target-ce-pin/debug/deps/ce_pin-5d5e314ce0072408)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/host_logic.rs (/opt/build/target-ce-pin/debug/deps/host_logic-b858720be74524d6)
+
+running 7 tests
+test admission_rejects_oversize_low_rent_and_over_capacity ... ok
+test expired_lease_is_collected ... ok
+test corrupt_held_set_is_preserved_not_silently_dropped ... ok
+test gc_evicts_expired_first_then_low_rent_then_lru ... ok
+test metrics_track_admission_and_audit_outcomes ... ok
+test repair_plan_restores_the_factor_excluding_current_holders ... ok
+test held_set_persists_atomically_and_survives_reload ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/integration.rs (/opt/build/target-ce-pin/debug/deps/integration-9fba3c8763c69862)
+
+running 7 tests
+test challenge_index_in_range ... ok
+test pinset_persists ... ok
+test placement_selects_best_hosts ... ok
+test por_proof_round_trip ... ok
+test host_authorizes_self_issued_pin_store ... ok
+test read_cap_does_not_authorize_store ... ok
+test unrooted_chain_is_denied ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/live_mesh.rs (/opt/build/target-ce-pin/debug/deps/live_mesh-e24da889a2a2d5bd)
+
+running 1 test
+test pin_offer_audit_status_round_trip_across_two_nodes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/properties.rs (/opt/build/target-ce-pin/debug/deps/properties-cf99d9811da19244)
+
+running 17 tests
+test chain_survives_token_encoding ... ok
+test challenge_index_in_range_and_deterministic ... ok
+test delegation_cannot_amplify_abilities ... ok
+test audit_resp_roundtrips ... ok
+test empty_chain_denied ... ok
+test empty_object_audit_index_is_zero_not_panic ... ok
+test expired_capability_is_denied ... ok
+test malformed_nonce_still_produces_deterministic_proof ... ok
+test delegation_narrowing_is_honored_both_ways ... ok
+test offer_resp_tolerates_partial_host_reply ... ok
+test offer_req_roundtrips ... ok
+test pinset_load_rejects_malformed_json ... ok
+test proof_verifies_and_rejects_tamper ... ok
+test rank_is_total_and_idempotent ... ok
+test revoked_capability_is_denied ... ok
+test select_respects_exclude_and_cap ... ok
+test pinset_disk_roundtrip ... ok
+
+test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.81s
+
+   Doc-tests ce_pin
+
+running 3 tests
+test src/pinset.rs - pinset::Entry::healthy_replicas (line 59) ... ok
+test src/placement.rs - placement::rank (line 36) ... ok
+test src/audit.rs - audit::prove (line 39) ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+all doctests ran in 0.60s; merged doctests compilation took 0.58s

@@ -1,0 +1,185 @@
+=== Wed Jun 24 16:30:58 UTC 2026 remote test ce-db ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.38s
+     Running unittests src/lib.rs (/opt/build/target-ce-db/debug/deps/ce_db-ce54644e71d5098f)
+
+running 55 tests
+test access::tests::attenuation_cannot_amplify ... ok
+test access::tests::expired_grant_is_denied ... ok
+test access::tests::attenuation_narrows_and_chains ... ok
+test access::tests::node_id_hex_roundtrips ... ok
+test access::tests::minted_grant_authorizes_write ... ok
+test access::tests::non_holder_cannot_attenuate ... ok
+test access::tests::token_roundtrips_and_pins_collection ... ok
+test collection::tests::snapshot_diff_added_modified_removed ... ok
+test access::tests::read_only_grant_denies_write ... ok
+test collection::tests::snapshot_get_and_query ... ok
+test doc::tests::convergence_is_order_independent ... ok
+test doc::tests::delete_tombstones_until_resurrected ... ok
+test doc::tests::array_union_and_remove ... ok
+test doc::tests::field_patch_lww_newer_wins_regardless_of_order ... ok
+test doc::tests::field_level_patch_merge_preserves_concurrent_fields ... ok
+test doc::tests::fold_seq_equals_fold_for_keyed_ops ... ok
+test doc::tests::increment_composes_across_writers ... ok
+test doc::tests::increment_on_missing_field_starts_at_zero ... ok
+test doc::tests::metadata_tracks_create_and_update ... ok
+test doc::tests::nested_patch_deep_merges ... ok
+test doc::tests::nested_patch_null_deletes_nested_key ... ok
+test doc::tests::null_field_in_patch_deletes_field ... ok
+test doc::tests::older_op_after_delete_stays_deleted ... ok
+test doc::tests::set_resets_stale_fields ... ok
+test doc::tests::set_then_get_roundtrips ... ok
+test doc::tests::whole_document_lww_highest_key_wins ... ok
+test limits::tests::rejects_control_chars ... ok
+test limits::tests::permissive_allows_big_but_still_validates_structure ... ok
+test limits::tests::rejects_deep_nesting ... ok
+test limits::tests::rejects_empty_and_slash_and_dotdot ... ok
+test limits::tests::rejects_empty_field_name ... ok
+test limits::tests::rejects_oversize_doc ... ok
+test limits::tests::rejects_oversize_id ... ok
+test query::tests::array_contains_any ... ok
+test query::tests::comparison_filters ... ok
+test limits::tests::rejects_too_many_fields ... ok
+test query::tests::conjunction_of_filters ... ok
+test query::tests::contains_array_and_substring ... ok
+test query::tests::cursor_end_before_value ... ok
+test query::tests::cursor_start_after_value ... ok
+test query::tests::cursor_start_at_value ... ok
+test query::tests::empty_query_matches_all_sorted_by_id ... ok
+test query::tests::eq_filter ... ok
+test query::tests::in_and_not_in ... ok
+test query::tests::large_integers_compare_precisely ... ok
+test query::tests::literal_key_with_dot ... ok
+test query::tests::multi_field_order_with_id_tiebreak ... ok
+test query::tests::ne_matches_missing_field ... ok
+test query::tests::nested_field_path_filter ... ok
+test query::tests::offset_and_limit ... ok
+test query::tests::order_and_limit ... ok
+test query::tests::pagination_with_doc_cursor ... ok
+test tests::docpath_keeps_nested_doc_id ... ok
+test tests::docpath_parses ... ok
+test tests::docpath_rejects_malformed ... ok
+
+test result: ok. 55 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.12s
+
+     Running unittests src/bin/ce_db.rs (/opt/build/target-ce-db/debug/deps/ce_db-67d24727456839ae)
+
+running 8 tests
+test tests::parse_filter_errors ... ok
+test tests::parse_filter_ok_and_ops ... ok
+test tests::build_query_multi_field_order_and_offset ... ok
+test tests::parse_order_ok_and_errors ... ok
+test tests::parse_object_rejects_non_object ... ok
+test tests::parse_value_jsonish_must_be_valid ... ok
+test tests::parse_value_bare_word_is_string ... ok
+test tests::validate_abilities_works ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/edge_cases.rs (/opt/build/target-ce-db/debug/deps/edge_cases-4577a7f719b66c27)
+
+running 15 tests
+test comparison_across_incomparable_types_is_false ... ok
+test contains_on_non_container_is_false ... ok
+test empty_machine_is_empty ... ok
+test docpath_edge_cases ... ok
+test large_integer_field_survives_fold ... ok
+test le_ge_boundary_inclusive ... ok
+test limit_zero_returns_empty ... ok
+test grant_from_garbage_token_errors ... ok
+test older_set_after_delete_stays_deleted_either_order ... ok
+test order_puts_missing_field_last_asc_first_desc ... ok
+test patch_null_deletes_only_that_field ... ok
+test non_holder_cannot_attenuate ... ok
+test snapshot_query_and_get ... ok
+test unrelated_root_denies ... ok
+test revoked_grant_is_denied ... ok
+
+test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/guard.rs (/opt/build/target-ce-db/debug/deps/guard-ece57fff9115c7d2)
+
+running 8 tests
+test forged_token_does_not_parse_as_grant ... ok
+test grant_for_other_collection_is_denied ... ok
+test read_only_grant_denies_write_at_the_gate ... ok
+test expired_grant_is_denied ... ok
+test untrusted_root_is_denied ... ok
+test revoked_grant_is_denied ... ok
+test wrong_requester_is_denied ... ok
+test write_grant_authorizes_read_and_write ... ok
+
+test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/live.rs (/opt/build/target-ce-db/debug/deps/live-a407edf42d221201)
+
+running 12 tests
+test live_capability_per_collection ... ok
+test live_atomic_increment_composes ... ok
+test live_concurrent_writes_monotonic_lamport ... ok
+test live_field_level_lww ... ok
+test live_guarded_collection_enforces ... ok
+test live_limits_reject_bad_input ... ok
+test live_push_realtime_wakes_watcher ... ok
+test live_query_filters_order_limit ... ok
+test live_snapshot_compact ... ok
+test live_subcollection_converges ... ok
+test live_two_reader_realtime_convergence ... ok
+test live_write_batch_atomic ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/model_extra.rs (/opt/build/target-ce-db/debug/deps/model_extra-0f034ca12389df64)
+
+running 6 tests
+test increment_sum_is_independent_of_delivery_order ... ok
+test duplicate_increment_ops_dedup ... ok
+test nested_deep_merge_preserves_siblings ... ok
+test prop_update_op_serde_roundtrips ... ok
+test query_over_large_integers ... ok
+test prop_increment_converges ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s
+
+     Running tests/prop_db.rs (/opt/build/target-ce-db/debug/deps/prop_db-b29b1664b06fa171)
+
+running 16 tests
+test convergence_is_order_independent ... ok
+test docop_roundtrips_with_large_numbers ... ok
+test docpath_parse_never_panics ... ok
+test duplicate_delivery_is_idempotent ... ok
+test eq_filter_matches_exactly ... ok
+test expiry_is_honored ... ok
+test from_token_garbage_never_panics ... ok
+test grant_pinned_to_collection ... ok
+test grant_token_roundtrips ... ok
+test incomparable_filter_is_false_not_panic ... ok
+test leaf_cannot_invent_ability ... ok
+test ne_matches_missing_eq_does_not ... ok
+test opkey_total_order ... ok
+test order_desc_limit_is_sorted_and_capped ... ok
+test pairwise_commutative ... ok
+test attenuation_never_amplifies ... ok
+
+test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 17.09s
+
+     Running tests/realtime_sync.rs (/opt/build/target-ce-db/debug/deps/realtime_sync-7a13ca01b9a4487a)
+
+running 4 tests
+test lamport_ties_break_deterministically ... ok
+test late_reader_replay_equals_live_reader ... ok
+test two_readers_converge_regardless_of_delivery_order ... ok
+test live_two_reader_realtime_sync ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+   Doc-tests ce_db
+
+running 3 tests
+test src/lib.rs - (line 27) - compile ... ok
+test src/query.rs - query::Query (line 176) ... ok
+test src/limits.rs - limits::Limits (line 25) ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+all doctests ran in 1.93s; merged doctests compilation took 1.90s

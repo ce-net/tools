@@ -1,0 +1,45 @@
+=== Thu Jun 25 16:09:44 UTC 2026 remote test ce-scale-types ===
+rustc 1.96.0 (ac68faa20 2026-05-25)
+    Updating crates.io index
+     Locking 12 packages to latest Rust 1.96.0 compatible versions
+      Adding bincode v1.3.3 (available: v3.0.0)
+    Checking ce-scale-types v0.1.0 (/opt/build/ce-scale-types)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.40s
+   Compiling ce-scale-types v0.1.0 (/opt/build/ce-scale-types)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.33s
+     Running unittests src/lib.rs (/opt/build/target-ce-scale-types/debug/deps/ce_scale_types-d43ee7b79df83b5d)
+
+running 24 tests
+test tests::child_hop_propagates_trace_never_extends_deadline ... ok
+test tests::ctx_bincode_roundtrip ... ok
+test tests::ctx_framed_encode_decode_roundtrip ... ok
+test tests::ctx_json_roundtrip ... ok
+test tests::current_vs_default_version ... ok
+test tests::decode_rejects_truncated_frame ... ok
+test tests::effective_ns_falls_back_to_node_hex ... ok
+test tests::field_version_lookup ... ok
+test tests::has_trace_and_has_deadline ... ok
+test tests::new_decoder_reads_old_envelope_as_default_tail ... ok
+test tests::old_decoder_reads_new_envelope_dropping_appended_field ... ok
+test tests::partial_accounting_and_honesty ... ok
+test tests::partial_bincode_roundtrip ... ok
+test tests::partial_failure_status_analysis ... ok
+test tests::partial_map_ok_preserves_failures ... ok
+test tests::presence_by_version_future_field_absent_on_v1 ... ok
+test tests::retry_after_exponential_backoff_capped ... ok
+test tests::presence_by_version_uses_v_not_value ... ok
+test tests::retry_after_honors_server_hint ... ok
+test tests::retry_after_internal_only_when_idempotent ... ok
+test tests::retry_after_none_for_permanent_and_success ... ok
+test tests::retryability_table_matches_contract ... ok
+test tests::status_bincode_roundtrip_all_variants ... ok
+test tests::status_http_mapping ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ce_scale_types
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
