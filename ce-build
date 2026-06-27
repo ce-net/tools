@@ -49,19 +49,37 @@ WS="/root/ce-build/ws"
 SSH=(ssh -o BatchMode=yes -o ConnectTimeout=15)
 RSYNC_EXCL=(--exclude 'target' --exclude 'target-*' --exclude .git --exclude node_modules --exclude dist --exclude '*.bak')
 
-# Discover `path = "(../)+name"` deps (any depth) anywhere in the repo's Cargo.toml files. A path dep
-# is relative to the Cargo.toml it is DECLARED in (crates can be nested, e.g. crates/foo/Cargo.toml
-# with `path = "../../../bar"`), so resolve each against ITS OWN file's dir — not the repo root.
-DEP_RELS=""
-while IFS= read -r match; do
-  file="${match%%:*}"
-  rel="$(printf '%s\n' "$match" | sed -E 's|.*path *= *"([^"]+)".*|\1|')"
-  [ -z "$rel" ] && continue
-  dabs="$(cd "$(dirname "$file")" && cd "$rel" 2>/dev/null && pwd || true)"
-  if [ -z "$dabs" ]; then echo "    ! path-dep $rel (in ${file#"$REPO_ABS"/}) unresolved (skipping)" >&2; continue; fi
-  DEP_RELS="$DEP_RELS ${dabs#"$WS_ROOT"/}"
-done < <(grep -rE 'path *= *"(\.\./)+[^"]+"' "$REPO_ABS" --include=Cargo.toml 2>/dev/null || true)
-DEP_RELS=$(echo "$DEP_RELS" | tr ' ' '\n' | sed '/^$/d' | sort -u)
+# Discover `path = "(../)+name"` deps TRANSITIVELY. A path dep is relative to the Cargo.toml it is
+# DECLARED in (crates can be nested, e.g. crates/foo/Cargo.toml with `path = "../../../bar"`), AND a
+# dep crate can itself declare more path deps (cast-control -> ce-gke -> ce/crates/ce-appmgr +
+# ce-iam/crates/ce-iam-core). We must sync the FULL closure, or the remote build fails on a transitive
+# crate that was never synced. Compute it by fixed point (BFS over dep dirs).
+_deps_of() { # $1 = dir to scan; prints absolute resolved path-dep dirs, one per line
+  grep -rE 'path *= *"(\.\./)+[^"]+"' "$1" --include=Cargo.toml 2>/dev/null | while IFS= read -r m; do
+    f="${m%%:*}"; r="$(printf '%s\n' "$m" | sed -E 's|.*path *= *"([^"]+)".*|\1|')"
+    [ -n "$r" ] && (cd "$(dirname "$f")" && cd "$r" 2>/dev/null && pwd) || true
+  done
+}
+SEEN=" $REPO_ABS "   # set of already-scanned dirs (space-delimited)
+WORK="$REPO_ABS"     # frontier to scan this round
+DEP_ABS=""           # accumulated dep dirs (the closure, minus the repo itself)
+while [ -n "$WORK" ]; do
+  NEXT=""
+  while IFS= read -r d; do
+    [ -z "$d" ] && continue
+    while IFS= read -r dep; do
+      [ -z "$dep" ] && continue
+      case "$SEEN" in
+        *" $dep "*) ;;  # already seen
+        *) SEEN="$SEEN$dep "; DEP_ABS="$DEP_ABS
+$dep"; NEXT="$NEXT
+$dep" ;;
+      esac
+    done < <(_deps_of "$d")
+  done < <(printf '%s\n' "$WORK")
+  WORK="$NEXT"
+done
+DEP_RELS="$(printf '%s\n' "$DEP_ABS" | sed '/^$/d' | while IFS= read -r d; do printf '%s\n' "${d#"$WS_ROOT"/}"; done | sort -u)"
 
 echo "==> [ce-build] node=$NODE image=$IMAGE repo=$REPO_REL cargo $CARGO_ARGS"
 [ -n "$DEP_RELS" ] && echo "    path-dep crates: $(echo "$DEP_RELS" | tr '\n' ' ')"
@@ -78,6 +96,26 @@ for drel in $DEP_RELS; do
     echo "    ! dep $drel not found at $WS_ROOT/$drel (skipping)" >&2
   fi
 done
+
+# Auto-clean: the relay is production; runaway target-* dirs filled the disk to 100% once. Before
+# building, bound total build scratch to CE_BUILD_TARGET_BUDGET_GB (default 20G) by pruning the
+# least-recently-modified target-* dirs (never the current repo's), preserving incrementality for
+# active repos while keeping the disk safe. Set the budget to 0 to disable.
+BUDGET_GB="${CE_BUILD_TARGET_BUDGET_GB:-20}"
+if [ "$BUDGET_GB" != "0" ]; then
+  echo "==> auto-clean: keeping build scratch under ${BUDGET_GB}G (current: target-$NAME)"
+  "${SSH[@]}" "$NODE" "
+    cd /root/ce-build 2>/dev/null || exit 0
+    budget=\$(( $BUDGET_GB * 1024 * 1024 ))
+    total=\$(du -sk target-* 2>/dev/null | awk '{s+=\$1} END{print s+0}')
+    for d in \$(ls -dtr target-* 2>/dev/null); do
+      [ \"\$total\" -le \"\$budget\" ] && break
+      [ \"\$d\" = \"target-$NAME\" ] && continue
+      sz=\$(du -sk \"\$d\" 2>/dev/null | awk '{print \$1+0}')
+      rm -rf \"\$d\" && total=\$(( total - sz )) && echo \"    pruned \$d (\$(( sz / 1024 ))MB)\"
+    done
+  "
+fi
 
 echo "==> cargo $CARGO_ARGS  (in $IMAGE on $NODE)"
 "${SSH[@]}" "$NODE" "docker run --rm \
