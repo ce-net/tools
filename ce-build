@@ -5,24 +5,30 @@
 # heavy or disk-hungry cargo work onto a CE node (the Hetzner relay by default) instead of melting
 # the laptop. It dogfoods the idea CE sells — run work on someone else's machine.
 #
-# Workspace-tree mirroring: the workspace root is the nearest ancestor holding CLAUDE.md (e.g.
-# ~/ce-net). The repo and every `path = "../…"` dependency (at ANY depth — `../ce-rs`,
-# `../../ce-rs`) are synced to the node at their real position relative to that root, so the
-# relative layout in Cargo.toml resolves identically on the remote.
+# How cross-repo deps resolve (the model — see PLAN/ce-cross-repo-deps.md):
+#   CE crates live in separate repos and depend on each other via github GIT deps. A clean checkout
+#   would resolve those from github (needing escape-free PUBLISHED manifests). Instead, to build YOUR
+#   uncommitted WIP, we:
+#     1. ask `tools/ce-dev-link --closure` for the transitive set of CE crate dirs this repo needs,
+#     2. rsync the repo + that closure (+ each dep's workspace-root manifest) to the node,
+#     3. run `tools/ce-dev-link` ON THE NODE so every synced repo gets a scoped `[patch]` config
+#        pointing at the synced sibling source (relay-absolute paths),
+#     4. mount the workspace at the SAME absolute path inside the container so those paths resolve,
+#        and run cargo. No `../` rewriting, no stale-manifest games — the same mechanism as local dev.
 #
 # Usage:
 #   tools/ce-build <repo-path> [cargo subcommand + args...]      # default: test
-#   tools/ce-build web/ce-hub test
+#   tools/ce-build ce-hub build
 #   tools/ce-build ce-ratio test --release
-#   tools/ce-build ce-watch "build --locked"
 #
 # Env:
 #   CE_BUILD_NODE   ssh target of the build node   (default: root@178.105.145.170, the relay)
 #   CE_BUILD_IMAGE  rust docker image              (default: rust:1-bookworm — has gcc/build-essential)
+#   CE_BUILD_TARGET_BUDGET_GB  cap on total build scratch on the node (default 20; 0 disables)
 #
 # Persistent state on the node (so builds are incremental and deps aren't re-downloaded):
 #   /root/ce-build/cargo-registry    shared cargo registry cache
-#   /root/ce-build/ws/<rel-path>     synced source mirror (repo + path-dep crates at workspace paths)
+#   /root/ce-build/ws/<rel-path>     synced source mirror (repo + closure crates at workspace paths)
 #   /root/ce-build/target-<name>     per-repo persistent target dir
 #
 # Exit code is the cargo exit code, so this composes in scripts and CI.
@@ -31,7 +37,7 @@ set -euo pipefail
 NODE="${CE_BUILD_NODE:-root@178.105.145.170}"
 IMAGE="${CE_BUILD_IMAGE:-rust:1-bookworm}"
 
-REPO="${1:?usage: ce-build <repo-path> [cargo args...]   (e.g. ce-build web/ce-hub test)}"
+REPO="${1:?usage: ce-build <repo-path> [cargo args...]   (e.g. ce-build ce-hub build)}"
 shift || true
 CARGO_ARGS="${*:-test}"
 
@@ -39,55 +45,41 @@ CARGO_ARGS="${*:-test}"
 REPO_ABS="$(cd "$REPO" && pwd)"
 NAME="$(basename "$REPO_ABS")"
 
-# Workspace root = nearest ancestor holding CLAUDE.md (the ~/ce-net marker); fallback to repo parent.
+# Workspace root = the ancestor that actually holds the dev-link tool (`tools/ce-dev-link`, the real
+# ~/ce-net marker). We must NOT key on CLAUDE.md alone: a repo may carry its OWN CLAUDE.md (e.g.
+# ce/CLAUDE.md), which would wrongly root that repo at itself and then fail to find tools/ce-dev-link.
+# Prefer the nearest ancestor with tools/ce-dev-link; fall back to nearest CLAUDE.md, then repo parent.
 WS_ROOT="$REPO_ABS"
-while [ "$WS_ROOT" != "/" ] && [ ! -f "$WS_ROOT/CLAUDE.md" ]; do WS_ROOT="$(dirname "$WS_ROOT")"; done
-[ -f "$WS_ROOT/CLAUDE.md" ] || WS_ROOT="$(dirname "$REPO_ABS")"
+while [ "$WS_ROOT" != "/" ] && [ ! -f "$WS_ROOT/tools/ce-dev-link" ]; do WS_ROOT="$(dirname "$WS_ROOT")"; done
+if [ ! -f "$WS_ROOT/tools/ce-dev-link" ]; then
+  WS_ROOT="$REPO_ABS"
+  while [ "$WS_ROOT" != "/" ] && [ ! -f "$WS_ROOT/CLAUDE.md" ]; do WS_ROOT="$(dirname "$WS_ROOT")"; done
+  [ -f "$WS_ROOT/CLAUDE.md" ] || WS_ROOT="$(dirname "$REPO_ABS")"
+fi
 REPO_REL="${REPO_ABS#"$WS_ROOT"/}"
 
-WS="/root/ce-build/ws"
+WS="/root/ce-build/ws"   # workspace root on the node; mounted at the SAME path in the container
 SSH=(ssh -o BatchMode=yes -o ConnectTimeout=15)
-RSYNC_EXCL=(--exclude 'target' --exclude 'target-*' --exclude .git --exclude node_modules --exclude dist --exclude '*.bak')
+# Never sync target dirs, git, node bits, or the LOCAL dev-link config (it carries laptop-absolute
+# paths; the node regenerates its own with node-absolute paths in step 3).
+RSYNC_EXCL=(--exclude 'target' --exclude 'target-*' --exclude .git --exclude node_modules
+            --exclude dist --exclude '*.bak' --exclude '.cargo/config.toml')
 
-# Discover `path = "(../)+name"` deps TRANSITIVELY. A path dep is relative to the Cargo.toml it is
-# DECLARED in (crates can be nested, e.g. crates/foo/Cargo.toml with `path = "../../../bar"`), AND a
-# dep crate can itself declare more path deps (cast-control -> ce-gke -> ce/crates/ce-appmgr +
-# ce-iam/crates/ce-iam-core). We must sync the FULL closure, or the remote build fails on a transitive
-# crate that was never synced. Compute it by fixed point (BFS over dep dirs).
-_deps_of() { # $1 = dir to scan; prints absolute resolved path-dep dirs, one per line
-  grep -rE 'path *= *"(\.\./)+[^"]+"' "$1" --include=Cargo.toml 2>/dev/null | while IFS= read -r m; do
-    f="${m%%:*}"; r="$(printf '%s\n' "$m" | sed -E 's|.*path *= *"([^"]+)".*|\1|')"
-    [ -n "$r" ] && (cd "$(dirname "$f")" && cd "$r" 2>/dev/null && pwd) || true
-  done
-}
-SEEN=" $REPO_ABS "   # set of already-scanned dirs (space-delimited)
-WORK="$REPO_ABS"     # frontier to scan this round
-DEP_ABS=""           # accumulated dep dirs (the closure, minus the repo itself)
-while [ -n "$WORK" ]; do
-  NEXT=""
-  while IFS= read -r d; do
-    [ -z "$d" ] && continue
-    while IFS= read -r dep; do
-      [ -z "$dep" ] && continue
-      case "$SEEN" in
-        *" $dep "*) ;;  # already seen
-        *) SEEN="$SEEN$dep "; DEP_ABS="$DEP_ABS
-$dep"; NEXT="$NEXT
-$dep" ;;
-      esac
-    done < <(_deps_of "$d")
-  done < <(printf '%s\n' "$WORK")
-  WORK="$NEXT"
-done
-DEP_RELS="$(printf '%s\n' "$DEP_ABS" | sed '/^$/d' | while IFS= read -r d; do printf '%s\n' "${d#"$WS_ROOT"/}"; done | sort -u)"
+DEVLINK="$WS_ROOT/tools/ce-dev-link"
+[ -f "$DEVLINK" ] || { echo "ce-build: missing $DEVLINK" >&2; exit 2; }
+
+# 1) Transitive closure of CE crate dirs this repo depends on (git + path edges), via ce-dev-link.
+DEP_RELS="$(python3 "$DEVLINK" --closure "$REPO_ABS" "$WS_ROOT" | sort -u)"
 
 echo "==> [ce-build] node=$NODE image=$IMAGE repo=$REPO_REL cargo $CARGO_ARGS"
-[ -n "$DEP_RELS" ] && echo "    path-dep crates: $(echo "$DEP_RELS" | tr '\n' ' ')"
+[ -n "$DEP_RELS" ] && echo "    closure: $(echo "$DEP_RELS" | tr '\n' ' ')"
 "${SSH[@]}" "$NODE" "mkdir -p /root/ce-build/cargo-registry '$WS/$REPO_REL' '/root/ce-build/target-$NAME'"
 
+# 2) Sync the repo + every closure crate (at its workspace-relative path).
 echo "==> syncing source"
 rsync -az --delete -e "ssh -o BatchMode=yes" "${RSYNC_EXCL[@]}" "$REPO_ABS/" "$NODE:$WS/$REPO_REL/"
 for drel in $DEP_RELS; do
+  [ "$drel" = "$REPO_REL" ] && continue
   if [ -d "$WS_ROOT/$drel" ]; then
     echo "    + dep $drel"
     "${SSH[@]}" "$NODE" "mkdir -p '$WS/$drel'"
@@ -97,10 +89,36 @@ for drel in $DEP_RELS; do
   fi
 done
 
-# Auto-clean: the relay is production; runaway target-* dirs filled the disk to 100% once. Before
-# building, bound total build scratch to CE_BUILD_TARGET_BUDGET_GB (default 20G) by pruning the
-# least-recently-modified target-* dirs (never the current repo's), preserving incrementality for
-# active repos while keeping the disk safe. Set the budget to 0 to disable.
+# Each closure crate that is a WORKSPACE MEMBER (e.g. ce/crates/ce-cap) needs its workspace-root
+# manifest present so cargo can resolve member/workspace inheritance. Sync those root manifests only.
+_ws_root() { # $1 = abs dir; prints nearest ancestor (within WS_ROOT) whose Cargo.toml has [workspace]
+  local d="$1"
+  while [ -n "$d" ] && [ "$d" != "/" ] && [ "$d" != "$WS_ROOT" ]; do
+    if [ -f "$d/Cargo.toml" ] && grep -qE '^\[workspace\]' "$d/Cargo.toml" 2>/dev/null; then
+      printf '%s\n' "${d#"$WS_ROOT"/}"; return
+    fi
+    d="$(dirname "$d")"
+  done
+}
+WSROOTS="$(for drel in $DEP_RELS; do _ws_root "$WS_ROOT/$drel"; done | sort -u)"
+for wsrel in $WSROOTS; do
+  [ "$wsrel" = "$REPO_REL" ] && continue
+  [ -f "$WS_ROOT/$wsrel/Cargo.toml" ] || continue
+  echo "    + workspace-root manifest $wsrel"
+  "${SSH[@]}" "$NODE" "mkdir -p '$WS/$wsrel'"
+  rsync -az -e "ssh -o BatchMode=yes" "$WS_ROOT/$wsrel/Cargo.toml" "$NODE:$WS/$wsrel/Cargo.toml"
+  [ -f "$WS_ROOT/$wsrel/Cargo.lock" ] && rsync -az -e "ssh -o BatchMode=yes" "$WS_ROOT/$wsrel/Cargo.lock" "$NODE:$WS/$wsrel/Cargo.lock"
+done
+
+# 3) Generate the per-repo [patch] configs ON THE NODE (node-absolute paths). Piped over ssh so the
+#    tool need not be installed there; $WS is the workspace root on the node.
+echo "==> wiring dev-link on node"
+"${SSH[@]}" "$NODE" "python3 - '$WS' >/dev/null" < "$DEVLINK" || \
+  echo "    ! ce-dev-link on node failed (python3 missing?); falling back to published github resolution" >&2
+
+# Auto-clean: the relay is production; runaway target-* dirs filled the disk to 100% once. Bound total
+# build scratch to CE_BUILD_TARGET_BUDGET_GB (default 20G) by pruning least-recently-modified target-*
+# dirs (never the current repo's). Set the budget to 0 to disable.
 BUDGET_GB="${CE_BUILD_TARGET_BUDGET_GB:-20}"
 if [ "$BUDGET_GB" != "0" ]; then
   echo "==> auto-clean: keeping build scratch under ${BUDGET_GB}G (current: target-$NAME)"
@@ -117,10 +135,11 @@ if [ "$BUDGET_GB" != "0" ]; then
   "
 fi
 
+# 4) Build. Mount ws at its node-absolute path so the generated [patch] paths resolve in-container.
 echo "==> cargo $CARGO_ARGS  (in $IMAGE on $NODE)"
 "${SSH[@]}" "$NODE" "docker run --rm \
   -e CARGO_TERM_COLOR=always \
-  -v '$WS':/ws -w '/ws/$REPO_REL' \
+  -v '$WS':'$WS' -w '$WS/$REPO_REL' \
   -v /root/ce-build/cargo-registry:/usr/local/cargo/registry \
-  -v '/root/ce-build/target-$NAME':'/ws/$REPO_REL/target' \
+  -v '/root/ce-build/target-$NAME':'$WS/$REPO_REL/target' \
   '$IMAGE' sh -c 'cargo $CARGO_ARGS'"

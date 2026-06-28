@@ -1,0 +1,186 @@
+#!/usr/bin/env python3
+"""ce-dev-link — wire up local cross-repo Cargo development, the smart way.
+
+The problem: CE crates live in ~40 separate git repos. Their cross-repo deps are declared as github
+git deps (portable, no `../` coupling, builds anywhere). But for LOCAL development you want the crate
+that compiles to be your uncommitted working-tree WIP, not the last pushed commit.
+
+cargo's mechanisms each have a wart when used GLOBALLY:
+  * `[paths]` override  -> deprecated for workspace members ("altered the original list ... future
+    hard error") and can't short-circuit a not-yet-pushed (escape-carrying) published manifest.
+  * a global `[patch]`  -> warns "patch X was not used in the crate graph" for every CE crate a given
+    consumer doesn't use (and most consumers use a subset). Noisy.
+
+The fix: generate a PER-REPO `[patch]` config that lists ONLY the CE crates that repo actually
+depends on. Result: local WIP wins, works for workspace members, short-circuits broken/unpushed
+published manifests, ZERO unused-patch warnings, no `../` in any committed file, no registry server,
+no github push required. The generated file is local-only (git-excluded), re-run after changing a
+cross-repo dep. See PLAN/ce-cross-repo-deps.md.
+
+Modes:
+  tools/ce-dev-link [ROOT]            generate per-repo .cargo/config.toml for every repo under ROOT
+  tools/ce-dev-link --check [ROOT]    report stale configs without writing (exit 1 if any stale)
+  tools/ce-dev-link --closure PATH [ROOT]
+                                      print, one per line, the ROOT-relative dirs of every crate in
+                                      PATH's transitive dependency closure (cross-repo git deps AND
+                                      intra-repo `../` path deps). Used by tools/ce-build to know what
+                                      to sync to a remote build node.
+
+ROOT defaults to the repo two levels above this script (~/ce-net). PATH may be a repo or a crate dir.
+"""
+import os, re, sys, glob
+
+GH = "https://github.com/ce-net/"
+
+# ---- arg parsing (robust: works when piped via stdin, where __file__ is unreliable) ----
+_args = sys.argv[1:]
+CHECK = "--check" in _args
+_closure = None
+if "--closure" in _args:
+    i = _args.index("--closure")
+    _closure = _args[i + 1] if i + 1 < len(_args) else None
+    del _args[i:i + 2]
+_args = [a for a in _args if not a.startswith("--")]
+if _args:
+    ROOT = os.path.abspath(_args[0])
+else:
+    try:
+        ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+    except NameError:
+        ROOT = os.path.abspath(".")
+
+def repo_of(path):
+    return os.path.relpath(path, ROOT).split(os.sep)[0]
+
+def iter_manifests(base):
+    for f in glob.glob(os.path.join(base, "**", "Cargo.toml"), recursive=True):
+        rel = os.path.relpath(f, ROOT)
+        if rel.startswith(".ce-gitsync" + os.sep) or "/target/" in f or "/target-" in f:
+            continue
+        yield f
+
+# 1) Index every CE crate: package name -> absolute crate dir (the patch target / closure node).
+pkg_path = {}
+for f in iter_manifests(ROOT):
+    txt = open(f, errors="ignore").read()
+    m = re.search(r'\[package\][^\[]*?\bname\s*=\s*"([^"]+)"', txt, re.S)
+    if m:
+        pkg_path[m.group(1)] = os.path.dirname(os.path.abspath(f))
+
+# A dep line carrying a CE github git source:  name = { git = "https://github.com/ce-net/<repo>", .. }
+git_re = re.compile(r'^\s*([A-Za-z0-9_-]+)\s*=\s*\{([^}]*\bgit\s*=\s*"' + re.escape(GH) + r'[^"]*"[^}]*)\}')
+# A dep line carrying an intra-repo (or any) relative path source.
+path_re = re.compile(r'^\s*([A-Za-z0-9_-]+)\s*=\s*\{([^}]*\bpath\s*=\s*"(\.\.[^"]+)"[^}]*)\}')
+pkg_kw = re.compile(r'\bpackage\s*=\s*"([^"]+)"')
+
+def crate_git_deps(manifest):
+    """package names this manifest depends on via a CE github git dep."""
+    out = []
+    for ln in open(manifest, errors="ignore"):
+        m = git_re.match(ln)
+        if m:
+            pm = pkg_kw.search(m.group(2))
+            out.append(pm.group(1) if pm else m.group(1))
+    return out
+
+def crate_path_deps(manifest):
+    """absolute dirs this manifest depends on via a relative `path = "../..."` dep."""
+    d = os.path.dirname(os.path.abspath(manifest))
+    out = []
+    for ln in open(manifest, errors="ignore"):
+        m = path_re.match(ln)
+        if m:
+            out.append(os.path.normpath(os.path.join(d, m.group(3))))
+    return out
+
+dir_name = {d: n for n, d in pkg_path.items()}  # inverse index: crate dir -> package name
+
+def closure_dirs(start):
+    """Every crate dir transitively reachable from `start` over BOTH cross-repo git edges and
+    intra-repo `../` path edges. Excludes `start` itself."""
+    start = os.path.abspath(start)
+    seen, frontier, result = {start}, [start], set()
+    while frontier:
+        cur = frontier.pop()
+        if not os.path.isdir(cur):
+            continue
+        for f in iter_manifests(cur):
+            for t in [pkg_path.get(c) for c in crate_git_deps(f)] + crate_path_deps(f):
+                if t and os.path.isdir(t) and t not in seen:
+                    seen.add(t); result.add(t); frontier.append(t)
+    return result
+
+# ---- --closure: transitive dep dirs (git + path edges), ROOT-relative, for the remote sync list ----
+if _closure is not None:
+    for d in sorted(closure_dirs(_closure)):
+        if d.startswith(ROOT + os.sep):
+            print(os.path.relpath(d, ROOT))
+    sys.exit(0)
+
+# ---- generate / --check: per-repo scoped [patch] config ----
+# For each repo, patch the FULL transitive closure of CROSS-repo crates it reaches (not just direct
+# deps) — a transitive dep like ce-hub -> ce-storage -> ce-iam-core must be patched too, else it falls
+# through to the (possibly broken/unpushed) github manifest. Closure crates are all in the crate graph,
+# so patching them stays warning-free. Crates in the repo's OWN tree resolve via their path edges.
+repos = sorted({repo_of(os.path.abspath(f)) for f in iter_manifests(ROOT)})
+repo_deps = {}
+for repo in repos:
+    rd = os.path.join(ROOT, repo)
+    cross = {dir_name[d] for d in closure_dirs(rd) if repo_of(d) != repo and d in dir_name}
+    if cross:
+        repo_deps[repo] = cross
+
+HDR = (
+    "# GENERATED by tools/ce-dev-link — DO NOT EDIT, DO NOT COMMIT (git-excluded).\n"
+    "# Redirects this repo's cross-repo CE git deps to local working-tree source so your\n"
+    "# uncommitted WIP is what compiles. Scoped to exactly this repo's deps => no unused-patch\n"
+    "# warnings. Re-run `tools/ce-dev-link` after adding/removing a cross-repo dep.\n"
+    "# Delete this file to build against the published (github) sources instead.\n\n"
+)
+
+def render(crates):
+    by_url, missing = {}, []
+    for c in sorted(crates):
+        p = pkg_path.get(c)
+        if not p:
+            missing.append(c); continue
+        by_url.setdefault(GH + repo_of(p), []).append((c, p))
+    out = HDR
+    for url in sorted(by_url):
+        out += f'[patch."{url}"]\n'
+        for c, p in sorted(by_url[url]):
+            out += f'{c} = {{ path = "{p}" }}\n'
+        out += "\n"
+    return out, missing
+
+def git_exclude(repo):
+    ex = os.path.join(ROOT, repo, ".git", "info", "exclude")
+    if not os.path.isdir(os.path.dirname(ex)):
+        return  # no .git (remote build mirror / worktree); nothing to exclude
+    lines = open(ex).read().splitlines() if os.path.exists(ex) else []
+    if "/.cargo/config.toml" not in lines:
+        with open(ex, "a") as fh:
+            fh.write("\n# ce-dev-link generated local dev override\n/.cargo/config.toml\n")
+
+changed = stale = 0
+for repo in sorted(repo_deps):
+    content, missing = render(repo_deps[repo])
+    if missing:
+        print(f"  ! {repo}: no local crate for {missing} (skipped those)")
+    dst = os.path.join(ROOT, repo, ".cargo", "config.toml")
+    cur = open(dst).read() if os.path.exists(dst) else ""
+    if cur == content:
+        continue
+    stale += 1
+    if CHECK:
+        print(f"  STALE {repo}/.cargo/config.toml"); continue
+    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    open(dst, "w").write(content)
+    git_exclude(repo)
+    changed += 1
+    print(f"  linked {repo} ({len(repo_deps[repo])} cross-repo deps)")
+
+if CHECK:
+    print(f"{stale} repo config(s) stale" if stale else "all repo dev-links up to date")
+    sys.exit(1 if stale else 0)
+print(f"\nce-dev-link: wrote {changed} repo config(s) across {len(repo_deps)} repos with cross-repo deps.")
