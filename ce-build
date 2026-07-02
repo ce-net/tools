@@ -24,14 +24,21 @@
 # Env:
 #   CE_BUILD_NODE   ssh target of the build node   (default: root@178.105.145.170, the relay)
 #   CE_BUILD_IMAGE  rust docker image              (default: rust:1-bookworm — has gcc/build-essential)
-#   CE_BUILD_TARGET_BUDGET_GB  cap on total build scratch on the node (default 20; 0 disables)
+#   CE_BUILD_TARGET_BUDGET_GB  cap on total build scratch on the node (default 20; 0 disables).
+#                              NOTE: prunes OTHER repos' target-* dirs, never the CURRENT one — a
+#                              single fat repo target (ce was 34G once) can still blow the budget.
+#   CE_BUILD_LOG_DIR  where per-repo logs are persisted (default ~/.ce-build-logs)
+#
+# Output + exit: the run streams to your terminal AND is tee'd to $CE_BUILD_LOG_DIR/<name>-last.log.
+# A PASS/FAIL summary is printed at the end (passed/failed counts, the failing tests, the log path),
+# so callers never need to redirect+grep. The script exits with cargo's REAL exit code (preserved
+# through the tee via PIPESTATUS), so it still composes in scripts and CI. Re-read the last run with:
+#   cat ~/.ce-build-logs/<name>-last.log
 #
 # Persistent state on the node (so builds are incremental and deps aren't re-downloaded):
 #   /root/ce-build/cargo-registry    shared cargo registry cache
 #   /root/ce-build/ws/<rel-path>     synced source mirror (repo + closure crates at workspace paths)
 #   /root/ce-build/target-<name>     per-repo persistent target dir
-#
-# Exit code is the cargo exit code, so this composes in scripts and CI.
 set -euo pipefail
 
 NODE="${CE_BUILD_NODE:-root@178.105.145.170}"
@@ -136,10 +143,45 @@ if [ "$BUDGET_GB" != "0" ]; then
 fi
 
 # 4) Build. Mount ws at its node-absolute path so the generated [patch] paths resolve in-container.
-echo "==> cargo $CARGO_ARGS  (in $IMAGE on $NODE)"
+#    Output is tee'd to a persisted per-repo log so a summary can be printed and the full log
+#    re-read without the caller hand-rolling a redirect. The REAL cargo exit is preserved via
+#    PIPESTATUS (the tee must not mask it) and this script exits with it.
+LOG_DIR="${CE_BUILD_LOG_DIR:-$HOME/.ce-build-logs}"
+mkdir -p "$LOG_DIR"
+LOG="$LOG_DIR/$NAME-last.log"
+echo "==> cargo $CARGO_ARGS  (in $IMAGE on $NODE)   [log: $LOG]"
+set +e
 "${SSH[@]}" "$NODE" "docker run --rm \
   -e CARGO_TERM_COLOR=always \
   -v '$WS':'$WS' -w '$WS/$REPO_REL' \
   -v /root/ce-build/cargo-registry:/usr/local/cargo/registry \
   -v '/root/ce-build/target-$NAME':'$WS/$REPO_REL/target' \
-  '$IMAGE' sh -c 'cargo $CARGO_ARGS'"
+  '$IMAGE' sh -c 'cargo $CARGO_ARGS'" 2>&1 | tee "$LOG"
+rc=${PIPESTATUS[0]}
+set -e
+
+# ----- Summary: a clear PASS/FAIL banner so the caller never has to grep the stream. Parses the
+# tee'd log (ANSI stripped). The script still exits with cargo's real code for scripts/CI. -----
+plain=$(sed -E 's/\x1b\[[0-9;]*m//g' "$LOG")
+echo "----------------------------------------------------------------------"
+# Order matters: a TEST failure also prints "error: test failed", so check test results BEFORE
+# the compile-error check (which must match only real rustc diagnostics: error[Ennnn] / could
+# not compile), or a failed test gets mislabelled a compile failure.
+if echo "$plain" | grep -q 'test result: FAILED'; then
+  nfail=$(echo "$plain" | grep -oE '[0-9]+ failed' | awk '{s+=$1} END{print s+0}')
+  npass=$(echo "$plain" | grep -oE '[0-9]+ passed' | awk '{s+=$1} END{print s+0}')
+  echo "==> ce-build TESTS FAILED ($NAME): $nfail failed, $npass passed — full log: $LOG"
+  echo "$plain" | grep -E 'panicked at|test .* FAILED' | grep -v 'test result' | head -10
+elif echo "$plain" | grep -qE '^error\[E[0-9]+\]|could not compile'; then
+  echo "==> ce-build FAILED to compile ($NAME) — full log: $LOG"
+  echo "$plain" | grep -E '^error(\[|:)' | head -8
+elif echo "$plain" | grep -q 'test result: ok'; then
+  npass=$(echo "$plain" | grep -oE '[0-9]+ passed' | awk '{s+=$1} END{print s+0}')
+  nign=$(echo "$plain" | grep -oE '[0-9]+ ignored' | awk '{s+=$1} END{print s+0}')
+  echo "==> ce-build OK ($NAME): $npass passed${nign:+, $nign ignored} — full log: $LOG"
+else
+  # A build/run with no test summary (e.g. `build`, `run`): report by exit code alone.
+  [ "$rc" -eq 0 ] && echo "==> ce-build OK ($NAME) — full log: $LOG" \
+                  || echo "==> ce-build FAILED ($NAME, exit $rc) — full log: $LOG"
+fi
+exit "$rc"
