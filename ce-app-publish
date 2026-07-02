@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
-# ce-app-publish — build a native ceapp for BOTH arches, upload the binaries to the durable ce-hub
+# ce-app-publish — DEPRECATED. Use the ce-publish app instead (mesh-native, no ssh):
+#
+#   ce-publish app <repo> --build --via linux-amd64=hetzner
+#
+# That is the same one command (build both arches + upload + stamp + sign + publish), but the cross
+# build runs THROUGH the rdev app over the mesh (capability-authed, NAT-traversing) instead of this
+# script's raw ssh to the relay, and artifacts land in the node's durable /blobs. This script stays
+# only as a fallback until every machine runs ce-publish >= 0.2.0.
+#
+# ---- original: build a native ceapp for BOTH arches, upload the binaries to the durable ce-hub
 # /blobs, fill the manifest digests, sign + publish. One command instead of the manual recipe.
 #
 #   tools/ce-app-publish <repo>            # e.g. tools/ce-app-publish ce-pubsub
