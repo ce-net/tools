@@ -25,8 +25,13 @@
 #   CE_BUILD_NODE   ssh target of the build node   (default: root@178.105.145.170, the relay)
 #   CE_BUILD_IMAGE  rust docker image              (default: rust:1-bookworm — has gcc/build-essential)
 #   CE_BUILD_TARGET_BUDGET_GB  cap on total build scratch on the node (default 20; 0 disables).
-#                              NOTE: prunes OTHER repos' target-* dirs, never the CURRENT one — a
-#                              single fat repo target (ce was 34G once) can still blow the budget.
+#                              Prunes OTHER repos' least-recently-used target-* dirs, never the
+#                              CURRENT one. A single fat current-repo target is handled separately by:
+#   CE_BUILD_MIN_FREE_GB  minimum free disk to keep on the node before building (default 6; 0 disables).
+#                         When short, drops the CURRENT repo's regenerable debug/incremental cache +
+#                         vacuums journald (never source/registry/compiled deps). Fixes the "ce target
+#                         hit 44G and filled the disk to 100%, dying mid-build with a fake compile
+#                         error" failure — a real ENOSPC is now reported AS a disk-full error, not code.
 #   CE_BUILD_LOG_DIR  where per-repo logs are persisted (default ~/.ce-build-logs)
 #
 # Output + exit: the run streams to your terminal AND is tee'd to $CE_BUILD_LOG_DIR/<name>-last.log.
@@ -142,6 +147,33 @@ if [ "$BUDGET_GB" != "0" ]; then
   "
 fi
 
+# Disk-headroom guard: the budget above prunes OTHER repos' targets but NEVER the current one, so a
+# single fat repo target (ce's hit 44G, mostly regenerable debug/incremental) can still fill the node
+# to 100% and die mid-build with a raw ENOSPC that looks like a compile error. Before building, if the
+# node is below a minimum free margin, drop the CURRENT repo's incremental cache (cargo rebuilds it)
+# and vacuum journald. Never touches source, the registry cache, or compiled deps. Disable with
+# CE_BUILD_MIN_FREE_GB=0.
+MIN_FREE_GB="${CE_BUILD_MIN_FREE_GB:-6}"
+if [ "$MIN_FREE_GB" != "0" ]; then
+  "${SSH[@]}" "$NODE" "
+    free_gb() { df -Pk / | awk 'NR==2{printf \"%d\", \$4/1024/1024}'; }
+    before=\$(free_gb)
+    echo \"==> disk on \$(hostname): \${before}G free (want >= ${MIN_FREE_GB}G)\"
+    if [ \"\$before\" -lt ${MIN_FREE_GB} ]; then
+      inc=\$(du -sk /root/ce-build/target-$NAME/debug/incremental 2>/dev/null | awk '{print int(\$1/1024)}')
+      rm -rf /root/ce-build/target-$NAME/debug/incremental /root/ce-build/target-$NAME/tmp 2>/dev/null
+      { [ -n \"\$inc\" ] && [ \"\$inc\" -gt 0 ]; } && echo \"    freed target-$NAME/debug/incremental (\${inc}MB)\"
+      journalctl --vacuum-size=100M >/dev/null 2>&1 || true
+      after=\$(free_gb)
+      echo \"    after cleanup: \${after}G free\"
+      if [ \"\$after\" -lt 2 ]; then
+        echo \"    ! WARNING: only \${after}G free after cleanup — build may ENOSPC.\" >&2
+        echo \"      Largest scratch: du -sh /root/ce-build/target-* | sort -rh | head\" >&2
+      fi
+    fi
+  " || true
+fi
+
 # 4) Build. Mount ws at its node-absolute path so the generated [patch] paths resolve in-container.
 #    Output is tee'd to a persisted per-repo log so a summary can be printed and the full log
 #    re-read without the caller hand-rolling a redirect. The REAL cargo exit is preserved via
@@ -164,10 +196,16 @@ set -e
 # tee'd log (ANSI stripped). The script still exits with cargo's real code for scripts/CI. -----
 plain=$(sed -E 's/\x1b\[[0-9;]*m//g' "$LOG")
 echo "----------------------------------------------------------------------"
-# Order matters: a TEST failure also prints "error: test failed", so check test results BEFORE
-# the compile-error check (which must match only real rustc diagnostics: error[Ennnn] / could
-# not compile), or a failed test gets mislabelled a compile failure.
-if echo "$plain" | grep -q 'test result: FAILED'; then
+# Order matters: an ENOSPC failure floods the log with "could not compile", and a TEST failure
+# prints "error: test failed" — both would be mislabelled a compile error. Check disk-full FIRST,
+# then test results, then real rustc diagnostics.
+if echo "$plain" | grep -qi 'no space left on device'; then
+  echo "==> ce-build FAILED: NODE DISK FULL on $NODE — NOT a code error, do not 'fix' the code."
+  echo "    The build ran out of disk mid-compile. Free space and retry:"
+  echo "      ${SSH[*]} $NODE \"du -sh /root/ce-build/target-* | sort -rh | head; df -h /\""
+  echo "    (ce-build auto-prunes the current repo's incremental cache when free < ${MIN_FREE_GB}G;"
+  echo "     raise CE_BUILD_MIN_FREE_GB or the node's disk if this recurs.) — full log: $LOG"
+elif echo "$plain" | grep -q 'test result: FAILED'; then
   nfail=$(echo "$plain" | grep -oE '[0-9]+ failed' | awk '{s+=$1} END{print s+0}')
   npass=$(echo "$plain" | grep -oE '[0-9]+ passed' | awk '{s+=$1} END{print s+0}')
   echo "==> ce-build TESTS FAILED ($NAME): $nfail failed, $npass passed — full log: $LOG"
