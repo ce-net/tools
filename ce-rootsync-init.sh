@@ -23,7 +23,7 @@ cd "$ROOT"
     .next/ .svelte-kit/ __pycache__/ '*.pyc' .venv/ venv/ .cache/
   echo
   echo "# --- local agent/build state (machine-specific, never sync) ---"
-  printf '%s\n' .claude/ .claude_tmp/ .cargo-shared/ .cargo/ .worktrees/ trash/
+  printf '%s\n' .claude/ .claude_tmp/ .cargo-shared/ .cargo/ .worktrees/ trash/ .ce-gitsync/
   echo
   echo "# --- secrets (never sync) ---"
   printf '%s\n' .env '*.env' '*.token' '*.key' '*.pem' '*.secret'
