@@ -84,6 +84,12 @@ DEVLINK="$WS_ROOT/tools/ce-dev-link"
 DEP_RELS="$(python3 "$DEVLINK" --closure "$REPO_ABS" "$WS_ROOT" | sort -u)"
 
 echo "==> [ce-build] node=$NODE image=$IMAGE repo=$REPO_REL cargo $CARGO_ARGS"
+# Say it loudly when local dev-link [patch] overrides are in play — a build that silently uses
+# local WIP instead of published github sources hides published-build breakage until a bare
+# machine hits it (FINDINGS 2026-07-24).
+if [ -f "$REPO_ABS/.cargo/config.toml" ] && grep -q '^\[patch' "$REPO_ABS/.cargo/config.toml" 2>/dev/null; then
+  echo "==> NOTE: dev-link [patch] overrides ACTIVE for $REPO_REL — building against LOCAL working trees, not published github sources (rm <repo>/.cargo/config.toml to test published)"
+fi
 [ -n "$DEP_RELS" ] && echo "    closure: $(echo "$DEP_RELS" | tr '\n' ' ')"
 "${SSH[@]}" "$NODE" "mkdir -p /root/ce-build/cargo-registry '$WS/$REPO_REL' '/root/ce-build/target-$NAME'"
 
