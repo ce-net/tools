@@ -1,0 +1,352 @@
+#!/usr/bin/env python3
+"""Move the workspace's backlog, log, plans and notes into Ocean — once, without duplicates.
+
+    tools/workspace-to-ocean --dry-run          # show exactly what would be created
+    tools/workspace-to-ocean                    # do it (idempotent; re-running adds nothing)
+    tools/workspace-to-ocean --only backlog     # one source at a time
+
+Sources and where they land, under org "Rydenfalk":
+
+    FINDINGS.md  [OPEN]  items      -> Backlog / Todo / <one doc per item>
+    FINDINGS.md  [FIXED] items      -> Backlog / Completed / <one doc per item>
+    FINDINGS.md  dated sections     -> Log / Investigations / <one doc per section>
+    AGENTS.md    ## entries         -> Log / Agent log / <one doc per entry>
+    PLAN/*.md                       -> Plans / <one doc per file>
+    notes/*.md                      -> Notes / <one doc per file>
+
+Every write goes through Ocean.ensure_doc, which matches on (parent, normalized title)
+against an index built from ONE doc.tree call. A document that is already there is left
+alone. That is what makes this safe to run again after a partial run, and what stops a
+second copy of the backlog appearing next to the first.
+
+Backlog items keep their state by WHICH FOLDER THEY ARE IN, not by a status field in the
+text. Moving an item from Todo to Started is `doc.move` — one call, and the item's history,
+links and backlinks come with it.
+"""
+from __future__ import annotations
+
+import argparse
+import os
+import re
+import sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "tools"))
+from oceanlib import Ocean, title_from  # noqa: E402
+
+# The live FINDINGS.md / AGENTS.md are TOMBSTONES now — pointers to Ocean, not content.
+# Reading them would migrate the tombstone's own headings ("Why it moved", ...) as if they
+# were findings, which it did once. The frozen pre-migration copies under archive/ are the
+# real source, so prefer those and fall back only if they are missing.
+def _source(name: str) -> str:
+    frozen = os.path.join(ROOT, "archive", f"{name}.frozen-2026-07-26")
+    return frozen if os.path.exists(frozen) else os.path.join(ROOT, name)
+
+
+FINDINGS = _source("FINDINGS.md")
+AGENTS = _source("AGENTS.md")
+PLAN_DIR = os.path.join(ROOT, "PLAN")
+NOTES_DIR = os.path.join(ROOT, "notes")
+
+DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
+
+BACKLOG_INDEX = """\
+The work queue for everyone working on ce-net, human or agent. **This replaces
+`FINDINGS.md`** — that file is now a tombstone pointing here.
+
+## How it works
+
+An item is a **document**, and its state is **which folder it is in**. There is no status
+field to forget to update.
+
+| folder | means |
+|---|---|
+| **Todo** | nobody has started. Anyone may pick it up. |
+| **Started** | someone is on it right now. The doc says who, and when they claimed it. |
+| **Completed** | done. The doc says what actually fixed it. |
+
+Moving between them is one call (`doc.move`), and the item keeps its history, its links and
+its backlinks. Use the CLI rather than clicking:
+
+    tools/backlog list                  # pending work: Started first, then Todo
+    tools/backlog add "..." --why "..." # file something you found
+    tools/backlog start <id> --by Name  # claim it
+    tools/backlog done  <id> --how "..."# close it, saying what fixed it
+    tools/backlog show  <id>
+
+## The rules
+
+- **Log, don't work around.** Anything that is not your current task — a footgun, a rough
+  edge, a half-baked API, a surprising behaviour — gets filed here instead of being silently
+  routed around. This is the queue we draw work from.
+- **Say why it matters.** An item nobody can act on is noise. What is wrong, where, and what
+  breaks if it stays broken.
+- **Claim before you start**, so two agents do not fix the same thing twice.
+- **Close with what you actually did**, not "fixed". A resolution without a reason teaches
+  nobody, and the next person to meet it starts from zero.
+- **Link things together.** `[[Wiki Link]]` an item to the plan, directive or log entry it
+  relates to. Backlinks are how the next person finds the context you already paid for.
+
+## Related
+
+- [[Leif's directives — index]] — the law. The backlog is work; directives are what is not
+  up for debate.
+- [[Agent log]] — who did what, and what they said about it.
+- [[Unprocessed and unsorted ideas and issues and thoughts - pending processing and sorting]]
+  — Leif's raw inbox. Things get promoted from there into Todo.
+"""
+
+TODO_INDEX = """\
+Nobody has started these. Pick one up with `tools/backlog start <id> --by <you>`, which
+moves it to [[Started]].
+
+Newest items are at the bottom. Severity is not a field — if something is urgent, say so in
+the item and tell someone.
+"""
+
+STARTED_INDEX = """\
+Someone is working on these right now. Each doc says who claimed it and when.
+
+**Check here before starting anything**, so two agents do not fix the same thing twice. If
+an item has been here a long time with no movement, ask its owner in [[Agent log]] before
+taking it over.
+
+Close with `tools/backlog done <id> --how "what actually fixed it"`.
+"""
+
+COMPLETED_INDEX = """\
+Done. Kept, not deleted — the "how" on a finished item is the cheapest documentation this
+workspace has, and the same class of bug comes back.
+
+If a completed item's condition returns, reopen it rather than filing a new one, so the
+history stays in one place.
+"""
+
+LOG_INDEX = """\
+What happened, in order. **This replaces `AGENTS.md`.**
+
+| folder | holds |
+|---|---|
+| **[[Agent log]]** | one entry per agent per piece of work: what they claimed, what shipped, what they found, who it affects |
+| **[[Investigations]]** | the long-form write-ups that used to pile up at the bottom of FINDINGS.md |
+
+## For agents
+
+Coordination is **two-way and continuous**, and it is the difference between a fleet that
+compounds and one that clobbers itself.
+
+- **Read before you touch anything.** Someone may already be in the file you are about to
+  edit. Re-read whenever you change a wire shape, hit a build break, or are about to claim
+  someone broke your build — most "X broke my build" is your own dev-linked WIP or a stale
+  binary. Verify against their PUSHED state first.
+- **Write the full picture, kept current.** Name who each change affects with `@Name`.
+- **Respond to things addressed to you.** `@Name — read, ack`.
+- **A wrong coordination note is worse than none.** Correct it the moment you know.
+- **Never clobber another agent's WIP.**
+
+Entries link to the [[Backlog]] items they came from and the [[Leif's directives — index]]
+they follow. Link generously — a `[[name]]` that does not resolve yet is a note that
+something is worth writing, not an error.
+"""
+
+PLANS_INDEX = """\
+Workstream design docs — the long-form thinking behind what gets built. Moved out of the
+local `PLAN/` directory so it is readable by anyone on the mesh instead of only on Leif's
+laptop.
+
+Start at [[CE Master Roadmap — index and state of the work]].
+
+A plan is not a commitment and not law. [[Leif's directives — index]] is the law; the
+[[Backlog]] is what is actually queued. If a plan disagrees with a directive, the directive
+wins and the plan is stale — fix it.
+"""
+
+NOTES_INDEX = """\
+Working notes and session write-ups that were sitting in the local `notes/` directory.
+
+Kept because they are the record of how something was actually figured out, which is
+usually more useful than the conclusion alone.
+"""
+
+
+# --------------------------------------------------------------------------- parsing
+
+def parse_findings_items(text: str, marker: str):
+    """`- [OPEN] ...` / `- [FIXED] ...` bullets, including their indented continuations."""
+    lines = text.split("\n")
+    items, cur = [], None
+    for line in lines:
+        if line.startswith(f"- [{marker}]"):
+            if cur:
+                items.append("\n".join(cur))
+            cur = [line]
+        elif cur is not None:
+            # A continuation line is indented; anything else ends the item.
+            if line.startswith("  ") and line.strip():
+                cur.append(line)
+            else:
+                items.append("\n".join(cur))
+                cur = None
+    if cur:
+        items.append("\n".join(cur))
+    return items
+
+
+def item_title(raw: str, marker: str) -> str:
+    """`- [OPEN] (area) description — where — why` -> `(area) description`."""
+    body = " ".join(raw.split())
+    body = body.replace(f"- [{marker}]", "", 1).strip()
+    return title_from(body, "untitled item", split_dash=True)
+
+
+def item_md(raw: str, marker: str, source_line: int) -> str:
+    body = "\n".join(l[2:] if l.startswith("  ") else l for l in raw.split("\n"))
+    body = body.replace(f"- [{marker}]", "", 1).strip()
+    return (f"{body}\n\n---\n\n*Migrated from `FINDINGS.md` line {source_line} "
+            f"(the file is now a tombstone pointing at [[Backlog]]).*\n")
+
+
+def parse_sections(text: str):
+    """`## heading` sections with their bodies."""
+    lines = text.split("\n")
+    heads = [i for i, l in enumerate(lines) if l.startswith("## ")]
+    out = []
+    for n, start in enumerate(heads):
+        head = lines[start][3:].strip()
+        end = heads[n + 1] if n + 1 < len(heads) else len(lines)
+        body = "\n".join(lines[start + 1:end]).strip("\n")
+        out.append((head, body, start + 1))
+    return out
+
+
+# --------------------------------------------------------------------------- sources
+
+def do_backlog(o: Ocean, org, args):
+    text = open(FINDINGS, encoding="utf-8").read()
+    lines = text.split("\n")
+    proj = o.ensure_project(org, "Backlog")
+    idx, _ = o.ensure_doc("Backlog", BACKLOG_INDEX, project=proj, icon="clipboard",
+                          update=True, dry=args.dry_run)
+    folders = {}
+    for name, md, icon in (("Todo", TODO_INDEX, "circle"),
+                           ("Started", STARTED_INDEX, "hourglass"),
+                           ("Completed", COMPLETED_INDEX, "check")):
+        folders[name], _ = o.ensure_doc(name, md, parent=idx, icon=icon,
+                                        update=True, dry=args.dry_run)
+
+    for marker, folder in (("OPEN", "Todo"), ("FIXED", "Completed")):
+        items = parse_findings_items(text, marker)
+        print(f"  {marker}: {len(items)} items -> {folder}")
+        for raw in items:
+            first = raw.split("\n")[0]
+            ln = lines.index(first) + 1 if first in lines else 0
+            title = item_title(raw, marker)
+            _, how = o.ensure_doc(title, item_md(raw, marker, ln),
+                                  parent=folders[folder], update=args.update,
+                                  dry=args.dry_run, distinct_key=f"L{ln}")
+            if args.verbose or how == "created":
+                print(f"    {how:8} {title[:88]}")
+
+
+def do_log(o: Ocean, org, args):
+    proj = o.ensure_project(org, "Log")
+    idx, _ = o.ensure_doc("Log", LOG_INDEX, project=proj, icon="book",
+                          update=True, dry=args.dry_run)
+    agent_folder, _ = o.ensure_doc("Agent log", LOG_INDEX.split("## For agents")[1].strip(),
+                                   parent=idx, icon="people", update=True, dry=args.dry_run)
+    inv_folder, _ = o.ensure_doc(
+        "Investigations",
+        "Long-form write-ups migrated out of the bottom of `FINDINGS.md`. One document per "
+        "session or incident.\n\nRelated: [[Backlog]], [[Agent log]].\n",
+        parent=idx, icon="magnifier", update=True, dry=args.dry_run)
+
+    entries = parse_sections(open(AGENTS, encoding="utf-8").read())
+    print(f"  AGENTS.md: {len(entries)} entries -> Agent log")
+    for head, body, ln in entries:
+        title = title_from(head, f"entry at line {ln}", limit=120)
+        md = f"{body}\n\n---\n\n*Migrated from `AGENTS.md` line {ln}.*\n"
+        _, how = o.ensure_doc(title, md, parent=agent_folder, update=args.update,
+                             dry=args.dry_run, distinct_key=f"L{ln}")
+        if args.verbose or how == "created":
+            print(f"    {how:8} {title[:88]}")
+
+    ftext = open(FINDINGS, encoding="utf-8").read()
+    sections = [s for s in parse_sections(ftext) if s[0] not in ("Open", "Fixed")]
+    print(f"  FINDINGS.md: {len(sections)} investigation sections -> Investigations")
+    for head, body, ln in sections:
+        title = title_from(head, f"section at line {ln}", limit=120)
+        md = f"{body}\n\n---\n\n*Migrated from `FINDINGS.md` line {ln}.*\n"
+        _, how = o.ensure_doc(title, md, parent=inv_folder, update=args.update,
+                             dry=args.dry_run, distinct_key=f"L{ln}")
+        if args.verbose or how == "created":
+            print(f"    {how:8} {title[:88]}")
+
+
+def _dir_source(o: Ocean, org, args, project_name, index_md, directory, icon):
+    if not os.path.isdir(directory):
+        print(f"  {directory} does not exist, skipping")
+        return
+    proj = o.ensure_project(org, project_name)
+    idx, _ = o.ensure_doc(project_name, index_md, project=proj, icon=icon,
+                          update=True, dry=args.dry_run)
+    files = sorted(f for f in os.listdir(directory) if f.endswith(".md"))
+    print(f"  {directory}: {len(files)} files -> {project_name}")
+    for fname in files:
+        text = open(os.path.join(directory, fname), encoding="utf-8").read()
+        title = fname[:-3]
+        body = text
+        for line in text.split("\n"):
+            if line.startswith("# "):
+                title = line[2:].strip()
+                body = text.split(line, 1)[1].strip("\n")
+                break
+        title = title_from(title, fname[:-3], limit=120)
+        md = f"{body}\n\n---\n\n*Migrated from `{os.path.basename(directory)}/{fname}`.*\n"
+        _, how = o.ensure_doc(title, md, parent=idx, update=args.update, dry=args.dry_run,
+                              distinct_key=fname)
+        if args.verbose or how == "created":
+            print(f"    {how:8} {title[:88]}")
+
+
+def do_plans(o, org, args):
+    _dir_source(o, org, args, "Plans", PLANS_INDEX, PLAN_DIR, "map")
+
+
+def do_notes(o, org, args):
+    _dir_source(o, org, args, "Notes", NOTES_INDEX, NOTES_DIR, "pencil")
+
+
+SOURCES = {"backlog": do_backlog, "log": do_log, "plans": do_plans, "notes": do_notes}
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--dry-run", action="store_true",
+                    help="show what would be created; write nothing")
+    ap.add_argument("--only", action="append", choices=sorted(SOURCES),
+                    help="migrate one source (repeatable)")
+    ap.add_argument("--update", action="store_true",
+                    help="overwrite documents that already exist (default: leave them alone)")
+    ap.add_argument("-v", "--verbose", action="store_true",
+                    help="print every document, not only new ones")
+    a = ap.parse_args()
+
+    o = Ocean()
+    org = o.org()
+    n = o.build_index()
+    print(f"org {org[:12]} — indexed {n} existing documents "
+          f"({'DRY RUN, nothing will be written' if a.dry_run else 'duplicates will be skipped'})")
+
+    for name in (a.only or list(SOURCES)):
+        print(f"\n== {name}")
+        SOURCES[name](o, org, a)
+
+    print(f"\n{o.summary()}")
+    if o.skipped and not a.update:
+        print("(existing documents were left untouched — pass --update to overwrite them)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

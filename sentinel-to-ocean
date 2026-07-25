@@ -1,0 +1,206 @@
+#!/usr/bin/env python3
+"""Publish the ce-sentinel documentation into Ocean (one document per page).
+
+The source of truth is `ce-sentinel/docs/*.md` — it lives in the repo so it travels with
+it, per the self-containment law. Ocean gets the same text as a readable, linked document
+tree so the fleet's own workspace explains the system without anyone cloning a repo.
+
+This script is idempotent: running it again updates the documents it already created
+instead of duplicating them.
+
+Structure it builds in Ocean, under org "Rydenfalk":
+
+    Sentinel                                          (project)
+      Sentinel - suspicious-activity flagging         (doc: the index)
+        The incident that this system exists because of
+        How it works - collect, evaluate, route
+        The rule catalog
+        Alerts, and messages for agents to fix
+        The substrate half - what GET /vitals does
+        Operating the sentinel
+
+Usage:
+    tools/sentinel-to-ocean [--dry-run]
+"""
+from __future__ import annotations
+
+import json
+import os
+import sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DOCS = os.path.join(ROOT, "ce-sentinel", "docs")
+OCEAN = os.path.join(ROOT, "ocean")
+
+SERVICE = "ce.ocean"
+CTL = "ocean/ctl"
+ORG_NAME = "Rydenfalk"
+PROJECT_NAME = "Sentinel"
+INDEX_TITLE = "Sentinel - suspicious-activity flagging on the mesh"
+
+sys.path.insert(0, OCEAN)
+import ce  # noqa: E402  (the ocean app's vendored SDK)
+
+# Ordered; the title is taken from each file's first `# ` heading.
+PAGES = [
+    ("00-the-incident.md", "1"),
+    ("01-design.md", "2"),
+    ("02-rule-catalog.md", "3"),
+    ("03-alerts-and-agents.md", "4"),
+    ("04-substrate-vitals.md", "5"),
+    ("05-operating.md", "6"),
+]
+
+INDEX_MD = """\
+**Do we have a system to flag suspicious activity?** Now, yes. `ce-sentinel` watches the
+substrate resources apps can exhaust, the health of every app it can see, and the blind
+spots where nothing is watching at all - then raises findings that are *work items*, not
+alarms, and puts them in front of a human or an agent.
+
+It exists because on 2026-07-25 one app filled the DHT provider store and took cross-node
+discovery down across the whole fleet, while every node reported healthy and nothing said
+why.
+
+## The three apps
+
+| third | repo | owns |
+|---|---|---|
+| state | `ce-sentinel-state` | five bounded collections and change events. No meaning. |
+| logic | `ce-sentinel` | every judgement: rules, severity, escalation, routing. No state. |
+| viz | `ce-sentinel-web` | the findings board and the occupancy strip. |
+
+## Start here
+
+    ce app install ./ce-sentinel-state
+    ce app install ./ce-sentinel
+    sentinelctl.py scan --dry-run     # evaluate everything, send nothing, change nothing
+    sentinelctl.py board
+
+## Can AI reach it
+
+Yes, on all three surfaces, with parity - an agent sees the same board, through the same
+ops, under the same capability gates, as a human.
+
+- **SDK** - `sdk/py/sentinel.py`, `sdk/js/sentinel.js`
+- **API** - service `ce.sentinel`, JSON on `sentinel/ctl`, events on `sentinel/events`
+- **Capabilities** - `sentinel:read` / `sentinel:write` / `sentinel:admin`, defined in the
+  app's own `cecapabilities.toml`
+- **MCP** - `claude mcp add ce-sentinel -- python3 clients/mcp/ce_sentinel_mcp.py`
+- **CLI** - `sentinelctl.py`
+
+## The pages
+
+1. [The incident that this system exists because of](#) - what actually happened on
+   2026-07-25, the three separate failures in it, and what was fixed immediately.
+2. [How it works - collect, evaluate, route](#) - the scan cycle, why findings do not
+   repeat themselves, and the guards that stop this app becoming the problem it watches for.
+3. [The rule catalog](#) - every shipped rule, what it means, and why it exists.
+4. [Alerts, and messages for agents to fix](#) - what a work item looks like, the posture
+   ladder, and why dispatch is rate-limited.
+5. [The substrate half - what GET /vitals does](#) - the mechanism-only occupancy endpoint,
+   and an honest account of the quota and backpressure that are still owed.
+6. [Operating the sentinel](#) - install, configure, read the board honestly, troubleshoot.
+
+## The one thing to remember
+
+A quiet board is not the same as a healthy fleet. Check that `last_scan` is recent, that
+the blind-spot rules are not open, and that `stats.store.evicted` is not climbing. The
+system reports where it cannot see - **unknown is not empty** - and that reporting is the
+part that would have caught the original outage.
+"""
+
+
+class Ocean:
+    def __init__(self):
+        self.client = ce.connect()
+        found = self.client.find_service(SERVICE)
+        if not found:
+            raise SystemExit("ce.ocean is not on this mesh (install ocean-state + ocean)")
+        self.provider = found[0]
+
+    def call(self, op, args=None, timeout_ms=120000):
+        raw = self.client.request(self.provider, CTL,
+                                  json.dumps({"op": op, "args": args or {}}),
+                                  timeout_ms=timeout_ms)
+        reply = json.loads(raw.decode("utf-8") or "{}")
+        if "error" in reply:
+            raise RuntimeError(f"{op}: {reply['error']}")
+        return reply.get("result")
+
+    def org(self):
+        for o in self.call("org.list")["orgs"]:
+            if o.get("title") == ORG_NAME or o.get("name") == ORG_NAME:
+                return o["id"]
+        return self.call("org.create", {"name": ORG_NAME})["id"]
+
+    def project(self, org):
+        for p in self.call("project.list", {"org": org})["projects"]:
+            if p.get("title") == PROJECT_NAME or p.get("name") == PROJECT_NAME:
+                return p["id"]
+        return self.call("project.create",
+                         {"org": org, "name": PROJECT_NAME, "visibility": "open"})["id"]
+
+    def upsert(self, title, md, project=None, parent=None, icon=None):
+        """Create the doc, or update it in place if one with this title already exists here."""
+        where = {"project": project} if project else {"parent": parent}
+        existing = None
+        try:
+            for d in self.call("doc.list", where)["docs"]:
+                if d.get("title") == title:
+                    existing = d["id"]
+                    break
+        except RuntimeError:
+            pass
+        if existing:
+            self.call("doc.update", {"doc": existing, "title": title, "md": md,
+                                     **({"icon": icon} if icon else {})})
+            return existing, "updated"
+        args = {"title": title, "md": md, **where}
+        if icon:
+            args["icon"] = icon
+        return self.call("doc.create", args)["id"], "created"
+
+
+def title_and_body(path):
+    """The first `# ` heading is the document title; the rest is the body."""
+    text = open(path, encoding="utf-8").read()
+    lines = text.split("\n")
+    for i, line in enumerate(lines):
+        if line.startswith("# "):
+            return line[2:].strip(), "\n".join(lines[i + 1:]).strip("\n")
+    return os.path.basename(path), text
+
+
+def main():
+    dry = "--dry-run" in sys.argv
+    missing = [f for f, _ in PAGES if not os.path.exists(os.path.join(DOCS, f))]
+    if missing:
+        raise SystemExit(f"missing doc source: {', '.join(missing)}")
+
+    if dry:
+        print(f"would publish into Ocean: org {ORG_NAME} / project {PROJECT_NAME}")
+        print(f"  {INDEX_TITLE}")
+        for fname, icon in PAGES:
+            title, body = title_and_body(os.path.join(DOCS, fname))
+            print(f"    {title}  ({len(body)} bytes)")
+        return 0
+
+    o = Ocean()
+    org = o.org()
+    project = o.project(org)
+    print(f"org {org[:12]} / project {project[:12]}")
+
+    index_id, how = o.upsert(INDEX_TITLE, INDEX_MD, project=project, icon="shield")
+    print(f"  {how:8} {INDEX_TITLE}")
+
+    for fname, icon in PAGES:
+        title, body = title_and_body(os.path.join(DOCS, fname))
+        _, how = o.upsert(title, body, parent=index_id, icon=icon)
+        print(f"  {how:8} {title}")
+
+    print(f"\nOcean: org {ORG_NAME} -> project {PROJECT_NAME} -> {INDEX_TITLE}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

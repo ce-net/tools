@@ -1,0 +1,251 @@
+#!/usr/bin/env python3
+"""The ce-net backlog — pending work, in Ocean, from one command.
+
+    tools/backlog                        # pending work: Started first, then Todo
+    tools/backlog add "..." --why "..."  # file something you found
+    tools/backlog start <id> --by Vigil  # claim it (moves Todo -> Started)
+    tools/backlog done  <id> --how "..." # close it (moves -> Completed)
+    tools/backlog show  <id>
+    tools/backlog drop  <id> --why "..." # not going to do it; says so on the record
+    tools/backlog search <text>
+
+An item's STATE IS WHICH FOLDER IT IS IN — Todo, Started or Completed under the Backlog
+project. There is no status field to forget to update, and moving an item carries its
+history, links and backlinks with it.
+
+`<id>` is the short id printed by `list` (the first 8 characters are enough).
+
+This replaces editing FINDINGS.md by hand. The old file is a tombstone.
+"""
+from __future__ import annotations
+
+import argparse
+import os
+import sys
+import time
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "tools"))
+from oceanlib import Ocean, norm  # noqa: E402
+
+FOLDERS = ("Todo", "Started", "Completed")
+
+
+def today() -> str:
+    return time.strftime("%Y-%m-%d")
+
+
+class Backlog:
+    def __init__(self):
+        self.o = Ocean(verbose=False)
+        self.o.build_index()
+        self.index_id = None
+        self.folders = {}
+        self._locate()
+
+    def _locate(self):
+        tree = self.o.call("doc.tree")
+        for org in tree.get("tree", []):
+            for pr in org.get("projects", []):
+                if norm(pr.get("title") or pr.get("name")) != "backlog":
+                    continue
+                for d in pr.get("docs", []):
+                    if norm(d.get("title")) == "backlog":
+                        self.index_id = d["id"]
+                        for ch in d.get("children") or []:
+                            if ch.get("title") in FOLDERS:
+                                self.folders[ch["title"]] = ch
+        if not self.folders:
+            sys.exit("Backlog is not set up in Ocean yet. Run: tools/workspace-to-ocean")
+
+    def items(self, folder: str):
+        node = self.folders.get(folder)
+        return list(node.get("children") or []) if node else []
+
+    def find(self, short_id: str):
+        for folder in FOLDERS:
+            for it in self.items(folder):
+                if it["id"].startswith(short_id):
+                    return folder, it
+        sys.exit(f"no backlog item starts with {short_id!r} (try: tools/backlog list)")
+
+    def move(self, item_id: str, folder: str):
+        self.o.move(item_id, self.folders[folder]["id"])
+
+    def append(self, item_id: str, text: str):
+        """Append a line to an item without resending the whole document."""
+        doc = self.o.call("doc.get", {"doc": item_id})
+        md = self.o.call("md.render", {"doc": item_id})
+        body = md.get("md") if isinstance(md, dict) else str(md or "")
+        self.o.call("doc.update", {"doc": item_id, "md": (body or "").rstrip() + "\n\n" + text})
+        return doc
+
+
+def cmd_list(bl: Backlog, a):
+    total = 0
+    for folder in ("Started", "Todo") if not a.all else FOLDERS:
+        items = bl.items(folder)
+        if not items and folder != "Started":
+            continue
+        print(f"\n{folder.upper()}  ({len(items)})")
+        if folder == "Started" and not items:
+            print("  nothing claimed right now")
+        for it in items[: a.limit]:
+            total += 1
+            print(f"  {it['id'][:8]}  {it['title'][:96]}")
+        if len(items) > a.limit:
+            print(f"  ... {len(items) - a.limit} more (--limit)")
+    print(f"\n{len(bl.items('Todo'))} todo, {len(bl.items('Started'))} started, "
+          f"{len(bl.items('Completed'))} completed")
+
+
+def cmd_add(bl: Backlog, a):
+    md = a.text.strip()
+    if a.why:
+        md += f"\n\n**Why it matters:** {a.why}"
+    if a.where:
+        md += f"\n\n**Where:** {a.where}"
+    md += f"\n\n*Filed {today()}"
+    md += f" by {a.by}*\n" if a.by else "*\n"
+    title = a.title or " ".join(a.text.split())[:110]
+    doc_id, how = bl.o.ensure_doc(title, md, parent=bl.folders["Todo"]["id"])
+    if how == "exists":
+        print(f"already on the backlog: {doc_id[:8]}  {title[:88]}")
+    else:
+        print(f"filed {doc_id[:8]}  {title[:88]}")
+
+
+def cmd_start(bl: Backlog, a):
+    folder, it = bl.find(a.id)
+    if folder == "Started":
+        sys.exit(f"{it['id'][:8]} is already started")
+    bl.append(it["id"], f"**Started {today()}**"
+                        + (f" by {a.by}" if a.by else "")
+                        + (f" — {a.note}" if a.note else ""))
+    bl.move(it["id"], "Started")
+    print(f"started {it['id'][:8]}  {it['title'][:88]}")
+    print("  close it with: tools/backlog done %s --how \"what actually fixed it\"" % it["id"][:8])
+
+
+def cmd_done(bl: Backlog, a):
+    folder, it = bl.find(a.id)
+    if not a.how:
+        sys.exit("--how is required: say what actually fixed it, so the next person learns "
+                 "something. 'fixed' teaches nobody.")
+    bl.append(it["id"], f"**Completed {today()}**"
+                        + (f" by {a.by}" if a.by else "")
+                        + f" — {a.how}")
+    bl.move(it["id"], "Completed")
+    print(f"completed {it['id'][:8]}  {it['title'][:88]}")
+
+
+def cmd_drop(bl: Backlog, a):
+    folder, it = bl.find(a.id)
+    if not a.why:
+        sys.exit("--why is required: an item dropped without a reason gets refiled next month.")
+    bl.append(it["id"], f"**Dropped {today()}**"
+                        + (f" by {a.by}" if a.by else "") + f" — not doing this: {a.why}")
+    bl.move(it["id"], "Completed")
+    print(f"dropped {it['id'][:8]}  {it['title'][:88]}")
+
+
+def cmd_show(bl: Backlog, a):
+    folder, it = bl.find(a.id)
+    md = bl.o.call("md.render", {"doc": it["id"]})
+    body = md.get("md") if isinstance(md, dict) else str(md or "")
+    print(f"[{folder}] {it['title']}\n{'-' * 70}")
+    print(body or "(empty)")
+
+
+def cmd_log(bl: Backlog, a):
+    """Post an entry to the Ocean Agent log — what AGENTS.md used to be."""
+    tree = bl.o.call("doc.tree")
+    folder = None
+
+    def walk(docs):
+        nonlocal folder
+        for d in docs:
+            if norm(d.get("title")) == "agent log":
+                folder = d
+            if isinstance(d.get("children"), list):
+                walk(d["children"])
+
+    for org in tree.get("tree", []):
+        for pr in org.get("projects", []):
+            walk(pr.get("docs", []))
+    if not folder:
+        sys.exit("the Ocean Log project is not set up. Run: tools/workspace-to-ocean --only log")
+
+    body = a.body or ""
+    if not sys.stdin.isatty() and not body:
+        body = sys.stdin.read()
+    if not body.strip():
+        sys.exit("give a body with --body or on stdin — an entry with no content helps nobody")
+    title = f"{today()}" + (f" ({a.by})" if a.by else "") + f" — {a.title}"
+    doc_id, how = bl.o.ensure_doc(title, body.strip() + "\n", parent=folder["id"],
+                                  update=True)
+    print(f"{how} {doc_id[:8]}  {title[:88]}")
+
+
+def cmd_search(bl: Backlog, a):
+    r = bl.o.call("search", {"q": a.text})
+    hits = r.get("hits") or r.get("results") or []
+    if not hits:
+        print("no hits")
+        return
+    for h in hits[: a.limit]:
+        print(f"  {h.get('id','')[:8]}  {h.get('title','')[:96]}")
+
+
+def main():
+    ap = argparse.ArgumentParser(prog="backlog", description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = ap.add_subparsers(dest="cmd")
+
+    p = sub.add_parser("list", help="pending work (default)")
+    p.add_argument("--all", action="store_true", help="include Completed")
+    p.add_argument("--limit", type=int, default=40)
+    p.set_defaults(fn=cmd_list)
+
+    p = sub.add_parser("add", help="file something you found")
+    p.add_argument("text")
+    p.add_argument("--why", default="", help="why it matters / what breaks if it stays broken")
+    p.add_argument("--where", default="", help="file, repo or command")
+    p.add_argument("--title", default="", help="override the generated title")
+    p.add_argument("--by", default="")
+    p.set_defaults(fn=cmd_add)
+
+    p = sub.add_parser("start", help="claim an item")
+    p.add_argument("id"); p.add_argument("--by", default=""); p.add_argument("--note", default="")
+    p.set_defaults(fn=cmd_start)
+
+    p = sub.add_parser("done", help="close an item")
+    p.add_argument("id"); p.add_argument("--how", default=""); p.add_argument("--by", default="")
+    p.set_defaults(fn=cmd_done)
+
+    p = sub.add_parser("drop", help="decide not to do it, on the record")
+    p.add_argument("id"); p.add_argument("--why", default=""); p.add_argument("--by", default="")
+    p.set_defaults(fn=cmd_drop)
+
+    p = sub.add_parser("show", help="one item in full")
+    p.add_argument("id"); p.set_defaults(fn=cmd_show)
+
+    p = sub.add_parser("log", help="post an entry to the Ocean Agent log")
+    p.add_argument("title")
+    p.add_argument("--body", default="", help="the entry (or pipe it on stdin)")
+    p.add_argument("--by", default="")
+    p.set_defaults(fn=cmd_log)
+
+    p = sub.add_parser("search", help="search the whole workspace")
+    p.add_argument("text"); p.add_argument("--limit", type=int, default=20)
+    p.set_defaults(fn=cmd_search)
+
+    a = ap.parse_args()
+    if not a.cmd:
+        a = ap.parse_args(["list"])
+    a.fn(Backlog(), a)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
