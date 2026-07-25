@@ -289,7 +289,10 @@ def _dir_source(o: Ocean, org, args, project_name, index_md, directory, icon):
     proj = o.ensure_project(org, project_name)
     idx, _ = o.ensure_doc(project_name, index_md, project=proj, icon=icon,
                           update=True, dry=args.dry_run)
-    files = sorted(f for f in os.listdir(directory) if f.endswith(".md"))
+    # A tombstone pointer is not content. Migrating it would file "PLAN/ has moved to
+    # Ocean" as a plan — the same mistake the FINDINGS tombstone caused once already.
+    files = sorted(f for f in os.listdir(directory)
+                   if f.endswith(".md") and f != "MOVED-TO-OCEAN.md")
     print(f"  {directory}: {len(files)} files -> {project_name}")
     for fname in files:
         text = open(os.path.join(directory, fname), encoding="utf-8").read()
