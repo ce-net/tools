@@ -1,0 +1,253 @@
+#!/usr/bin/env python3
+"""Publish Leif's directives into Ocean (one document each) and into ce-drive (one file each).
+
+The archive in ~/ce-net/directives/ is the source. This script is idempotent: running it
+again updates the documents it already created instead of duplicating them.
+
+Structure it builds in Ocean, under org "Rydenfalk" -> project "Directives":
+
+    Directives                       (project)
+      Leif's directives — index      (doc: every directive, linked, newest theme first)
+        <theme>                      (doc: one per theme file, with its own contents list)
+          <date> · <topic>           (doc: ONE directive, verbatim quote + direction)
+
+and in ce-drive:
+
+    /directives/<theme>/<slug>.md    the same markdown, in Leif's own drive
+
+Usage:
+    tools/directives-to-ocean [--dry-run] [--drive-only] [--ocean-only]
+"""
+from __future__ import annotations
+
+import json
+import os
+import re
+import subprocess
+import sys
+import tempfile
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DIRECTIVES = os.path.join(ROOT, "directives")
+OCEAN = os.path.join(ROOT, "ocean")
+DRIVE_BIN = os.path.expanduser(
+    "~/Library/Application Support/ce/apps/ce-drive/0.1.0/ce-drive")
+
+SERVICE = "ce.ocean"
+CTL = "ocean/ctl"
+ORG_NAME = "Rydenfalk"
+PROJECT_NAME = "Directives"
+
+sys.path.insert(0, OCEAN)
+import ce  # noqa: E402  (the ocean app's vendored SDK)
+
+THEME_TITLES = {
+    "00-standing": "Standing directives — the foundation",
+    "substrate-and-layers": "The substrate, layering and adapters",
+    "repos-and-distribution": "Repos, packaging and distribution",
+    "dev-environment": "The development environment",
+    "app-anatomy": "App anatomy — State / Logic / Viz, docs, robustness",
+    "canvas-and-ui": "The canvas and the UI layer",
+    "identity-and-trust": "Identity, capabilities, people and devices",
+    "fleet-and-embedded": "Fleet, embedded and platform entry points",
+    "ai-and-agents": "AI and agents on the mesh",
+}
+THEME_ORDER = list(THEME_TITLES)
+
+DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
+
+
+# --------------------------------------------------------------------------- parse
+
+def entries_of(theme: str):
+    """Yield (title, date, body_markdown) for each directive in a theme file."""
+    path = os.path.join(DIRECTIVES, theme + ".md")
+    lines = open(path, encoding="utf-8").read().split("\n")
+    heads = [i for i, l in enumerate(lines) if l.startswith("## ")]
+    out = []
+    for n, start in enumerate(heads):
+        head = lines[start][3:].strip()
+        if head == "Contents":
+            continue
+        end = heads[n + 1] if n + 1 < len(heads) else len(lines)
+        body = "\n".join(lines[start + 1:end]).strip("\n")
+        # trailing "---" separators belong to the file, not the entry
+        body = re.sub(r"\n-{3,}\s*$", "", body).rstrip()
+        out.append((title_of(head), DATE_RE.search(head).group(1) if DATE_RE.search(head) else "", body))
+    return out
+
+
+def title_of(head: str) -> str:
+    """'Leif verbatim — 2026-07-24 (topic)' -> '2026-07-24 · topic'."""
+    h = head
+    h = re.sub(r"^Leif verbatim\s*—\s*", "", h)
+    h = re.sub(r"^Leif's standing directives.*$", "Standing directives — his word is law", h)
+    m = re.match(r"^(\d{4}-\d{2}-\d{2})\s*(?:session)?\s*\((.+)\)$", h)
+    if m:
+        return f"{m.group(1)} · {m.group(2)}"
+    m = re.match(r"^(\d{4}-\d{2}-\d{2})\s+(.+)$", h)
+    if m:
+        return f"{m.group(1)} · {m.group(2)}"
+    return h
+
+
+def slug(text: str) -> str:
+    s = re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    return s[:80]
+
+
+# --------------------------------------------------------------------------- ocean
+
+class Ocean:
+    def __init__(self):
+        self.client = ce.connect()
+        found = self.client.find_service(SERVICE)
+        self.provider = found[0] if found else self.client.node_id
+
+    def call(self, op, args=None, timeout_ms=120000):
+        raw = self.client.request(self.provider, CTL,
+                                  json.dumps({"op": op, "args": args or {}}),
+                                  timeout_ms=timeout_ms)
+        reply = json.loads(raw.decode("utf-8") or "{}")
+        if "error" in reply:
+            raise RuntimeError(f"{op}: {reply['error']}")
+        return reply.get("result")
+
+    def org(self):
+        for o in self.call("org.list")["orgs"]:
+            if o.get("title") == ORG_NAME or o.get("name") == ORG_NAME:
+                return o["id"]
+        return self.call("org.create", {"name": ORG_NAME})["id"]
+
+    def project(self, org):
+        for p in self.call("project.list", {"org": org})["projects"]:
+            if p.get("title") == PROJECT_NAME or p.get("name") == PROJECT_NAME:
+                return p["id"]
+        return self.call("project.create",
+                         {"org": org, "name": PROJECT_NAME, "visibility": "open"})["id"]
+
+    def upsert(self, title, md, project=None, parent=None, icon=None):
+        """Create the doc, or update it in place if a doc with this title already exists here."""
+        where = {"project": project} if project else {"parent": parent}
+        existing = None
+        try:
+            for d in self.call("doc.list", where)["docs"]:
+                if d.get("title") == title:
+                    existing = d["id"]
+                    break
+        except RuntimeError:
+            pass
+        if existing:
+            self.call("doc.update", {"doc": existing, "title": title, "md": md,
+                                     **({"icon": icon} if icon else {})})
+            return existing, "updated"
+        args = {"title": title, "md": md, **where}
+        if icon:
+            args["icon"] = icon
+        return self.call("doc.create", args)["id"], "created"
+
+
+# --------------------------------------------------------------------------- drive
+
+def drive_put(dest: str, text: str, dry: bool) -> bool:
+    if dry:
+        print(f"  drive (dry) {dest}")
+        return True
+    with tempfile.NamedTemporaryFile("w", suffix=".md", delete=False, encoding="utf-8") as fh:
+        fh.write(text)
+        tmp = fh.name
+    try:
+        r = subprocess.run([DRIVE_BIN, "add", tmp, dest],
+                           capture_output=True, text=True)
+        if r.returncode != 0:
+            print(f"  drive FAILED {dest}: {r.stderr.strip()[:200]}", file=sys.stderr)
+            return False
+        return True
+    finally:
+        os.unlink(tmp)
+
+
+# --------------------------------------------------------------------------- main
+
+def main() -> int:
+    dry = "--dry-run" in sys.argv
+    index_only = "--index-only" in sys.argv          # rebuild just the index document
+    do_drive = "--ocean-only" not in sys.argv
+    do_ocean = "--drive-only" not in sys.argv
+
+    themes = [(t, entries_of(t)) for t in THEME_ORDER
+              if os.path.exists(os.path.join(DIRECTIVES, t + ".md"))]
+    total = sum(len(e) for _, e in themes)
+    print(f"{total} directives across {len(themes)} themes\n")
+
+    ocean = org = project = None
+    if do_ocean and not dry:
+        ocean = Ocean()
+        org = ocean.org()
+        project = ocean.project(org)
+        print(f"org {org} / project {project} ({PROJECT_NAME})\n")
+
+    index_rows = []
+    for theme, entries in themes:
+        title = THEME_TITLES[theme]
+        print(f"{title}  ({len(entries)})")
+
+        # theme doc: its own contents list, so the tree reads like a book
+        theme_md = (
+            f"Leif's words on **{title.lower()}**, one document per directive, "
+            f"verbatim and byte-exact.\n\n"
+            f"His word is law. A quote is never edited, summarized in place, or deleted.\n\n"
+            + "\n".join(f"- [[{t}]]" for t, _, _ in entries)
+            + f"\n\nSource of truth: `~/ce-net/directives/{theme}.md`. "
+              f"The one-line law that binds every agent lives in `~/ce-net/CLAUDE.md`.\n"
+        )
+        theme_doc = None
+        if do_ocean and not dry and not index_only:
+            theme_doc, how = ocean.upsert(title, theme_md, project=project)
+            print(f"  theme doc {theme_doc} ({how})")
+
+        for etitle, edate, body in entries:
+            md = body + (
+                f"\n\n---\n\nRecorded {edate or 'undated'}. "
+                f"Verbatim source: `~/ce-net/directives/{theme}.md`.\n"
+            )
+            if do_ocean and not dry and not index_only:
+                doc_id, how = ocean.upsert(etitle, md, parent=theme_doc)
+                print(f"    {how[:3]} {doc_id}  {etitle[:70]}")
+            elif do_ocean and not index_only:
+                print(f"    (dry) {etitle[:70]}")
+            if do_drive and not index_only:
+                drive_put(f"/directives/{theme}/{slug(etitle)}.md",
+                          f"# {etitle}\n\n{md}", dry)
+            index_rows.append((title, etitle, edate))
+        print()
+
+    # the index doc — the one place an AI or a human starts
+    idx_md = (
+        "Every directive Leif has given, one document each, verbatim.\n\n"
+        "**His word is law.** A quote is never edited, summarized in place, or deleted. "
+        "The one-line law that binds every agent lives in `~/ce-net/CLAUDE.md`; this is the "
+        "provenance — the exact words, the date, and the reasoning.\n\n"
+        "For AI: `search` covers every block of every document here, `doc.tree` walks the "
+        "whole structure, and `doc.get` returns a directive with its children and backlinks. "
+        "The same words are files in ce-drive under `/directives/<theme>/`.\n\n"
+        "## By theme\n\n"
+        + "\n".join(f"- [[{THEME_TITLES[t]}]] — {len(e)} directive(s)" for t, e in themes)
+        + "\n\n## Every directive, newest first\n\n"
+        + "\n".join(
+            f"- `{d or '        '}` [[{t}]]  <sub>{th}</sub>"
+            for th, t, d in sorted(index_rows, key=lambda r: r[2], reverse=True))
+        + "\n"
+    )
+    if do_ocean and not dry:
+        idx, how = ocean.upsert("Leif's directives — index", idx_md, project=project)
+        print(f"index doc {idx} ({how})")
+    if do_drive:
+        drive_put("/directives/README.md", idx_md, dry)
+
+    print(f"\ndone: {total} directives")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -54,3 +54,42 @@ This is a plain script so it's usable immediately. It can later be folded into `
 (`rdev test <app> --on hetzner`) once the mesh exec/sync path is mature — the convention
 here (`/opt/build/<repo>` siblings, per-app target dir, flock) matches the existing
 `/opt/build/build.sh`.
+
+## claude-md-guard — keep the root context file an index, not an archive
+
+The workspace root `CLAUDE.md` is loaded into every agent's context on every session. It once
+reached 159 KB (~40k tokens per agent per session) because every new verbatim directive was
+pasted into it in full, restating laws earlier entries had already set.
+
+The guard enforces the split that fixed it:
+
+- a byte budget (24 KB) on `CLAUDE.md`,
+- no verbatim quote blocks in it — those belong in `directives/<theme>.md`,
+- every theme file linked from `CLAUDE.md`, and listed in `directives/README.md`.
+
+    ./claude-md-guard            # check; exit 1 with the fix on violation
+    ./claude-md-guard --stats    # sizes only
+
+Wire it as the workspace repo's `pre-commit` hook:
+
+    printf '#!/bin/sh\nexec python3 "$(git rev-parse --show-toplevel)/tools/claude-md-guard"\n' \
+      > ../.git/hooks/pre-commit && chmod +x ../.git/hooks/pre-commit
+
+Raising the budget is not the fix. Moving content out is: repo descriptions to `REPOS.md`,
+machines/ports/release to `OPERATIONS.md`, how-to into the skills, design into `PLAN/`.
+
+## directives-to-ocean — publish the directive archive onto the mesh
+
+Reads `directives/*.md` and publishes each directive as its own **Ocean** document (org
+Rydenfalk, project Directives, nested under a doc per theme, plus an index doc) and as markdown
+in **ce-drive** under `/directives/<theme>/`. Idempotent: a second run updates the documents it
+already created rather than duplicating them.
+
+    ./directives-to-ocean               # both faces
+    ./directives-to-ocean --dry-run     # show what it would write
+    ./directives-to-ocean --index-only  # rebuild just the index document
+    ./directives-to-ocean --drive-only | --ocean-only
+
+Why: the archive should be reachable from the mesh — `ce.ocean` `search`/`doc.tree` for agents
+and humans, `ce.files` for AI — not only from one laptop's context file. Run it after recording
+a new directive.
