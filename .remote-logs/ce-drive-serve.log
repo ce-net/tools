@@ -1,0 +1,724 @@
+=== Sun Jul 26 18:39:37 UTC 2026 remote test ce-drive-serve ===
+rustc 1.97.1 (8bab26f4f 2026-07-14)
+    Updating git repository `https://github.com/ce-net/ce-coord`
+    Updating git repository `https://github.com/ce-net/ce-drive`
+    Updating git repository `https://github.com/ce-net/ce-iam`
+    Updating git repository `https://github.com/ce-net/ce`
+    Updating git repository `https://github.com/ce-net/ce-rs`
+    Updating git repository `https://github.com/ce-net/ce-drive-client`
+    Updating git repository `https://github.com/ce-net/rdev`
+     Locking 22 packages to latest Rust 1.97.1 compatible versions
+      Adding ce-appmgr v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-blob v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-cap v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-container v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-coord v0.1.0 (https://github.com/ce-net/ce-coord#d416f189)
+      Adding ce-drive-client v0.1.0 (https://github.com/ce-net/ce-drive-client#4330a652)
+      Adding ce-drive-core v0.1.0 (https://github.com/ce-net/ce-drive#31e797ba)
+      Adding ce-guard v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-iam-core v0.1.0 (https://github.com/ce-net/ce-iam#f00657db)
+      Adding ce-identity v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-lane v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-mesh v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-microvm v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-node v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-protocol v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-reqresp v0.26.3 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-rs v0.1.0 (https://github.com/ce-net/ce-rs#000d3dc1)
+      Adding ce-runtime v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-tls v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-wallet v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding ce-wasm v0.1.0 (https://github.com/ce-net/ce#645020c1)
+      Adding rdev v0.2.1 (https://github.com/ce-net/rdev#d86cf79f)
+   Compiling proc-macro2 v1.0.106
+   Compiling quote v1.0.46
+   Compiling unicode-ident v1.0.24
+   Compiling libc v0.2.186
+   Compiling syn v2.0.118
+   Compiling cfg-if v1.0.4
+   Compiling serde_core v1.0.228
+   Compiling serde v1.0.228
+   Compiling version_check v0.9.5
+   Compiling getrandom v0.2.17
+   Compiling memchr v2.8.2
+   Compiling serde_derive v1.0.228
+   Compiling zeroize_derive v1.5.0
+   Compiling zeroize v1.9.0
+   Compiling typenum v1.20.1
+   Compiling rand_core v0.6.4
+   Compiling log v0.4.33
+   Compiling subtle v2.6.1
+   Compiling generic-array v0.14.7
+   Compiling pin-project-lite v0.2.17
+   Compiling once_cell v1.21.4
+   Compiling crypto-common v0.1.7
+   Compiling anyhow v1.0.102
+   Compiling bytes v1.12.0
+   Compiling smallvec v1.15.2
+   Compiling const-oid v0.9.6
+   Compiling futures-core v0.3.32
+   Compiling futures-io v0.3.32
+   Compiling futures-sink v0.3.32
+   Compiling slab v0.4.12
+   Compiling block-buffer v0.10.4
+   Compiling digest v0.10.7
+   Compiling cpufeatures v0.2.17
+   Compiling futures-channel v0.3.32
+   Compiling futures-macro v0.3.32
+   Compiling futures-task v0.3.32
+   Compiling jobserver v0.1.34
+   Compiling futures-util v0.3.32
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.9
+   Compiling cc v1.2.65
+   Compiling parking_lot_core v0.9.12
+   Compiling scopeguard v1.2.0
+   Compiling lock_api v0.4.14
+   Compiling synstructure v0.13.2
+   Compiling equivalent v1.0.2
+   Compiling parking_lot v0.12.5
+   Compiling tracing-core v0.1.36
+   Compiling foldhash v0.2.0
+   Compiling tracing-attributes v0.1.31
+   Compiling semver v1.0.28
+   Compiling fnv v1.0.7
+   Compiling zerocopy v0.8.52
+   Compiling tracing v0.1.44
+   Compiling sha2 v0.10.9
+   Compiling zerofrom-derive v0.1.7
+   Compiling displaydoc v0.2.6
+   Compiling zerofrom v0.1.8
+   Compiling yoke-derive v0.8.2
+   Compiling errno v0.3.14
+   Compiling stable_deref_trait v1.2.1
+   Compiling yoke v0.8.3
+   Compiling signal-hook-registry v1.4.8
+   Compiling tokio-macros v2.7.0
+   Compiling mio v1.2.1
+   Compiling socket2 v0.6.4
+   Compiling tokio v1.52.3
+   Compiling zerovec-derive v0.11.3
+   Compiling zerovec v0.11.6
+   Compiling ppv-lite86 v0.2.21
+   Compiling thiserror-impl v2.0.18
+   Compiling bitflags v2.13.0
+   Compiling percent-encoding v2.3.2
+   Compiling thiserror v1.0.69
+   Compiling tinystr v0.8.3
+   Compiling thiserror-impl v1.0.69
+   Compiling writeable v0.6.3
+   Compiling litemap v0.8.2
+   Compiling icu_locale_core v2.2.0
+   Compiling potential_utf v0.1.5
+   Compiling zerotrie v0.2.4
+   Compiling rustc_version v0.4.1
+   Compiling icu_normalizer_data v2.2.0
+   Compiling icu_properties_data v2.2.0
+   Compiling utf8_iter v1.0.4
+   Compiling icu_collections v2.2.0
+   Compiling icu_provider v2.2.0
+   Compiling thiserror v2.0.18
+   Compiling heck v0.5.0
+   Compiling itoa v1.0.18
+   Compiling icu_normalizer v2.2.0
+   Compiling icu_properties v2.2.0
+   Compiling form_urlencoded v1.2.2
+   Compiling rand_chacha v0.3.1
+   Compiling hashbrown v0.17.1
+   Compiling signature v2.2.0
+   Compiling idna_adapter v1.2.2
+   Compiling rand v0.8.6
+   Compiling curve25519-dalek v4.1.3
+   Compiling futures-executor v0.3.32
+   Compiling futures v0.3.32
+   Compiling idna v1.1.0
+   Compiling curve25519-dalek-derive v0.1.1
+   Compiling url v2.5.8
+   Compiling ed25519 v2.2.3
+   Compiling ed25519-dalek v2.2.0
+   Compiling hmac v0.12.1
+   Compiling indexmap v2.14.0
+   Compiling hkdf v0.12.4
+   Compiling ipnet v2.12.0
+   Compiling allocator-api2 v0.2.21
+   Compiling zmij v1.0.21
+   Compiling either v1.16.0
+   Compiling libm v0.2.16
+   Compiling autocfg v1.5.1
+   Compiling ring v0.17.14
+   Compiling data-encoding v2.11.0
+   Compiling cmake v0.1.58
+   Compiling pin-project-internal v1.1.13
+   Compiling dunce v1.0.5
+   Compiling fs_extra v1.3.0
+   Compiling byteorder v1.5.0
+   Compiling static_assertions v1.1.0
+   Compiling aws-lc-sys v0.41.0
+   Compiling itertools v0.14.0
+   Compiling pin-project v1.1.13
+   Compiling unsigned-varint v0.8.0
+   Compiling base64 v0.22.1
+   Compiling data-encoding-macro-internal v0.1.18
+   Compiling prost-derive v0.14.4
+   Compiling asynchronous-codec v0.6.2
+   Compiling match-lookup v0.1.2
+   Compiling socket2 v0.5.10
+   Compiling const-str v0.4.3
+   Compiling untrusted v0.9.0
+   Compiling base256emoji v1.0.2
+   Compiling unsigned-varint v0.7.2
+   Compiling prost v0.14.4
+   Compiling data-encoding-macro v0.1.20
+   Compiling multihash v0.19.5
+   Compiling quick-protobuf v0.8.1
+   Compiling async-trait v0.1.89
+   Compiling futures-timer v3.0.4
+   Compiling base-x v0.2.11
+   Compiling bs58 v0.5.1
+   Compiling aws-lc-rs v1.17.0
+   Compiling libp2p-identity v0.2.14
+   Compiling multibase v0.9.2
+   Compiling pkg-config v0.3.33
+   Compiling cfg_aliases v0.2.1
+   Compiling arrayref v0.3.9
+   Compiling web-time v1.1.0
+   Compiling multiaddr v0.18.2
+   Compiling multistream-select v0.13.0
+   Compiling rw-stream-sink v0.4.0
+   Compiling rustls-pki-types v1.14.1
+   Compiling hex v0.4.3
+   Compiling void v1.0.2
+   Compiling httparse v1.10.1
+   Compiling libp2p-core v0.41.3
+   Compiling http v1.4.2
+   Compiling rustls v0.23.40
+   Compiling rustix v1.1.4
+   Compiling wasmtime-internal-core v46.0.0
+   Compiling serde_json v1.0.150
+   Compiling http-body v1.0.1
+   Compiling linux-raw-sys v0.12.1
+   Compiling tower-service v0.3.3
+   Compiling cranelift-bitset v0.133.0
+   Compiling memoffset v0.9.1
+   Compiling tokio-util v0.7.18
+   Compiling atomic-waker v1.1.2
+   Compiling try-lock v0.2.5
+   Compiling vcpkg v0.2.15
+   Compiling openssl-sys v0.9.117
+   Compiling want v0.3.1
+   Compiling h2 v0.4.15
+   Compiling nix v0.30.1
+   Compiling httpdate v1.0.3
+   Compiling foldhash v0.1.5
+   Compiling hashbrown v0.15.5
+   Compiling hyper v1.10.1
+   Compiling cranelift-srcgen v0.133.0
+   Compiling target-lexicon v0.13.5
+   Compiling cranelift-assembler-x64-meta v0.133.0
+   Compiling hyper-util v0.1.20
+   Compiling lru v0.12.5
+   Compiling http-body-util v0.1.3
+   Compiling libp2p-swarm-derive v0.34.2
+   Compiling bincode v1.3.3
+   Compiling instant v0.1.13
+   Compiling rustc-hash v2.1.2
+   Compiling libp2p-swarm v0.44.2
+   Compiling pulley-macros v46.0.0
+   Compiling encoding_rs v0.8.35
+   Compiling foreign-types-shared v0.1.1
+   Compiling openssl v0.10.81
+   Compiling foreign-types v0.3.2
+   Compiling ce-identity v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling sync_wrapper v1.0.2
+   Compiling openssl-macros v0.1.1
+   Compiling getrandom v0.3.4
+   Compiling cranelift-isle v0.133.0
+   Compiling base64ct v1.8.3
+   Compiling native-tls v0.2.18
+   Compiling tower-layer v0.3.3
+   Compiling ryu v1.0.23
+   Compiling serde_urlencoded v0.7.1
+   Compiling pem-rfc7468 v0.7.0
+   Compiling pulley-interpreter v46.0.0
+   Compiling cranelift-entity v0.133.0
+   Compiling num-traits v0.2.19
+   Compiling cobs v0.3.0
+   Compiling hashbrown v0.16.1
+   Compiling time-core v0.1.9
+   Compiling openssl-probe v0.2.1
+   Compiling num-conv v0.2.2
+   Compiling cranelift-codegen-shared v0.133.0
+   Compiling cranelift-codegen-meta v0.133.0
+   Compiling time-macros v0.2.30
+   Compiling gimli v0.33.0
+   Compiling postcard v1.1.3
+   Compiling cranelift-bforest v0.133.0
+   Compiling der v0.7.10
+   Compiling tower v0.5.3
+   Compiling cranelift-assembler-x64 v0.133.0
+   Compiling mime v0.3.17
+   Compiling crc32fast v1.5.0
+   Compiling powerfmt v0.2.0
+   Compiling regex-syntax v0.8.11
+   Compiling rustls-webpki v0.103.13
+   Compiling paste v1.0.15
+   Compiling deranged v0.5.8
+   Compiling time v0.3.51
+   Compiling tokio-rustls v0.26.4
+   Compiling wasmparser v0.251.0
+   Compiling spki v0.7.3
+   Compiling cranelift-codegen v0.133.0
+   Compiling rand_core v0.9.5
+   Compiling tokio-native-tls v0.3.1
+   Compiling webpki-roots v1.0.8
+   Compiling bumpalo v3.20.3
+   Compiling toml_datetime v0.6.11
+   Compiling serde_spanned v0.6.9
+   Compiling wasmtime-internal-versioned-export-macros v46.0.0
+   Compiling aho-corasick v1.1.4
+   Compiling toml_write v0.1.2
+   Compiling option-ext v0.2.0
+   Compiling arbitrary v1.4.2
+   Compiling object v0.39.1
+   Compiling base16ct v0.2.0
+   Compiling io-lifetimes v2.0.4
+   Compiling winnow v0.7.15
+   Compiling lazy_static v1.5.0
+   Compiling serdect v0.2.0
+   Compiling cranelift-control v0.133.0
+   Compiling toml_edit v0.22.27
+   Compiling dirs-sys v0.4.1
+   Compiling regex-automata v0.4.14
+   Compiling regalloc2 v0.15.1
+   Compiling hyper-rustls v0.27.9
+   Compiling hyper-tls v0.6.0
+   Compiling pkcs8 v0.10.2
+   Compiling tower-http v0.6.11
+   Compiling ff v0.13.1
+   Compiling wasmtime-internal-component-util v46.0.0
+   Compiling tinyvec_macros v0.1.1
+   Compiling termcolor v1.4.1
+   Compiling utf8parse v0.2.2
+   Compiling minimal-lexical v0.2.1
+   Compiling leb128fmt v0.1.0
+   Compiling wasm-encoder v0.251.0
+   Compiling nom v7.1.3
+   Compiling anstyle-parse v1.0.0
+   Compiling wasmprinter v0.251.0
+   Compiling tinyvec v1.11.0
+   Compiling group v0.13.0
+   Compiling reqwest v0.12.28
+   Compiling netlink-packet-core v0.8.1
+   Compiling sec1 v0.7.3
+   Compiling toml v0.8.23
+   Compiling directories v5.0.1
+   Compiling rand_chacha v0.9.0
+   Compiling ce-cap v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling zstd-sys v2.0.16+zstd.1.5.7
+   Compiling futures-bounded v0.2.4
+   Compiling ce-runtime v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling crypto-bigint v0.5.5
+   Compiling inout v0.1.4
+   Compiling serde_repr v0.1.20
+   Compiling serde_with v3.21.0
+   Compiling filetime v0.2.29
+   Compiling anstyle-query v1.1.5
+   Compiling crossbeam-utils v0.8.21
+   Compiling io-extras v0.18.4
+   Compiling is_terminal_polyfill v1.70.2
+   Compiling anstyle v1.0.14
+   Compiling colorchoice v1.0.5
+   Compiling anstream v1.0.0
+   Compiling bollard-stubs v1.45.0-rc.26.0.1
+   Compiling cipher v0.4.4
+   Compiling elliptic-curve v0.13.8
+   Compiling rand v0.9.4
+   Compiling wasmtime-environ v46.0.0
+   Compiling rusticata-macros v4.1.0
+   Compiling ce-lane v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling hyperlocal v0.9.1
+   Compiling netlink-sys v0.8.8
+   Compiling asn1-rs-derive v0.5.1
+   Compiling asynchronous-codec v0.7.0
+   Compiling ring v0.16.20
+   Compiling universal-hash v0.5.1
+   Compiling asn1-rs-impl v0.2.0
+   Compiling unicode-xid v0.2.6
+   Compiling strsim v0.11.1
+   Compiling cap-primitives v3.4.5
+   Compiling wasmtime-internal-unwinder v46.0.0
+   Compiling id-arena v2.3.0
+   Compiling clap_lex v1.1.0
+   Compiling getrandom v0.4.3
+   Compiling rand_core v0.10.1
+   Compiling opaque-debug v0.3.1
+   Compiling polyval v0.6.2
+   Compiling clap_builder v4.6.0
+   Compiling wit-parser v0.251.0
+   Compiling asn1-rs v0.6.2
+   Compiling netlink-proto v0.12.0
+   Compiling bollard v0.17.1
+   Compiling fs-set-times v0.20.3
+   Compiling netlink-packet-route v0.28.0
+   Compiling wasmtime-internal-fiber v46.0.0
+   Compiling num-integer v0.1.46
+   Compiling rustix-linux-procfs v0.1.1
+   Compiling rfc6979 v0.4.0
+   Compiling clap_derive v4.6.1
+   Compiling ahash v0.8.12
+   Compiling dirs-sys-next v0.1.2
+   Compiling inotify-sys v0.1.5
+   Compiling same-file v1.0.6
+   Compiling zstd-safe v7.2.4
+   Compiling nu-ansi-term v0.50.3
+   Compiling oid-registry v0.7.1
+   Compiling maybe-owned v0.3.4
+   Compiling untrusted v0.7.1
+   Compiling bitflags v1.3.2
+   Compiling ambient-authority v0.0.2
+   Compiling leb128 v0.2.7
+   Compiling wasmtime-internal-component-macro v46.0.0
+   Compiling spin v0.5.2
+   Compiling wasmtime-internal-cranelift v46.0.0
+   Compiling wast v35.0.2
+   Compiling inotify v0.9.6
+   Compiling clap v4.6.1
+   Compiling walkdir v2.5.0
+   Compiling dirs-next v2.0.0
+   Compiling ecdsa v0.16.9
+   Compiling num-bigint v0.4.6
+   Compiling rtnetlink v0.20.0
+   Compiling ce-container v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling crossbeam-channel v0.5.15
+   Compiling wasmtime-internal-wit-bindgen v46.0.0
+   Compiling ghash v0.5.1
+   Compiling quick-protobuf-codec v0.3.1
+   Compiling ce-rs v0.1.0 (https://github.com/ce-net/ce-rs#000d3dc1)
+   Compiling primeorder v0.13.6
+   Compiling ctr v0.9.2
+   Compiling aes v0.8.4
+   Compiling cranelift-frontend v0.133.0
+   Compiling cranelift-native v0.133.0
+   Compiling wasmtime v46.0.0
+   Compiling yasna v0.5.2
+   Compiling quinn-udp v0.5.14
+   Compiling pem v3.0.6
+   Compiling enum-as-inner v0.6.1
+   Compiling aead v0.5.2
+   Compiling mio v0.8.11
+   Compiling crunchy v0.2.4
+   Compiling cap-std v3.4.5
+   Compiling notify v6.1.1
+   Compiling aes-gcm v0.10.3
+   Compiling hickory-proto v0.24.4
+   Compiling rcgen v0.11.3
+   Compiling p256 v0.13.2
+   Compiling if-watch v3.2.2
+   Compiling der-parser v9.0.0
+   Compiling witx v0.9.1
+   Compiling diffy v0.4.2
+   Compiling ce-wallet v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling futures-rustls v0.26.0
+   Compiling wasmtime-internal-jit-icache-coherence v46.0.0
+   Compiling memfd v0.6.5
+   Compiling quinn v0.11.11
+   Compiling snow v0.9.6
+   Compiling prometheus-client v0.22.3
+   Compiling wiggle-macro v46.0.0
+   Compiling nohash-hasher v0.2.0
+   Compiling linked-hash-map v0.5.6
+   Compiling lru-slab v0.1.2
+   Compiling lru-cache v0.1.2
+   Compiling quinn-proto v0.11.15
+   Compiling rdev v0.2.1 (https://github.com/ce-net/rdev#d86cf79f)
+   Compiling wiggle-generate v46.0.0
+   Compiling x509-parser v0.16.0
+   Compiling hashbrown v0.14.5
+   Compiling zstd v0.13.3
+   Compiling ce-secrets-rs v0.1.0 (https://github.com/ce-net/ce-secrets-rs#304ee9c2)
+   Compiling ce-coord v0.1.0 (https://github.com/ce-net/ce-coord#d416f189)
+   Compiling matchers v0.2.0
+   Compiling sharded-slab v0.1.7
+   Compiling quick-protobuf-codec v0.2.0
+   Compiling rustls-webpki v0.101.7
+   Compiling tracing-log v0.2.0
+   Compiling sha1 v0.10.6
+   Compiling prometheus-client-derive-encode v0.4.2
+   Compiling thread_local v1.1.9
+   Compiling dtoa v1.0.11
+   Compiling rustversion v1.0.22
+   Compiling resolv-conf v0.7.6
+   Compiling cap-fs-ext v3.4.5
+   Compiling cpufeatures v0.3.0
+   Compiling chacha20 v0.10.0
+   Compiling hickory-resolver v0.24.4
+   Compiling tracing-subscriber v0.3.23
+   Compiling soketto v0.8.1
+   Compiling libp2p-tls v0.4.1
+   Compiling ce-drive-core v0.1.0 (https://github.com/ce-net/ce-drive#31e797ba)
+   Compiling uint v0.9.5
+   Compiling ce-iam-core v0.1.0 (https://github.com/ce-net/ce-iam#f00657db)
+   Compiling lru v0.11.1
+   Compiling yamux v0.13.10
+   Compiling yamux v0.12.1
+   Compiling libp2p-request-response v0.26.3
+   Compiling regex v1.12.4
+   Compiling futures-ticker v0.0.3
+   Compiling x25519-dalek v2.0.1
+   Compiling iana-time-zone v0.1.65
+   Compiling base64 v0.21.7
+   Compiling arrayvec v0.7.7
+   Compiling webpki-roots v0.25.4
+   Compiling hex_fmt v0.3.0
+   Compiling libp2p-websocket v0.43.2
+   Compiling libp2p-gossipsub v0.46.1
+   Compiling libp2p-kad v0.45.3
+   Compiling cap-time-ext v3.4.5
+   Compiling libp2p-noise v0.44.0
+   Compiling libp2p-autonat v0.12.0
+   Compiling libp2p-yamux v0.45.2
+   Compiling wiggle v46.0.0
+   Compiling libp2p-dcutr v0.11.0
+   Compiling libp2p-quic v0.10.3
+   Compiling libp2p-dns v0.41.1
+   Compiling rand v0.10.1
+   Compiling cap-net-ext v3.4.5
+   Compiling wasmtime-wasi-io v46.0.0
+   Compiling libp2p-tcp v0.41.0
+   Compiling libp2p-mdns v0.45.1
+   Compiling libp2p-identify v0.44.2
+   Compiling libp2p-relay v0.17.2
+   Compiling libp2p-ping v0.44.1
+   Compiling libp2p-allow-block-list v0.3.0
+   Compiling libp2p-connection-limits v0.3.1
+   Compiling xattr v1.6.1
+   Compiling fastrand v2.4.1
+   Compiling rlimit v0.10.2
+   Compiling tempfile v3.27.0
+   Compiling tar v0.4.46
+   Compiling libp2p v0.53.2
+   Compiling wasmtime-wasi v46.0.0
+   Compiling axum-core v0.4.5
+   Compiling ce-reqresp v0.26.3 (https://github.com/ce-net/ce#645020c1)
+   Compiling ce-protocol v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling libp2p-stream v0.1.0-alpha
+   Compiling serde_path_to_error v0.1.20
+   Compiling wait-timeout v0.2.1
+   Compiling matchit v0.7.3
+   Compiling quick-error v1.2.3
+   Compiling bit-vec v0.8.0
+   Compiling bit-set v0.8.0
+   Compiling rusty-fork v0.3.1
+   Compiling axum v0.7.9
+   Compiling ce-mesh v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling ce-appmgr v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling ce-wasm v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling ce-drive-serve v0.1.0 (https://github.com/ce-net/ce-drive-serve#308e8122)
+   Compiling ce-tls v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling ce-microvm v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling ce-guard v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling rand_xorshift v0.4.0
+   Compiling ce-blob v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling unarray v0.1.4
+   Compiling ce-node v0.1.0 (https://github.com/ce-net/ce#645020c1)
+   Compiling proptest v1.11.0
+   Compiling ce-drive-client v0.1.0 (https://github.com/ce-net/ce-drive-client#4330a652)
+   Compiling ce-drive-serve v0.1.0 (/opt/build/ce-drive-serve)
+warning: function `id_for_test` is never used
+    --> src/serve.rs:1506:8
+     |
+1506 |     fn id_for_test(tag: &str) -> Identity {
+     |        ^^^^^^^^^^^
+     |
+     = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `ce-drive-serve` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5m 17s
+     Running unittests src/lib.rs (/opt/build/target-ce-drive-serve/debug/deps/ce_drive_serve-93a7fe476d1ffd75)
+
+running 50 tests
+test corpus::content_reply_tests::a_refusal_yields_no_bytes_rather_than_empty_ones ... ok
+test corpus::mouth_tests::a_page_is_always_bounded ... ok
+test corpus::content_reply_tests::every_content_app_decodes_the_same_way ... ok
+test corpus::mouth_tests::defaults_walk_the_whole_drive_from_the_start ... ok
+test corpus::mouth_tests::replies_use_the_envelope_every_ce_app_speaks ... ok
+test corpus::mouth_tests::since_is_inclusive_so_a_resumed_crawl_cannot_skip_a_tie ... ok
+test corpus::mouth_tests::since_is_parsed_from_the_request ... ok
+test corpus::mouth_tests::since_keeps_only_what_changed ... ok
+test corpus::mouth_tests::since_zero_is_a_full_crawl ... ok
+test corpus::tests::a_broken_kind_app_degrades_instead_of_poisoning_the_corpus ... ok
+test corpus::tests::a_good_reply_is_read ... ok
+test corpus::tests::a_node_with_no_kind_is_a_plain_file ... ok
+test corpus::tests::an_item_is_keyed_by_stable_node_id_not_path ... ok
+test corpus::tests::an_operators_prop_outranks_an_extracted_one ... ok
+test corpus::tests::an_unreadable_node_is_still_indexed_and_says_why ... ok
+test corpus::tests::dir_is_derived_for_grouping ... ok
+test corpus::tests::drive_links_and_format_links_are_merged ... ok
+test corpus::tests::duplicate_links_are_not_doubled ... ok
+test corpus::tests::the_extract_request_carries_bytes_the_caller_already_has ... ok
+test corpus::tests::the_filename_is_the_fallback_title ... ok
+test corpus::tests::the_formats_title_wins_over_the_filename ... ok
+test corpus::tests::the_locator_is_carried_so_a_hit_can_be_opened ... ok
+test feed::tests::change_kinds_preserved_in_feed ... ok
+test feed::tests::cursor_advances_per_record ... ok
+test feed::tests::empty_feed_polls_empty ... ok
+test feed::tests::full_drain_in_one_page_when_limit_large ... ok
+test feed::tests::limit_zero_is_clamped_to_one ... ok
+test feed::tests::paging_covers_every_change_exactly_once ... ok
+test feed::tests::poll_is_gap_free_and_resumable ... ok
+test feed::tests::poll_past_the_end_is_gap_free_noop ... ok
+test serve::tests::derive_nonce_is_deterministic_and_path_sensitive ... ok
+test serve::tests::enforce_prefix_root_admits_everything ... ok
+test serve::tests::enforce_prefix_subtree_rules ... ok
+test serve::tests::drive_prefix_roundtrips ... ok
+test serve::tests::full_read_pulls_all_chunks ... ok
+test serve::tests::no_dotdot_guards_traversal ... ok
+test serve::tests::norm_path_canonicalizes ... ok
+test serve::tests::parse_drive_prefix_rejects_unbound_and_foreign ... ok
+test serve::tests::parse_node_id_validates_length ... ok
+test serve::tests::ranged_read_header_pulls_one_chunk ... ok
+test serve::tests::read_plan_empty_object_has_no_chunks ... ok
+test serve::tests::ranged_read_pulls_only_intersecting_chunks ... ok
+test serve::tests::read_plan_exact_chunk_boundary ... ok
+test serve::tests::read_plan_last_chunk_is_partial ... ok
+test serve::tests::read_plan_len_clamps_to_total ... ok
+test serve::tests::read_plan_offset_past_end_returns_no_chunks ... ok
+test serve::tests::split_path_basic ... ok
+test serve::tests::split_path_normalizes_first ... ok
+test serve::tests::read_plan_zero_len_returns_no_chunks ... ok
+test tenant::tests::host_id_hex_is_stable_64_hex ... ok
+
+test result: ok. 50 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running unittests src/main.rs (/opt/build/target-ce-drive-serve/debug/deps/ce_drive_serve-197a1925ec61b915)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/authorize.rs (/opt/build/target-ce-drive-serve/debug/deps/authorize-59d1d1551d4fa135)
+
+running 11 tests
+test cap_authorizes_read_on_subtree ... ok
+test attenuation_cannot_widen_read_to_write ... ok
+test cap_for_drive_a_is_rejected_on_drive_b ... ok
+test child_prefix_cannot_escape_parent ... ok
+test dotdot_traversal_denied ... ok
+test drive_unbound_cap_is_rejected ... ok
+test expired_cap_denied ... ok
+test out_of_prefix_denied ... ok
+test read_cap_denied_for_write ... ok
+test revoked_subtree_denied ... ok
+test wrong_audience_denied ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+
+     Running tests/authorize_props.rs (/opt/build/target-ce-drive-serve/debug/deps/authorize_props-d41b512728707c55)
+
+running 11 tests
+test copy_source_outside_prefix_denied ... ok
+test empty_chain_denied ... ok
+test granted_abilities_returned_on_success ... ok
+test move_dotdot_in_source_denied ... ok
+test move_source_outside_prefix_denied ... ok
+test move_within_scope_allowed ... ok
+test not_yet_valid_cap_denied_as_expired ... ok
+test org_root_is_honored_when_accepted ... ok
+test required_ability_per_op_is_correct ... ok
+test three_link_narrowing_chain_authorizes ... ok
+test child_never_amplifies_parent ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.79s
+
+     Running tests/crdt_snapshot.rs (/opt/build/target-ce-drive-serve/debug/deps/crdt_snapshot-75ed943abf1412a3)
+
+running 5 tests
+test empty_drive_snapshot_round_trips ... ok
+test applying_same_remote_op_twice_is_idempotent ... ok
+test populated_drive_snapshot_round_trips ... ok
+test remote_ops_converge_regardless_of_order ... ok
+test snapshot_round_trips_for_any_order ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+
+     Running tests/durability.rs (/opt/build/target-ce-drive-serve/debug/deps/durability-ecc407b862f39fa0)
+
+running 3 tests
+test restore_preserves_stable_node_ids ... ok
+test an_absent_state_file_is_distinguishable_from_an_empty_one ... ok
+test successive_writes_round_trip_through_disk ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running tests/registry_live.rs (/opt/build/target-ce-drive-serve/debug/deps/registry_live-c522193a32a7c20e)
+
+running 7 tests
+test a_drive_survives_a_restart ... ok
+test a_reset_journal_replays_nothing_but_the_snapshot_still_has_it ... ok
+test duplicate_create_errors ... ok
+test create_get_and_list_drives ... ok
+test quota_is_carried_per_drive ... ok
+test restore_rebuilds_drive_from_state_and_rejects_duplicates ... ok
+test writes_survive_a_crash_with_no_snapshot_at_all ... ok
+
+test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.96s
+
+     Running tests/two_node_drive.rs (/opt/build/target-ce-drive-serve/debug/deps/two_node_drive-200d5d102134a602)
+
+running 1 test
+test remote_drive_open_write_read_and_mirror ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.52s
+
+     Running tests/two_node_full.rs (/opt/build/target-ce-drive-serve/debug/deps/two_node_full-c3f2c1ece1e21411)
+
+running 1 test
+test full_op_set_capability_gated_over_two_nodes ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.04s
+
+     Running tests/wire_golden_py.rs (/opt/build/target-ce-drive-serve/debug/deps/wire_golden_py-b5325597ceb2cbfb)
+
+running 13 tests
+test error_codes_are_stable_for_clients_that_do_not_decode_variants ... ok
+test golden_err_replies ... ok
+test golden_list ... ok
+test golden_metadata_ops ... ok
+test golden_mkdir_move_delete ... ok
+test golden_ok_replies ... ok
+test golden_open ... ok
+test golden_poll_and_watch ... ok
+test golden_read ... ok
+test golden_share_caveats_field_order ... ok
+test golden_stat ... ok
+test variant_indices_are_declaration_order ... ok
+test golden_write ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/wire_roundtrip.rs (/opt/build/target-ce-drive-serve/debug/deps/wire_roundtrip-7a3b7bb8168c445f)
+
+running 14 tests
+test beacon_round_trips ... ok
+test changes_topic_is_per_drive_and_stable ... ok
+test conflict_display_includes_etag ... ok
+test decode_empty_request_errs ... ok
+test decode_garbage_request_errs_not_panics ... ok
+test decode_random_bytes_never_panics ... ok
+test decode_truncated_reply_errs ... ok
+test decode_truncated_request_errs ... ok
+test drive_topic_is_stable ... ok
+test error_codes_match_http_semantics_and_are_unique ... ok
+test every_err_reply_round_trips ... ok
+test every_ok_reply_round_trips ... ok
+test every_request_op_round_trips ... ok
+test arbitrary_request_round_trips ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s
+
+   Doc-tests ce_drive_serve
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

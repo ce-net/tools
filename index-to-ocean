@@ -1,0 +1,323 @@
+#!/usr/bin/env python3
+"""Publish the ce-index documentation into Ocean (one document per page).
+
+The source of truth is `ce-index/docs/*.md` — it lives in the repo so it travels with it,
+per the self-containment law. Ocean gets the same text as a readable, linked document tree
+so the workspace explains its own search engine without anyone cloning a repo.
+
+This script is idempotent: running it again updates the documents it already created
+instead of duplicating them.
+
+Structure it builds in Ocean, under org "Rydenfalk":
+
+    Search                                            (project)
+      Search - the mesh-wide index and relation graph (doc: the index)
+        Why a search engine, and why a graph
+        How it works - census, crawl, rank, relate
+        The relation graph
+        The corpus contract
+        Operating the index
+
+Usage:
+    tools/index-to-ocean [--dry-run]
+"""
+from __future__ import annotations
+
+import json
+import os
+import sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DOCS = os.path.join(ROOT, "ce-index", "docs")
+OCEAN = os.path.join(ROOT, "ocean")
+
+SERVICE = "ce.ocean"
+CTL = "ocean/ctl"
+ORG_NAME = "Rydenfalk"
+PROJECT_NAME = "Search"
+INDEX_TITLE = "Search - the mesh-wide index and relation graph"
+
+sys.path.insert(0, OCEAN)
+import ce  # noqa: E402  (the ocean app's vendored SDK)
+
+# Ordered; the title is taken from each file's first `# ` heading.
+PAGES = [
+    ("00-why.md", "1"),
+    ("01-how-it-works.md", "2"),
+    ("02-the-relation-graph.md", "3"),
+    ("corpus-contract.md", "4"),
+    ("03-operating.md", "5"),
+]
+
+# Links from these pages into the REST of the workspace, added at publish time.
+#
+# They live here rather than in `ce-index/docs/*.md` on purpose: a wiki link to an Ocean
+# document is meaningless to anyone who clones the repo, and the docs have to travel alone.
+# The repo keeps the explanation; Ocean gets the explanation PLUS its own connective tissue.
+#
+# Every title is verified to exist before it is written. Ocean resolves a matching title to
+# a document ID (links are identity-based), and a title that matches nothing is recorded as
+# dangling — so an unverified link here would quietly point at nothing, or invent it.
+RELATED = {
+    "00-why.md": [
+        ("2026-07-26 · a distributed mesh-wide recursive search engine; similarity and relation graph over everything",
+         "the directive this exists because of"),
+        ("2026-07-24 · the self-describing mesh: State/Logic/Viz, apps ship own docs, AI navigates + functionality search",
+         "the earlier half: apps describing themselves, and functionality search"),
+        ("App anatomy — State / Logic / Viz, docs, robustness",
+         "why this is three apps and not one"),
+        ("2026-07-25 · AI lives on the mesh: file access is a ce app, agents get names + identities, context is injected live",
+         "why an agent needs one door to the workspace's content"),
+    ],
+    "01-how-it-works.md": [
+        ("2026-07-25 (Quill) — DONE: service enumeration wave (ce-lint rules + node-facts census + NEW ce-search)",
+         "the node.facts census this crawl is built on"),
+        ("2026-07-25 · a substrate that lets one app starve the fleet is a broken substrate",
+         "why every stage here is bounded and every bound is reported"),
+        ("2026-07-25 · military robustness: a fetch must never just fail; keep last knowledge",
+         "why a page that times out is retried smaller instead of written off"),
+    ],
+    "02-the-relation-graph.md": [
+        ("(ocean) Links and documents must be IDENTITY-based, not name-based (Leif directive 2026-07-26)",
+         "why a link resolves to an identity, and a fuzzy match is disclosed"),
+        ("2026-07-25 · a substrate that lets one app starve the fleet is a broken substrate",
+         "the law the shared-attribute bound comes from"),
+        ("Build ce-index: the mesh-wide content search engine + typed relation graph (ce.index trio)",
+         "the work item, with what shipped"),
+    ],
+    "corpus-contract.md": [
+        ("2026-07-25 (Cartograph) — DONE: the spatial wave — canvas app SDK + open-source map + a live digital twin",
+         "the places contract — the same shape, for location"),
+        ("2026-07-24 · the self-describing mesh: State/Logic/Viz, apps ship own docs, AI navigates + functionality search",
+         "describe: the op the crawler classifies your app from"),
+    ],
+    "03-operating.md": [
+        ("Sentinel - suspicious-activity flagging on the mesh",
+         "what watches the substrate this index runs on"),
+        ("2026-07-25 · a substrate that lets one app starve the fleet is a broken substrate",
+         "why occupancy is published as a fact rather than guessed"),
+    ],
+}
+
+INDEX_MD = """\
+**Where is anything, and what is it related to?** `ce.index` answers both, over the CONTENT
+of every app on the mesh at once - documents, pages, files, blocks, and the capabilities
+themselves - plus a graph of typed relations across all of them.
+
+Service discovery already answered *"what can this mesh do"*. This answers **"what does
+this mesh know"**, which nothing did: every corpus had its own differently-shaped search, so
+finding something meant already knowing which app owned it. And nothing anywhere computed or
+stored a *relation* - two documents about the same problem, in two apps, were strangers
+unless a human had typed a link.
+
+## The three apps
+
+| third | repo | owns |
+|---|---|---|
+| state | `ce-index-state` | items, typed edges, crawl cursors. Bounded per origin. No meaning. |
+| logic | `ce-index` | every opinion: crawler, ranking, relations, the query API. No state. |
+| viz | `ce-index-web` | the search box and the relation graph. |
+
+Everything stored is **derived and rebuildable**. The index is a cache of what the mesh
+answered, never a system of record: losing all of it costs one re-crawl and nothing else.
+
+## Making your app searchable
+
+Answer ONE op, `items`, on your own ctl topic. That is the entire integration - nothing is
+registered anywhere and no reader for your app exists in the index. The crawler finds you
+through the `node.facts` census and your own `describe`, so installing your app on any
+machine puts its content in the index with zero configuration.
+
+```
+{"op": "items", "args": {"since": <unix>, "cursor": <opaque>, "limit": <int>}}
+  -> {"items": [{id, kind, title, text, ref, updated, tags, links, meta}], "cursor", "more"}
+```
+
+## Start here
+
+```
+ce app install ./ce-index-state
+ce app install ./ce-index
+indexctl.py search per-origin quota
+indexctl.py suggest draft.md          # where does this passage belong?
+```
+
+## The op this exists for
+
+`suggest {text}` takes the passage you are **writing right now** - which lives in no app yet
+- and answers where it belongs, what it duplicates, what is relevant to it, and which
+existing things it should link to. The writer never has to already know the corpus.
+
+## Can AI reach it
+
+Yes, on every surface, with parity - an agent searches through the same ops, under the same
+capability gates, as a human.
+
+- **SDK** - `sdk/py/ceindex.py`, `sdk/js/ceindex.js`
+- **API** - service `ce.index`, JSON on `index/ctl`, events on `index/events`
+- **Capabilities** - `index:read` / `index:write`, defined in the app's own
+  `cecapabilities.toml`
+- **MCP** - `claude mcp add ce-index -- python3 clients/mcp/ce_index_mcp.py`
+- **CLI** - `indexctl.py`
+- **Cells** - `<ce-index-search>`, `<ce-index-graph>`
+
+## The pages
+
+1. [Why a search engine, and why a graph](#) - what each corpus could and could not do
+   before this, and why the graph is the half that matters more.
+2. [How it works](#) - census, crawl, rank, relate; the watermark, and what one cycle costs.
+3. [The relation graph](#) - every relation type, why each edge explains itself, and the
+   bounds that stop a shared tag exploding into an edge storm.
+4. [The corpus contract](#) - the one op, what each optional field buys you, and the three
+   modes an app can appear in.
+5. [Operating the index](#) - install, knobs, reading `sources` honestly, what to do when a
+   corpus indexes zero items, and the traps that cost live debugging rounds.
+
+## Related work
+
+- [[2026-07-26 · a distributed mesh-wide recursive search engine; similarity and relation graph over everything]] - the directive
+- [[Build ce-index: the mesh-wide content search engine + typed relation graph (ce.index trio)]] - the work item and what shipped
+- [[Sentinel - suspicious-activity flagging on the mesh]] - the sibling system that watches the substrate underneath
+- [[App anatomy — State / Logic / Viz, docs, robustness]] - why this is three apps
+
+## The one thing to remember
+
+**Unknown is not empty.** A corpus that could not be reached, refused the crawler, or timed
+out is reported as exactly that - never as a corpus that holds nothing. Every bound the
+system applies (items per corpus, relation budget, text truncation) is reported too, because
+a silent cap reads as "we indexed everything" when it did not.
+"""
+
+
+class Ocean:
+    def __init__(self):
+        self.client = ce.connect()
+        found = self.client.find_service(SERVICE)
+        if not found:
+            raise SystemExit("ce.ocean is not on this mesh (install ocean-state + ocean)")
+        self.provider = found[0]
+
+    def call(self, op, args=None, timeout_ms=120000):
+        raw = self.client.request(self.provider, CTL,
+                                  json.dumps({"op": op, "args": args or {}}),
+                                  timeout_ms=timeout_ms)
+        reply = json.loads(raw.decode("utf-8") or "{}")
+        if "error" in reply:
+            raise RuntimeError(f"{op}: {reply['error']}")
+        return reply.get("result")
+
+    def org(self):
+        for o in self.call("org.list")["orgs"]:
+            if o.get("title") == ORG_NAME or o.get("name") == ORG_NAME:
+                return o["id"]
+        return self.call("org.create", {"name": ORG_NAME})["id"]
+
+    def project(self, org):
+        for p in self.call("project.list", {"org": org})["projects"]:
+            if p.get("title") == PROJECT_NAME or p.get("name") == PROJECT_NAME:
+                return p["id"]
+        return self.call("project.create",
+                         {"org": org, "name": PROJECT_NAME, "visibility": "open"})["id"]
+
+    def upsert(self, title, md, project=None, parent=None, icon=None):
+        """Create the doc, or update it in place if one with this title already exists here."""
+        where = {"project": project} if project else {"parent": parent}
+        existing = None
+        try:
+            for d in self.call("doc.list", where)["docs"]:
+                if d.get("title") == title:
+                    existing = d["id"]
+                    break
+        except RuntimeError:
+            pass
+        if existing:
+            self.call("doc.update", {"doc": existing, "title": title, "md": md,
+                                     **({"icon": icon} if icon else {})})
+            return existing, "updated"
+        args = {"title": title, "md": md, **where}
+        if icon:
+            args["icon"] = icon
+        return self.call("doc.create", args)["id"], "created"
+
+
+def workspace_titles(o):
+    """Every document title the caller can see -> id. `graph` is the one op that answers
+    across the whole workspace, so it is what a link check should be built on."""
+    titles = {}
+    for node in o.call("graph").get("nodes") or ():
+        if node.get("kind") == "doc" and node.get("title"):
+            titles.setdefault(str(node["title"]).strip(), node["id"])
+    return titles
+
+
+def related_block(fname, titles):
+    """A `## Related` section of VERIFIED wiki links, plus whatever could not be found."""
+    entries = RELATED.get(fname) or []
+    if not entries:
+        return "", []
+    live, missing = [], []
+    for title, why in entries:
+        if title in titles:
+            live.append(f"- [[{title}]] - {why}")
+        else:
+            missing.append(title)
+    if not live:
+        return "", missing
+    return "\n\n## Related\n\n" + "\n".join(live) + "\n", missing
+
+
+def title_and_body(path):
+    """The first `# ` heading is the document title; the rest is the body."""
+    text = open(path, encoding="utf-8").read()
+    lines = text.split("\n")
+    for i, line in enumerate(lines):
+        if line.startswith("# "):
+            return line[2:].strip(), "\n".join(lines[i + 1:]).strip("\n")
+    return os.path.basename(path), text
+
+
+def main():
+    dry = "--dry-run" in sys.argv
+    missing = [f for f, _ in PAGES if not os.path.exists(os.path.join(DOCS, f))]
+    if missing:
+        raise SystemExit(f"missing doc source: {', '.join(missing)}")
+
+    if dry:
+        print(f"would publish into Ocean: org {ORG_NAME} / project {PROJECT_NAME}")
+        print(f"  {INDEX_TITLE}")
+        for fname, icon in PAGES:
+            title, body = title_and_body(os.path.join(DOCS, fname))
+            print(f"    {title}  ({len(body)} bytes)")
+        return 0
+
+    o = Ocean()
+    org = o.org()
+    project = o.project(org)
+    print(f"org {org[:12]} / project {project[:12]}")
+
+    index_id, how = o.upsert(INDEX_TITLE, INDEX_MD, project=project, icon="mag")
+    print(f"  {how:8} {INDEX_TITLE}")
+
+    titles = workspace_titles(o)
+    unresolved = []
+    for fname, icon in PAGES:
+        title, body = title_and_body(os.path.join(DOCS, fname))
+        block, missing = related_block(fname, titles)
+        unresolved += [(fname, m) for m in missing]
+        _, how = o.upsert(title, body + block, parent=index_id, icon=icon)
+        links = block.count("[[")
+        print(f"  {how:8} {title}" + (f"   (+{links} links)" if links else ""))
+
+    if unresolved:
+        # Never silent: an unwritten link is a link someone expected to see.
+        print("\nNOT LINKED — no document with these titles exists:")
+        for fname, title in unresolved:
+            print(f"  {fname}: {title[:78]}")
+
+    print(f"\nread it: ocean/oceanctl.py md {index_id}")
+    print("re-run this after editing ce-index/docs/*.md — it updates in place")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -75,8 +75,16 @@ run_ssh() {
 rsync_dir() {
   local d="$1" tries=0
   while :; do
+    # .cargo/config.toml is the git-excluded overlay `tools/ce-dev-link` generates: it
+    # [patch]es this repo's cross-repo deps onto ABSOLUTE local paths (/Users/<you>/ce-net/...).
+    # rsync does not honour .gitignore, so without this exclude we faithfully ship the one
+    # file guaranteed to be meaningless on the build box, and cargo dies resolving a mac path
+    # that does not exist there. Excluding it is also the RIGHT semantics for a remote
+    # verification build: test what a receiver would get (the published github deps), not the
+    # local WIP overlay.
     rsync -az --delete \
       --exclude target --exclude .git --exclude node_modules --exclude dist \
+      --exclude .cargo \
       -e "ssh ${SSH_OPTS[*]}" "$LOCAL_ROOT/$d/" "$HOST:$REMOTE_ROOT/$d/" && return 0
     tries=$((tries+1)); [ $tries -ge 5 ] && return 1
     echo "  rsync $d attempt $tries failed; retrying in $((tries*5))s..." >&2
@@ -104,6 +112,10 @@ set -o pipefail
 source \$HOME/.cargo/env
 mkdir -p $REMOTE_ROOT/logs
 cd $REMOTE_ROOT/$APP || exit 9
+# Belt and braces with the rsync --exclude .cargo above: an --exclude ALSO shields a path
+# from --delete, so a dev-link config left here by an older run would survive forever and
+# keep poisoning the build with absolute /Users/... paths. Drop it every time.
+rm -rf $REMOTE_ROOT/$APP/.cargo $REMOTE_ROOT/*/.cargo 2>/dev/null || true
 export CARGO_TARGET_DIR=$REMOTE_ROOT/target-$APP
 export CARGO_NET_RETRY=5
 exec 9>$REMOTE_ROOT/.buildlock
