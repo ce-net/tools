@@ -20,6 +20,7 @@ This replaces editing FINDINGS.md by hand. The old file is a tombstone.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 import time
@@ -56,7 +57,29 @@ class Backlog:
                             if ch.get("title") in FOLDERS:
                                 self.folders[ch["title"]] = ch
         if not self.folders:
-            sys.exit("Backlog is not set up in Ocean yet. Run: tools/workspace-to-ocean")
+            # "Not there" and "there but unreadable" look identical in a doc.tree reply —
+            # it answers ok with a truncated tree when the logic app's read mirror is cold
+            # (2026-07-26: one teamspace reported, fourteen in the store). Telling someone
+            # to run the migration in that state would rebuild the whole workspace as
+            # duplicates on top of the real one, so ASK THE STORE before saying it is gone.
+            sys.exit(self._absent_or_unreadable())
+
+    def _absent_or_unreadable(self) -> str:
+        try:
+            raw = self.o.client.request(
+                self.o.provider, "ocean.state/ctl",
+                json.dumps({"op": "keys", "args": {"prefix": "doc:"}}), timeout_ms=90000)
+            held = len((json.loads(raw.decode("utf-8") or "{}")
+                        .get("result") or {}).get("keys") or [])
+        except Exception as e:  # noqa: BLE001
+            return (f"Ocean did not answer, and ce.ocean.state could not be reached to say "
+                    f"whether the backlog exists ({e}). Do NOT run the migration on a guess.")
+        if held:
+            return (f"The backlog is NOT missing — ce.ocean.state holds {held} documents and "
+                    f"the ce.ocean logic app is serving a partial view of them. Wait for its "
+                    f"read mirror to catch up and try again. Do NOT run tools/workspace-to-"
+                    f"ocean: on a partial view it recreates the whole workspace as duplicates.")
+        return "Backlog is not set up in Ocean yet. Run: tools/workspace-to-ocean"
 
     def items(self, folder: str):
         node = self.folders.get(folder)

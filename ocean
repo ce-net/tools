@@ -21,6 +21,7 @@ something. Ids may be given by their first 8 characters.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
 import time
@@ -30,11 +31,57 @@ sys.path.insert(0, os.path.join(ROOT, "tools"))
 from oceanlib import Ocean, norm  # noqa: E402
 
 
+STATE_TOPIC = "ocean.state/ctl"
+
+
 class Workspace:
     def __init__(self):
         self.o = Ocean(verbose=False)
 
     # ----- reading -----
+
+    def state_counts(self) -> dict:
+        """How many projects and documents the STATE app holds — the ground truth.
+
+        `ce.ocean` is the logic third; `ce.ocean.state` is the durable store underneath it.
+        Asking the store directly is the only way to tell an empty workspace apart from a
+        logic app that cannot currently read it.
+        """
+        out = {}
+        for prefix in ("project:", "doc:"):
+            raw = self.o.client.request(
+                self.o.provider, STATE_TOPIC,
+                json.dumps({"op": "keys", "args": {"prefix": prefix}}), timeout_ms=90000)
+            reply = json.loads(raw.decode("utf-8") or "{}")
+            if "error" in reply:
+                raise RuntimeError(reply["error"])
+            res = reply.get("result") or {}
+            out[prefix] = len(res.get("keys") or res or [])
+        return out
+
+    def assert_view_is_whole(self, t: list):
+        """Refuse to destroy anything while the logic app is serving a partial view.
+
+        `doc.tree` answers `ok: true` with a truncated tree when the logic app's read
+        mirror is cold — it restarted at 21:36 on 2026-07-26 and reported one teamspace
+        where the store held fourteen. Every emptiness test in this tool reads that view,
+        so `teamspace rm` would cheerfully delete a teamspace that only LOOKS empty, and
+        project.delete trashes everything inside. A destructive op therefore has to agree
+        with the store's own count before it runs.
+        """
+        try:
+            counts = self.state_counts()
+        except Exception as e:  # noqa: BLE001 — no ground truth means no destroying
+            sys.exit(f"ocean: cannot reach ce.ocean.state to verify the view ({e}); "
+                     "refusing to delete anything")
+        seen_projects, seen_docs = len(t), sum(1 for _ in self.docs(t))
+        if seen_projects < counts["project:"] or seen_docs < counts["doc:"]:
+            sys.exit(
+                f"ocean: REFUSING — the logic app is serving a partial view.\n"
+                f"  doc.tree shows {seen_projects} teamspace(s) and {seen_docs} document(s);\n"
+                f"  ce.ocean.state holds {counts['project:']} and {counts['doc:']}.\n"
+                f"  Nothing is lost — the store is intact and the logic app's read mirror is\n"
+                f"  behind. Wait for it to catch up and run this again.")
 
     def tree(self, tries: int = 8) -> list:
         """Every teamspace, in a LIST, with its document tree hanging off it.
@@ -172,7 +219,9 @@ def cmd_mv(w: Workspace, a):
 
 
 def cmd_rm(w: Workspace, a):
-    kind, doc_id = w.resolve(a.id)
+    t = w.tree()
+    w.assert_view_is_whole(t)
+    kind, doc_id = w.resolve(a.id, t)
     if kind != "doc":
         sys.exit("ocean: that is a teamspace; use `teamspace rm`")
     ok = w.landed("doc.delete", {"doc": doc_id},
@@ -190,7 +239,9 @@ def cmd_teamspace(w: Workspace, a):
         found = w.spaces(a.name)
         print(found[0]["id"] if ok and found else "FAILED")
         return
-    found = w.spaces(a.name)
+    t = w.tree()
+    w.assert_view_is_whole(t)
+    found = w.spaces(a.name, t)
     if not found:
         sys.exit(f"ocean: no teamspace {a.name!r}")
     if len(found) > 1:
