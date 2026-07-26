@@ -51,8 +51,38 @@ THEME_TITLES = {
     "identity-and-trust": "Identity, capabilities, people and devices",
     "fleet-and-embedded": "Fleet, embedded and platform entry points",
     "ai-and-agents": "AI and agents on the mesh",
+    "business-and-customers": "Business, customers and the product case",
 }
 THEME_ORDER = list(THEME_TITLES)
+
+
+def all_themes() -> list:
+    """Every theme file on disk, known ones first, in THEME_ORDER.
+
+    The table above used to BE the list, so adding `directives/<new>.md` published
+    nothing and said nothing — the theme was simply absent from Ocean, which reads
+    exactly like "Leif never said it". The directory is the truth now; an unknown
+    file still gets published, titled from its own H1.
+    """
+    on_disk = sorted(f[:-3] for f in os.listdir(DIRECTIVES)
+                     if f.endswith(".md") and f != "README.md")
+    known = [t for t in THEME_ORDER if t in on_disk]
+    for t in on_disk:
+        if t in known:
+            continue
+        THEME_TITLES.setdefault(t, title_from_h1(t))
+        print(f"note: {t}.md is not in THEME_TITLES; publishing it as "
+              f"{THEME_TITLES[t]!r} (add it to the table to fix the ordering)")
+        known.append(t)
+    return known
+
+
+def title_from_h1(theme: str) -> str:
+    with open(os.path.join(DIRECTIVES, theme + ".md"), encoding="utf-8") as fh:
+        for line in fh:
+            if line.startswith("# "):
+                return line[2:].strip()
+    return theme.replace("-", " ").capitalize()
 
 DATE_RE = re.compile(r"(\d{4}-\d{2}-\d{2})")
 
@@ -175,8 +205,7 @@ def main() -> int:
     do_drive = "--ocean-only" not in sys.argv
     do_ocean = "--drive-only" not in sys.argv
 
-    themes = [(t, entries_of(t)) for t in THEME_ORDER
-              if os.path.exists(os.path.join(DIRECTIVES, t + ".md"))]
+    themes = [(t, entries_of(t)) for t in all_themes()]
     total = sum(len(e) for _, e in themes)
     print(f"{total} directives across {len(themes)} themes\n")
 
