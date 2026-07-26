@@ -93,3 +93,29 @@ already created rather than duplicating them.
 Why: the archive should be reachable from the mesh — `ce.ocean` `search`/`doc.tree` for agents
 and humans, `ce.files` for AI — not only from one laptop's context file. Run it after recording
 a new directive.
+
+## ocean — read and restructure the Ocean workspace
+
+`backlog` covers the work loop. `ocean` covers everything else, so that reshaping the
+workspace stops meaning "write a throwaway python script that imports oceanlib".
+
+    tools/ocean                          # the whole tree, teamspace by teamspace
+    tools/ocean tree Projects            # one teamspace, in full
+    tools/ocean find <text>              # search every document
+    tools/ocean read <id>                # a document's markdown
+    tools/ocean new Projects "Alice"     # a page in a teamspace (or under a page id)
+    tools/ocean mv <id> Projects         # re-file a page
+    tools/ocean rm <id>                  # to the trash (recoverable)
+    tools/ocean teamspace new|rm <name>
+
+Ids may be given by their first 8 characters, the ones every listing prints.
+
+Two things it does that a hand-written script will not. Every write **re-reads the server
+to see whether it landed** before retrying — Ocean's replies time out long before its
+writes do, so a blind retry is how you end up with two of something. And `teamspace rm`
+refuses a teamspace that still holds pages, because `project.delete` trashes everything
+inside it and that should never be a surprise.
+
+Ocean answers slowly when this laptop is loaded (load hit 980 on 2026-07-26 and every mesh
+call returned 504). Commands retry with backoff and are safe to re-run; if one prints
+FAILED, run it again rather than reaching for the raw op.

@@ -89,21 +89,64 @@ class OceanError(RuntimeError):
     pass
 
 
+PROVIDER_CACHE = os.path.join(ROOT, ".ocean-provider")
+
+
 class Ocean:
     def __init__(self, timeout_ms: int = 120000, verbose: bool = True):
         self.client = ce.connect()
-        found = self.client.find_service(SERVICE)
-        if not found:
-            raise OceanError("ce.ocean is not on this mesh (install ocean-state + ocean)")
-        self.provider = found[0]
-        self.timeout_ms = timeout_ms
         self.verbose = verbose
+        self.provider = self._discover()
+        self.timeout_ms = timeout_ms
         self._index: dict = {}      # (scope_id, norm(title)) -> doc id
         self._titles: dict = {}     # doc id -> title
         self._claimed: dict = {}    # scope -> {norm(title): distinct_key} — collision guard
         self.created = 0
         self.updated = 0
         self.skipped = 0
+
+    # ----- discovery -----
+
+    def _discover(self, tries: int = 3) -> str:
+        """Find ce.ocean, surviving a laptop that is momentarily too loaded to answer.
+
+        `find_service` blocks on the node's discovery path, which is the first thing to go
+        when this machine is under load (a cargo build plus a dozen agents put it at load
+        980 on 2026-07-26, and every workspace tool died on this one line before doing any
+        work). Discovery is retried, and the last known provider is remembered on disk so a
+        slow lookup costs a stale-but-correct id instead of the whole session's tooling. The
+        cached id is only ever a FALLBACK: a real answer always wins and rewrites the cache.
+        """
+        last = None
+        for attempt in range(tries):
+            try:
+                found = self.client.find_service(SERVICE)
+            except Exception as e:  # noqa: BLE001 — a wedged lookup is not a missing service
+                last = str(e)
+                found = None
+            if found:
+                try:
+                    with open(PROVIDER_CACHE, "w") as fh:
+                        fh.write(found[0])
+                except OSError:
+                    pass
+                return found[0]
+            if attempt + 1 < tries:
+                time.sleep(2 * (attempt + 1))
+        cached = ""
+        try:
+            with open(PROVIDER_CACHE) as fh:
+                cached = fh.read().strip()
+        except OSError:
+            pass
+        if cached:
+            if self.verbose:
+                print(f"ocean: discovery unavailable ({last or 'no provider'}); "
+                      f"using cached provider {cached[:12]}", file=sys.stderr)
+            return cached
+        raise OceanError(
+            "ce.ocean is not reachable: discovery returned nothing and no provider is "
+            f"cached in {PROVIDER_CACHE} ({last or 'install ocean-state + ocean'})")
 
     # ----- wire -----
 
