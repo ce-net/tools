@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""ce-vendor — one definition of a shared Python module, reused by every ceapp.
+"""ce-vendor — keep the copies of a shared Python module identical, until imports exist.
+
+THIS TOOL IS A STOPGAP. The law is: never copy code between repos, and shared code is an SDK you
+import (`directives/repos-and-distribution.md`). A generated, checksummed copy is still a copy.
+The import path does not exist yet — `ceapp.toml` cannot declare a Python dependency, and
+`ce/docs/ceapps-script.md` calls `[script].deps` a planned follow-up. Build that, and delete this.
 
 THE PROBLEM. A ceapp must travel ALONE: a receiver with only that repo has to be able to
 run it, so a Python app cannot `import` a sibling checkout and there is no PYTHONPATH the
@@ -60,6 +65,13 @@ MODULES = [
      "url": "github.com/ce-net/ce-org"},
     {"name": "staff.py", "source": "ce-staff/sdk/py/staff.py", "repo": "ce-staff/sdk",
      "url": "github.com/ce-net/ce-staff"},
+    # The drive client. Five apps carried byte-identical copies of it (ocean, canvas-drive,
+    # ce-files, ce-observer, ce-stream) with nothing keeping them that way — they were in
+    # sync by luck, and the first divergence would have been silent. ce-drive owns it.
+    {"name": "cedrive.py", "source": "ce-drive/sdk/py/cedrive.py", "repo": "ce-drive/sdk",
+     "url": "github.com/ce-net/ce-drive"},
+    {"name": "driveauth.py", "source": "ce-drive/sdk/py/driveauth.py", "repo": "ce-drive/sdk",
+     "url": "github.com/ce-net/ce-drive"},
 ]
 
 HEADER_MARK = "# ce-vendor:"
