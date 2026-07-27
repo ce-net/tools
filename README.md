@@ -1,30 +1,24 @@
-# tools — DEPRECATED, and nearly empty
+# tools — EMPTY, ON PURPOSE
 
-**There is no tools directory.** Every tool is a ce app, or a verb of the app it serves.
-A script in one person's workspace runs on one laptop. A ce app runs on any node, from any
-device, through the mesh — which is what development here has to be.
+**There are no tools. Every capability is a ce app.**
 
-Read `directives/dev-environment.md` in the workspace for the law and the reasoning. The plan
-lives in Ocean: *Removing tools — every tool is a ce app, one door to the mesh*.
+A script in this directory runs on one machine, for one person, with no discovery, no
+capability gate, and no way for an agent or another device to call it. The same development
+environment has to work across thousands of devices on different operating systems. That is
+impossible with scripts and ordinary with apps.
 
-## Where the tools went
+`ce` is the one door: `ce app install` makes an app a command, `ce app run --on node=` runs it
+elsewhere, and agents reach the same ops through ce-mcp and `describe`.
+
+## Where everything went
 
 | was | now |
 |---|---|
-| `ocean`, `backlog` | verbs of the **ocean** app: `ocean`, `ocean backlog` |
-| `oceanlib.py` | `ocean/workspace.py` |
-| `workspace-to-ocean`, `directives-to-ocean`, `index-to-ocean`, `log-to-items`, `repo-docs-to-ocean`, `sentinel-to-ocean`, `ocean-doc-ce-pg`, `ocean-doc-workspace` | deleted — one-shot migrations, already run |
-| `migrate-capauth.py` | deleted — one-shot, already run |
+| `ocean`, `backlog`, `oceanlib.py` | the **ocean** app: `ocean`, `ocean backlog` |
+| `ce-build`, `ce-dev-link`, `remote-test.sh`, `remote-test-all.sh` | the **ce-build** app (`ce.build`) — builds on any node, no ssh |
 | `ce-app-publish` | the **ce-publish** app |
-| `remote-test.sh`, `remote-test-all.sh` | superseded by `ce-build` |
-| `ce-rootsync-init.sh` | deleted — one-shot, already run |
-| `ce-vendor` | `ce-py/tools/ce-vendor` — it vendors ce-py's modules, and it dies when `[script].deps` lands |
-| `claude-md-guard` | `ce-lint/claude-md-guard` — ce-lint is the enforcement arm |
+| `claude-md-guard` | the **ce-lint** app |
+| `ce-vendor` | dies with `[script].deps`; its drift check belongs to ce-lint |
+| the eight `*-to-ocean` migrations, `migrate-capauth.py`, `ce-rootsync-init.sh` | deleted — one-shots, already run |
 
-## What is left, and why it is still here
-
-`ce-build` and `ce-dev-link` build Rust repos on a remote node. They are the last two, and they
-are the hardest, because the work has to happen ON the target machine. They become one **ce-build
-app** that answers on the mesh, so any device can ask any node to build.
-
-Until then they stay here, deprecated. Do not add anything to this directory.
+This directory stays only for its license files. Do not add anything to it.
