@@ -1,0 +1,433 @@
+=== Sun Jul 26 21:21:05 UTC 2026 remote test ce-space ===
+rustc 1.97.1 (8bab26f4f 2026-07-14)
+    Updating git repository `https://github.com/ce-net/ce-rs`
+    Updating git repository `https://github.com/ce-net/ce`
+     Locking 2 packages to latest Rust 1.97.1 compatible versions
+      Adding ce-lane v0.1.0 (https://github.com/ce-net/ce#701f07f3)
+      Adding ce-rs v0.1.0 (https://github.com/ce-net/ce-rs#000d3dc1)
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.24
+   Compiling libc v0.2.189
+   Compiling syn v2.0.119
+    Checking stable_deref_trait v1.2.1
+    Checking cfg-if v1.0.4
+    Checking pin-project-lite v0.2.17
+    Checking bytes v1.12.1
+    Checking futures-core v0.3.33
+    Checking errno v0.3.14
+    Checking smallvec v1.15.2
+   Compiling shlex v2.0.1
+   Compiling find-msvc-tools v0.1.9
+    Checking once_cell v1.21.4
+    Checking itoa v1.0.18
+   Compiling cc v1.4.0
+    Checking signal-hook-registry v1.4.8
+   Compiling synstructure v0.13.2
+    Checking socket2 v0.6.5
+    Checking mio v1.2.2
+    Checking writeable v0.6.3
+    Checking litemap v0.8.2
+   Compiling zerofrom-derive v0.1.7
+   Compiling yoke-derive v0.8.2
+   Compiling zerovec-derive v0.11.3
+    Checking zerofrom v0.1.8
+    Checking yoke v0.8.3
+   Compiling displaydoc v0.2.6
+   Compiling tokio-macros v2.7.1
+    Checking zerovec v0.11.6
+    Checking tokio v1.53.1
+    Checking tinystr v0.8.3
+    Checking icu_locale_core v2.2.0
+    Checking potential_utf v0.1.5
+    Checking zerotrie v0.2.4
+   Compiling ring v0.17.14
+   Compiling icu_properties_data v2.2.0
+    Checking utf8_iter v1.0.4
+   Compiling icu_normalizer_data v2.2.0
+   Compiling serde_core v1.0.229
+    Checking icu_collections v2.2.0
+    Checking icu_provider v2.2.0
+    Checking http v1.4.2
+   Compiling version_check v0.9.5
+    Checking percent-encoding v2.3.2
+    Checking zeroize v1.9.0
+    Checking rustls-pki-types v1.15.1
+   Compiling generic-array v0.14.7
+    Checking http-body v1.1.0
+   Compiling futures-macro v0.3.33
+    Checking tracing-core v0.1.36
+    Checking getrandom v0.2.17
+   Compiling syn v3.0.3
+    Checking futures-task v0.3.33
+    Checking bitflags v2.13.1
+    Checking slab v0.4.12
+   Compiling httparse v1.10.1
+   Compiling serde v1.0.229
+    Checking untrusted v0.9.0
+    Checking futures-util v0.3.33
+   Compiling serde_derive v1.0.229
+    Checking icu_properties v2.2.0
+    Checking icu_normalizer v2.2.0
+   Compiling tracing-attributes v0.1.31
+   Compiling rustls v0.23.42
+    Checking typenum v1.20.1
+    Checking tower-service v0.3.3
+    Checking try-lock v0.2.5
+   Compiling autocfg v1.5.1
+    Checking tracing v0.1.44
+    Checking want v0.3.1
+   Compiling memoffset v0.9.1
+    Checking idna_adapter v1.2.2
+    Checking rustls-webpki v0.103.13
+    Checking form_urlencoded v1.2.2
+    Checking futures-channel v0.3.33
+    Checking subtle v2.6.1
+    Checking atomic-waker v1.1.2
+   Compiling zmij v1.0.23
+   Compiling cfg_aliases v0.2.2
+   Compiling nix v0.30.1
+    Checking hyper v1.11.0
+    Checking idna v1.1.0
+    Checking sync_wrapper v1.0.2
+    Checking tower-layer v0.3.3
+    Checking log v0.4.33
+   Compiling serde_json v1.0.151
+    Checking base64 v0.22.1
+   Compiling anyhow v1.0.104
+    Checking ipnet v2.12.0
+    Checking hyper-util v0.1.20
+    Checking tokio-rustls v0.26.4
+    Checking tower v0.5.3
+    Checking url v2.5.8
+    Checking crypto-common v0.1.7
+    Checking block-buffer v0.10.4
+    Checking webpki-roots v1.0.9
+    Checking futures-sink v0.3.33
+    Checking option-ext v0.2.0
+    Checking regex-syntax v0.8.11
+    Checking memchr v2.8.3
+    Checking ryu v1.0.23
+    Checking serde_urlencoded v0.7.1
+    Checking regex-automata v0.4.16
+    Checking dirs-sys v0.4.1
+    Checking tokio-util v0.7.19
+    Checking hyper-rustls v0.27.9
+    Checking digest v0.10.7
+    Checking tower-http v0.6.11
+    Checking bincode v1.3.3
+    Checking http-body-util v0.1.4
+    Checking cpufeatures v0.2.17
+    Checking lazy_static v1.5.0
+    Checking sharded-slab v0.1.7
+    Checking sha2 v0.10.9
+    Checking ce-lane v0.1.0 (https://github.com/ce-net/ce#701f07f3)
+    Checking reqwest v0.12.28
+    Checking matchers v0.2.0
+    Checking directories v5.0.1
+    Checking tracing-log v0.2.0
+    Checking thread_local v1.1.10
+   Compiling getrandom v0.4.3
+    Checking nu-ansi-term v0.50.3
+    Checking hex v0.4.3
+   Compiling rustix v1.1.4
+    Checking ce-rs v0.1.0 (https://github.com/ce-net/ce-rs#000d3dc1)
+    Checking tracing-subscriber v0.3.23
+    Checking linux-raw-sys v0.12.1
+    Checking fastrand v2.5.0
+    Checking ce-space v0.1.0 (/opt/build/ce-space)
+    Checking tempfile v3.27.0
+warning: this `if` statement can be collapsed
+  --> src/materialize.rs:49:9
+   |
+49 | /         if let Some(f) = rule_filter {
+50 | |             if rule.id != f {
+51 | |                 continue;
+52 | |             }
+53 | |         }
+   | |_________^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+   = note: `#[warn(clippy::collapsible_if)]` on by default
+help: collapse nested if block
+   |
+49 ~         if let Some(f) = rule_filter
+50 ~             && rule.id != f {
+51 |                 continue;
+52 ~             }
+   |
+
+warning: this `if` statement can be collapsed
+  --> src/materialize.rs:64:13
+   |
+64 | /             if let Some(rep) = cell.coords.get(REPRESENTATION) {
+65 | |                 if rep != fixed.get(REPRESENTATION).expect("fixed has representation") {
+66 | |                     continue;
+67 | |                 }
+68 | |             }
+   | |_____________^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+   |
+64 ~             if let Some(rep) = cell.coords.get(REPRESENTATION)
+65 ~                 && rep != fixed.get(REPRESENTATION).expect("fixed has representation") {
+66 |                     continue;
+67 ~                 }
+   |
+
+warning: this `if` statement can be collapsed
+  --> src/service.rs:83:17
+   |
+83 | /                 if handled.op.is_some() {
+84 | |                     if let Err(e) = st.store.save(&st.machine) {
+85 | |                         tracing::warn!(error = %e, "persist failed after mutation");
+86 | |                         return Response::error(format!("persist failed: {e}"));
+87 | |                     }
+88 | |                 }
+   | |_________________^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+   |
+83 ~                 if handled.op.is_some()
+84 ~                     && let Err(e) = st.store.save(&st.machine) {
+85 |                         tracing::warn!(error = %e, "persist failed after mutation");
+86 |                         return Response::error(format!("persist failed: {e}"));
+87 ~                     }
+   |
+
+warning: this `if` statement can be collapsed
+   --> src/space.rs:209:17
+    |
+209 | /                 if let Some(d) =
+210 | |                     self.spaces.get_mut(space).and_then(|s| s.dimensions.get_mut(dimension))
+211 | |                 {
+212 | |                     if !d.coords.contains(key) {
+...   |
+215 | |                 }
+    | |_________________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+    |
+210 ~                     self.spaces.get_mut(space).and_then(|s| s.dimensions.get_mut(dimension))
+211 ~                     && !d.coords.contains(key) {
+212 |                         d.coords.push(key.clone());
+213 ~                     }
+    |
+
+warning: this `let...else` may be rewritten with the `?` operator
+   --> src/space.rs:305:9
+    |
+305 |         let Some(s) = self.spaces.get(space) else { return None };
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace it with: `let s = self.spaces.get(space)?;`
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#question_mark
+    = note: `#[warn(clippy::question_mark)]` on by default
+
+warning: this `if` statement can be collapsed
+  --> src/store.rs:33:9
+   |
+33 | /         if let Some(dir) = self.path.parent() {
+34 | |             if !dir.as_os_str().is_empty() {
+35 | |                 fs::create_dir_all(dir)
+36 | |                     .with_context(|| format!("creating {}", dir.display()))?;
+37 | |             }
+38 | |         }
+   | |_________^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.97.0/index.html#collapsible_if
+help: collapse nested if block
+   |
+33 ~         if let Some(dir) = self.path.parent()
+34 ~             && !dir.as_os_str().is_empty() {
+35 |                 fs::create_dir_all(dir)
+36 |                     .with_context(|| format!("creating {}", dir.display()))?;
+37 ~             }
+   |
+
+warning: `ce-space` (lib) generated 6 warnings (run `cargo clippy --fix --lib -p ce-space -- ` to apply 5 suggestions)
+warning: function `coords` is never used
+   --> src/service.rs:348:8
+    |
+348 |     fn coords(pairs: &[(&str, &str)]) -> Coords {
+    |        ^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `ce-space` (lib test) generated 7 warnings (6 duplicates)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 51.20s
+   Compiling libc v0.2.189
+   Compiling zerofrom v0.1.8
+   Compiling stable_deref_trait v1.2.1
+   Compiling yoke v0.8.3
+   Compiling cfg-if v1.0.4
+   Compiling pin-project-lite v0.2.17
+   Compiling zerovec v0.11.6
+   Compiling bytes v1.12.1
+   Compiling futures-core v0.3.33
+   Compiling errno v0.3.14
+   Compiling itoa v1.0.18
+   Compiling once_cell v1.21.4
+   Compiling smallvec v1.15.2
+   Compiling signal-hook-registry v1.4.8
+   Compiling mio v1.2.2
+   Compiling socket2 v0.6.5
+   Compiling tinystr v0.8.3
+   Compiling litemap v0.8.2
+   Compiling writeable v0.6.3
+   Compiling tokio v1.53.1
+   Compiling icu_locale_core v2.2.0
+   Compiling zerotrie v0.2.4
+   Compiling potential_utf v0.1.5
+   Compiling utf8_iter v1.0.4
+   Compiling icu_collections v2.2.0
+   Compiling icu_provider v2.2.0
+   Compiling http v1.4.2
+   Compiling zeroize v1.9.0
+   Compiling percent-encoding v2.3.2
+   Compiling rustls-pki-types v1.15.1
+   Compiling http-body v1.1.0
+   Compiling icu_properties_data v2.2.0
+   Compiling icu_normalizer_data v2.2.0
+   Compiling serde_core v1.0.229
+   Compiling tracing-core v0.1.36
+   Compiling getrandom v0.2.17
+   Compiling slab v0.4.12
+   Compiling untrusted v0.9.0
+   Compiling bitflags v2.13.1
+   Compiling futures-task v0.3.33
+   Compiling futures-util v0.3.33
+   Compiling ring v0.17.14
+   Compiling icu_normalizer v2.2.0
+   Compiling icu_properties v2.2.0
+   Compiling tower-service v0.3.3
+   Compiling try-lock v0.2.5
+   Compiling typenum v1.20.1
+   Compiling generic-array v0.14.7
+   Compiling idna_adapter v1.2.2
+   Compiling want v0.3.1
+   Compiling tracing v0.1.44
+   Compiling serde v1.0.229
+   Compiling httparse v1.10.1
+   Compiling rustls-webpki v0.103.13
+   Compiling form_urlencoded v1.2.2
+   Compiling futures-channel v0.3.33
+   Compiling subtle v2.6.1
+   Compiling atomic-waker v1.1.2
+   Compiling hyper v1.11.0
+   Compiling rustls v0.23.42
+   Compiling idna v1.1.0
+   Compiling sync_wrapper v1.0.2
+   Compiling log v0.4.33
+   Compiling base64 v0.22.1
+   Compiling tower-layer v0.3.3
+   Compiling ipnet v2.12.0
+   Compiling hyper-util v0.1.20
+   Compiling tokio-rustls v0.26.4
+   Compiling tower v0.5.3
+   Compiling memoffset v0.9.1
+   Compiling url v2.5.8
+   Compiling zmij v1.0.23
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling webpki-roots v1.0.9
+   Compiling ryu v1.0.23
+   Compiling option-ext v0.2.0
+   Compiling memchr v2.8.3
+   Compiling futures-sink v0.3.33
+   Compiling regex-syntax v0.8.11
+   Compiling serde_json v1.0.151
+   Compiling regex-automata v0.4.16
+   Compiling tokio-util v0.7.19
+   Compiling dirs-sys v0.4.1
+   Compiling serde_urlencoded v0.7.1
+   Compiling hyper-rustls v0.27.9
+   Compiling digest v0.10.7
+   Compiling nix v0.30.1
+   Compiling tower-http v0.6.11
+   Compiling anyhow v1.0.104
+   Compiling bincode v1.3.3
+   Compiling http-body-util v0.1.4
+   Compiling lazy_static v1.5.0
+   Compiling cpufeatures v0.2.17
+   Compiling sha2 v0.10.9
+   Compiling ce-lane v0.1.0 (https://github.com/ce-net/ce#701f07f3)
+   Compiling sharded-slab v0.1.7
+   Compiling reqwest v0.12.28
+   Compiling matchers v0.2.0
+   Compiling directories v5.0.1
+   Compiling tracing-log v0.2.0
+   Compiling thread_local v1.1.10
+   Compiling linux-raw-sys v0.12.1
+   Compiling nu-ansi-term v0.50.3
+   Compiling hex v0.4.3
+   Compiling ce-rs v0.1.0 (https://github.com/ce-net/ce-rs#000d3dc1)
+   Compiling tracing-subscriber v0.3.23
+   Compiling rustix v1.1.4
+   Compiling getrandom v0.4.3
+   Compiling fastrand v2.5.0
+   Compiling tempfile v3.27.0
+   Compiling ce-space v0.1.0 (/opt/build/ce-space)
+warning: function `coords` is never used
+   --> src/service.rs:348:8
+    |
+348 |     fn coords(pairs: &[(&str, &str)]) -> Coords {
+    |        ^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `ce-space` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1m 02s
+     Running unittests src/lib.rs (/opt/build/target-ce-space/debug/deps/ce_space-8c631e4a7a0ffa2f)
+
+running 30 tests
+test materialize::tests::convert_reply_parsing ... ok
+test materialize::tests::input_key_is_stable_and_sensitive ... ok
+test materialize::tests::plan_never_uses_derived_cells_as_sources ... ok
+test materialize::tests::plan_finds_pending_work ... ok
+test materialize::tests::plan_replans_when_input_changes ... ok
+test materialize::tests::plan_skips_up_to_date_targets ... ok
+test proto::tests::empty_coords_rejected ... ok
+test materialize::tests::rule_filter_limits_planning ... ok
+test proto::tests::full_request_flow ... ok
+test proto::tests::mutations_on_missing_space_error_without_op ... ok
+test proto::tests::wire_shapes_are_stable_json ... ok
+test service::tests::analyze_on_empty_slice_is_a_named_error ... ok
+test service::tests::bad_json_is_a_named_error ... ok
+test service::tests::remote_writes_are_refused_reads_are_open ... ok
+test service::tests::materialize_gated_to_owner ... ok
+test space::tests::apply_is_idempotent ... ok
+test space::tests::clear_cell_tombstones ... ok
+test space::tests::coordinates_register_implicitly_and_explicitly ... ok
+test space::tests::create_space_has_representation_axis ... ok
+test space::tests::derived_cell_carries_provenance ... ok
+test space::tests::lww_converges_regardless_of_order ... ok
+test space::tests::lww_tiebreak_by_writer_is_deterministic ... ok
+test service::tests::state_persists_across_reopen ... ok
+test space::tests::more_specific_cell_wins_at_a_point ... ok
+test space::tests::ref_parse_roundtrip ... ok
+test space::tests::partial_tuple_spans_subspace ... ok
+test space::tests::set_and_get_full_point ... ok
+test space::tests::slice_filters_by_fixed_dims ... ok
+test space::tests::stamp_advances_past_observed_remote_clock ... ok
+test store::tests::roundtrip_and_missing_file ... ok
+
+test result: ok. 30 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+     Running unittests src/main.rs (/opt/build/target-ce-space/debug/deps/ce_space-b0435184810947ad)
+
+running 3 tests
+test tests::coords_parsing ... ok
+test tests::flag_parsing ... ok
+test tests::value_parsing ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests ce_space
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
